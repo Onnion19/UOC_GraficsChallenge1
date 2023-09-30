@@ -14,22 +14,9 @@
 
 #include "Resources/ResourceLoader.h"
 #include "Resources/font.h"
+#include "Resources/music.h"
 #include "raylib.h"
 #include "screens.h"    // NOTE: Declares global (extern) variables and screens functions
-namespace {
-
-	void _UnloadFont(Font* f)
-	{
-		if (!f)return;
-		UnloadFont(*f);
-	}
-
-	Utils::Handle<Font, decltype(&_UnloadFont)> MakeFontHandle(std::string_view path) {
-		Font* font = new Font(LoadFont(path.data()));
-		return { font, &_UnloadFont };
-	}
-}
-
 
 //----------------------------------------------------------------------------------
 // Shared Variables Definition (global)
@@ -38,6 +25,7 @@ namespace {
 GameScreen currentScreen = LOGO;
 Music music = { 0 };
 Sound fxCoin = { 0 };
+Font font = { 0 };
 
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
@@ -73,12 +61,14 @@ int main(void)
 	InitWindow(screenWidth, screenHeight, "raylib game template");
 
 	InitAudioDevice();      // Initialize audio device
-
 	// Load global data (assets that must be available in all screens, i.e. font)
 	//font = LoadFont("resources/mecha.png");
-	auto font = Resources::Loader::Load<Font>("resources/mecha.png");
-	music = LoadMusicStream("resources/ambient.ogg");
-	fxCoin = LoadSound("resources/coin.wav");
+	auto f = Resources::Loader::Load<Font>("resources/mecha.png");
+	font = *f.get(); // Remove
+	auto m = Resources::Loader::Load<Music>("resources/ambient.ogg");
+	music = *m.get();
+	auto s = Resources::Loader::Load<Sound>("resources/coin.wav");
+	fxCoin = *s.get();
 
 	SetMusicVolume(music, 1.0f);
 	PlayMusicStream(music);
@@ -86,10 +76,6 @@ int main(void)
 	// Setup and init first screen
 	currentScreen = LOGO;
 	InitLogoScreen();
-
-#if defined(PLATFORM_WEB)
-	emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
-#else
 	SetTargetFPS(60);       // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
 
@@ -98,7 +84,7 @@ int main(void)
 	{
 		UpdateDrawFrame();
 	}
-#endif
+
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
@@ -111,11 +97,6 @@ int main(void)
 	case ENDING: UnloadEndingScreen(); break;
 	default: break;
 	}
-
-	// Unload global data loaded
-	//UnloadFont(font);
-	UnloadMusicStream(music);
-	UnloadSound(fxCoin);
 
 	CloseAudioDevice();     // Close audio context
 
