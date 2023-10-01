@@ -17,6 +17,7 @@ namespace Resources {
 	struct Resource {
 		using Type = T;
 		using DelTy = std::default_delete<T>;
+		using HandleTy = Utils::Handle<Type, DelTy>;
 	};
 
 	template <class T>
@@ -26,13 +27,13 @@ namespace Resources {
 	public:
 
 		template<DefaultResource T, typename ... Args>
-		static Utils::Handle< typename Resource<T>::Type>Load(Args&& ... args)
+		static Resource<T>::HandleTy Load(Args&& ... args)
 		{
 			return std::make_unique<typename Resource<T>::Type>(std::forward<Args>(args)...);
 		}
 
 		template <typename T, typename ... Args>
-		static Utils::Handle< typename Resource<T>::Type, typename Resource<T>::DelTy>Load(Args&& ... args)
+		static Resource<T>::HandleTy Load(Args&& ... args)
 		{
 			typename Resource<T>::Type* res = new Resource<T>::Type(Resource<T>::Loader(std::forward<Args>(args)...));
 			return { res, Resource<T>::Deleter };

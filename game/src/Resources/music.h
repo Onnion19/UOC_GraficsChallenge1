@@ -9,6 +9,7 @@ namespace Resources {
 	struct Resource<Music> {
 		using Type = Music;
 		using DelTy = void(*)(Type*);
+		using HandleTy = Utils::Handle<Type, DelTy>;
 		using LoadTy = Type(*)(std::string_view);
 
 		static constexpr LoadTy Loader = [](std::string_view path) -> Type {
@@ -25,6 +26,7 @@ namespace Resources {
 	struct Resource<Sound> {
 		using Type = Sound;
 		using DelTy = void(*)(Type*);
+		using HandleTy = Utils::Handle<Type, DelTy>;
 		using LoadTy = Type(*)(std::string_view);
 
 		static constexpr LoadTy Loader = [](std::string_view path) -> Type {

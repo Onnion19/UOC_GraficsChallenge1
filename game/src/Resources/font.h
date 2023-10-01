@@ -13,6 +13,7 @@ namespace Resources {
 	struct Resource<Font> {
 		using Type = Font;
 		using DelTy = void(*)(Type*);
+		using HandleTy = Utils::Handle<Type, DelTy>;
 		using LoadTy = Type(*)(const std::string_view &);
 
 		// Loader function called to generate a new resource of type Font.

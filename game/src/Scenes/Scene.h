@@ -2,12 +2,21 @@
 
 namespace Scenes
 {
-
+	/*
+		An updatable class is any class that implements Update function with delta time.
+	*/
 	template <typename T>
 	concept Updatable = requires (T t) {
 		t.Update(0.f);
 	};
 
+	/*
+		A Scenelike class must handle all the scene life cycle from: 
+		- Activation
+		- Draw
+		_ Reset
+		- Deactivation
+	*/
 	template<typename T>
 	concept SceneLike = requires (T t)
 	{
@@ -23,8 +32,13 @@ namespace Scenes
 	template<typename T>
 	concept UpddatableScene = SceneLike<T> && Updatable<T>;
 
+	/*
+		Type erasure scene type. So any class that's scenelike can be in fact a scene. 
+		This is a way to avoid interfaces and virtual functions which usually ens up indirecting pointer references.
+	*/
 	class SceneTE {
 	public:
+		// TODO: Scenes should be identified by ID's. Maybe a string hash? 
 		template<NonUpdatableScene T>
 		SceneTE(T* t)
 		{

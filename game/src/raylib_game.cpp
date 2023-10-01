@@ -12,9 +12,7 @@
 *
 ********************************************************************************************/
 
-#include "Resources/ResourceLoader.h"
-#include "Resources/font.h"
-#include "Resources/music.h"
+#include "Resources/ResourceManager.h"
 #include "Scenes/Scene.h"
 #include "raylib.h"
 #include "screens.h"    // NOTE: Declares global (extern) variables and screens functions
@@ -68,7 +66,7 @@ struct UpdatableTest : public Test {
 };
 int main(void)
 {
-	Scenes::SceneTE prova(new UpdatableTest());
+	ResourceManager resourceManager;
 	// Initialization
 	//---------------------------------------------------------
 	InitWindow(screenWidth, screenHeight, "raylib game template");
@@ -76,12 +74,9 @@ int main(void)
 	InitAudioDevice();      // Initialize audio device
 	// Load global data (assets that must be available in all screens, i.e. font)
 	//font = LoadFont("resources/mecha.png");
-	auto f = Resources::Loader::Load<Font>("resources/mecha.png");
-	font = *f.get(); // Remove
-	auto m = Resources::Loader::Load<Music>("resources/ambient.ogg");
-	music = *m.get();
-	auto s = Resources::Loader::Load<Sound>("resources/coin.wav");
-	fxCoin = *s.get();
+	font = resourceManager.Load<Font>("main font", "resources/mecha.png");
+	music = resourceManager.Load<Music>("music", "resources/ambient.ogg");
+	fxCoin = resourceManager.Load<Sound>("coin sound", "resources/coin.wav");
 
 	SetMusicVolume(music, 1.0f);
 	PlayMusicStream(music);
