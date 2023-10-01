@@ -15,6 +15,7 @@
 #include "Resources/ResourceLoader.h"
 #include "Resources/font.h"
 #include "Resources/music.h"
+#include "Scenes/Scene.h"
 #include "raylib.h"
 #include "screens.h"    // NOTE: Declares global (extern) variables and screens functions
 
@@ -54,8 +55,20 @@ static void UpdateDrawFrame(void);          // Update and draw one frame
 //----------------------------------------------------------------------------------
 // Main entry point
 //----------------------------------------------------------------------------------
+
+struct Test {
+	void ActivateScene(){}
+	void DeactivateScene(){}
+	void DrawScene(){}
+	void ResetScene() {}
+};
+
+struct UpdatableTest : public Test {
+	void Update(float) {};
+};
 int main(void)
 {
+	Scenes::SceneTE prova(new UpdatableTest());
 	// Initialization
 	//---------------------------------------------------------
 	InitWindow(screenWidth, screenHeight, "raylib game template");
