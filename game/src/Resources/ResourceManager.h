@@ -7,15 +7,42 @@
 #include "Resources/music.h"
 
 
+// Resource ID is just to hash string into id's. 
+// It would be nice to have constpexr hashing but this is probably out of the scope.
+struct ResourceID
+{
+private:
+	inline static const std::hash<std::string_view>hashFactory{};
+public:
+	const std::size_t id;
 
+	explicit ResourceID(std::string_view name) noexcept : id(hashFactory(name)) {}
+	explicit ResourceID(const char* name) noexcept : id(hashFactory(name)) {}
+	inline operator size_t() const noexcept { return id; }
+};
 
+namespace std
+{
+	template<>
+	struct std::hash<ResourceID> {
+		size_t operator()(const ResourceID& resourceID) const noexcept {
+			// implicit size_t cast
+			return resourceID;
+		}
+	};
+}
+
+/*
+	Resource Manager is a class that allows to handle and manage all type of objects, from loading from disk to release them.
+	The assets are not tied to any type so you are free to specify any type (Font, Image, String, CustomTypeTy).
+
+	The storage is a multimap where: 
+	  - Key 1: asset type (using type hash which should be free (compile time))
+	  - Key 2: Resource ID (std::hash is not compile time, but could use a custom implementation if needed)
+	  - Value: void* containing the ResourceHandle. Rach resource speicifies the handle using type traits. @see ResourceLoader.h for more info
+*/
 class ResourceManager {
-	// Resources will be referenced by name --> "Main font", "Background music"...
-	using ResourceName = std::string_view;
-	// Functor to convert name to hash, in this case using std::hash (good enough).
-	using ResourceIDFactory = std::hash<ResourceName>;
-	// Hash type or resource ID will be the result of hashing the name: std::hash("Main Font").
-	using ResourceID = std::invoke_result<ResourceIDFactory, ResourceName>::type;
+
 	template<typename T>
 	using ResourceHandle = Resources::Resource<T>::HandleTy;
 	template<typename T>
@@ -24,40 +51,45 @@ class ResourceManager {
 	using TypeHash = std::size_t;
 
 public:
-	template <typename T, typename ... Args>
-	T& Load(ResourceName name, Args&& ... args) {
-		ResourceID id = GetResoruceID(name);
-		if (auto ptr = FetchLoadedResource<T>(id))
+	template <typename ResourceTy, typename ... Args>
+	ResourceTy& GetOrLoad(ResourceID id, Args&& ... args) {
+
+		if (auto ptr = FetchLoadedResource<ResourceTy>(id))
 		{
-			assert(ptr, "Holding a handle with null data.");
+			assert(ptr && "Holding a handle with null data.");
 			return *(ptr->get());
 		}
 
-		auto handle = new ResourceHandle<T>(resourceLoader.Load<T>(std::forward<Args>(args)...));
-		auto& container = GetOrCreateContainerByType<T>();
-		auto h = container.emplace(id, handle).first->second;
-		return *(static_cast<ResourceHandlePtr<T>>(h)->get());
+		return Load<ResourceTy>(id, std::forward<Args>(args)...);
 	}
 
-	template <typename T>
-	void Unload(ResourceName name) {
-		ResourceID id = GetResoruceID(name);
+	template <typename ResourceTy>
+	void Unload(ResourceID id) {
 		// TODO: this will do a double look up and can be optimized. 
-		if (auto ptr = FetchLoadedResource<T>(id))
+		if (auto ptr = FetchLoadedResource<ResourceTy>(id))
 		{
 			// clean the resource --> call the deleter functor
 			ptr->reset();
 			// remove the resource entry in the manager
-			GetContainerByType<T>()->erase(id);
+			GetContainerByType<ResourceTy>()->erase(id);
 		}
 	}
 
 	// HEAVY BUG: destructor will clean up all the containers. Due to is storing wiht void* the destructor does not guarantee to call the deleters
 	// of the underlying type but just the raw memory. This might cause memory leaking or malfunctions in raylib.
 	// Current work around is to manually unload the previously loaded resources.
+	// working with shared_ptr this might solvable, but then have to pay the overhead tax.
 	~ResourceManager() = default;
 
 private:
+
+	template<typename T, typename ... Args>
+	T& Load(ResourceID id, Args&& ... args) {
+		auto handle = new ResourceHandle<T>(resourceLoader.Load<T>(std::forward<Args>(args)...));
+		auto& container = GetOrCreateContainerByType<T>();
+		auto h = container.emplace(id, handle).first->second;
+		return *(static_cast<ResourceHandlePtr<T>>(h)->get());
+	}
 
 	template<typename T>
 	inline ResourceMap* GetContainerByType()
@@ -89,13 +121,7 @@ private:
 
 	}
 
-	inline ResourceID GetResoruceID(ResourceName name)
-	{
-		return IdFactory(name);
-	}
-
 private:
 	Resources::Loader	resourceLoader;
-	ResourceIDFactory	IdFactory;
 	std::unordered_map<TypeHash, ResourceMap> resources;
 };

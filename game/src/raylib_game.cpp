@@ -55,9 +55,9 @@ static void UpdateDrawFrame(void);          // Update and draw one frame
 //----------------------------------------------------------------------------------
 
 struct Test {
-	void ActivateScene(){}
-	void DeactivateScene(){}
-	void DrawScene(){}
+	void ActivateScene() {}
+	void DeactivateScene() {}
+	void DrawScene() {}
 	void ResetScene() {}
 };
 
@@ -72,11 +72,11 @@ int main(void)
 	InitWindow(screenWidth, screenHeight, "raylib game template");
 
 	InitAudioDevice();      // Initialize audio device
+
 	// Load global data (assets that must be available in all screens, i.e. font)
-	//font = LoadFont("resources/mecha.png");
-	font = resourceManager.Load<Font>("main font", "resources/mecha.png");
-	music = resourceManager.Load<Music>("music", "resources/ambient.ogg");
-	fxCoin = resourceManager.Load<Sound>("coin sound", "resources/coin.wav");
+	font = resourceManager.GetOrLoad<Font>(ResourceID{ "main font" }, "resources/mecha.png");
+	music = resourceManager.GetOrLoad<Music>(ResourceID{ "music" }, "resources/ambient.ogg");
+	fxCoin = resourceManager.GetOrLoad<Sound>(ResourceID{ "coin sound" }, "resources/coin.wav");
 
 	SetMusicVolume(music, 1.0f);
 	PlayMusicStream(music);

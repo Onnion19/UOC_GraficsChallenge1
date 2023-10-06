@@ -9,7 +9,7 @@ namespace Resources {
 
 	/*
 		Resource Type trait which defines: 
-			- Type as resource basic type (Font, Music, ...)
+			- Type as resource basic type (Font, Music, string, ...)
 			- DelTy as the type of the deleter functor, called when the resource is no longer alive. By default: std::default_delete<T>
 			- LoadTy [optional] as the loader type functor called to generate the resource (ie, LoadFont, LoadSound...).
 	*/
