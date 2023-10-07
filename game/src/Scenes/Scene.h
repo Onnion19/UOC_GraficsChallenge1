@@ -1,88 +1,39 @@
 #pragma once
+#include "Resources/ResourceManager.h"
 
 namespace Scenes
 {
 	/*
-		An updatable class is any class that implements Update function with delta time.
+		IScene interface to enable dynamic polymorphism
 	*/
-	template <typename T>
-	concept Updatable = requires (T t) {
-		t.Update(0.f);
-	};
-
-	/*
-		A Scenelike class must handle all the scene life cycle from: 
-		- Activation
-		- Draw
-		_ Reset
-		- Deactivation
-	*/
-	template<typename T>
-	concept SceneLike = requires (T t)
-	{
-		t.ActivateScene();
-		t.DeactivateScene();
-		t.DrawScene();
-		t.ResetScene();
-	};
-
-	template<typename T>
-	concept NonUpdatableScene = SceneLike<T> && !Updatable<T>;
-
-	template<typename T>
-	concept UpddatableScene = SceneLike<T> && Updatable<T>;
-
-	/*
-		Type erasure scene type. So any class that's scenelike can be in fact a scene. 
-		This is a way to avoid interfaces and virtual functions which usually ens up indirecting pointer references.
-	*/
-	class SceneTE {
+	class IScene {
 	public:
-		// TODO: Scenes should be identified by ID's. Maybe a string hash? 
-		template<NonUpdatableScene T>
-		SceneTE(T* t)
-		{
-			_data = t;
-			InitScene<T>();
-		}
+		virtual void _Activate();
+		virtual void _DeActivate();
+		virtual void _Update(float deltaTime);
+		virtual void _Draw();
+		virtual void _Finish();
+	};
 
-		template<UpddatableScene T>
-		SceneTE(T* t)
-		{
+	/*
+		CRTP pattern to flatt the overhead of virtual cost to only 1 level of indirection.
 
-			_data = t;
-			InitScene<T>();
-			_Update = [](void* ptr, float delta) {static_cast<T*>(ptr)->Update(delta); };
-		}
-
-		~SceneTE() { _Destroy(_data); }
-
-		void Activate() { _Activate(_data); }
-		void Deactivate() { _Deactivate(_data); }
-		void Draw() { _Draw(_data); }
-		void Reset() { _Reset(_data); }
-		void Update(float delta) { if (_Update) _Update(_data, delta); }
-
-	private:
-
-		template<SceneLike T>
-		void InitScene()
-		{
-			_Destroy = [](void* ptr) { delete (static_cast<T*>(ptr)); };
-			_Activate = [](void* ptr) {static_cast<T*>(ptr)->ActivateScene(); };
-			_Deactivate = [](void* ptr) {static_cast<T*>(ptr)->DeactivateScene(); };
-			_Draw = [](void* ptr) {static_cast<T*>(ptr)->DrawScene(); };
-			_Reset = [](void* ptr) {static_cast<T*>(ptr)->ResetScene(); };
-			_Update = nullptr;
-		}
-
-		void (*_Activate)(void*);
-		void (*_Deactivate)(void*);
-		void (*_Draw)(void*);
-		void (*_Update)(void*, float);
-		void (*_Reset)(void*);
-		void (*_Destroy)(void*);
-		void* _data;
+		SceneBase should be inherited by all the scenes.
+	*/
+	template<typename T>
+	class SceneBase : public IScene {
+	public:
+		SceneBase(ResourceManager& manager) : resourceManager(manager) {}
+		virtual ~SceneBase() {}
+		/* IScene implementation */
+		void _Activate() override { static_cast<T*>(this)->Activate(); }
+		void _DeActivate() override { static_cast<T*>(this)->DeActivate(); }
+		void _Update(float deltaTime) override { static_cast<T*>(this)->Update(deltaTime); }
+		void _Draw() override { static_cast<T*>(this)->Draw(); }
+		void _Finish() override { static_cast<T*>(this)->Finish(); }
+		/* ~~~~~~~~~~~~~~~~~~~~~ */	
+	protected:
+		ResourceManager& resourceManager;
 	};
 
 }
