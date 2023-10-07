@@ -2,6 +2,7 @@
 
 void Core::Game::Initialize()
 {
+	gameLoop.SetActiveScene(&scene);
 }
 
 void Core::Game::Start()

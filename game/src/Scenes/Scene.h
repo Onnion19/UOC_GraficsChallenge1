@@ -8,11 +8,11 @@ namespace Scenes
 	*/
 	class IScene {
 	public:
-		virtual void _Activate();
-		virtual void _DeActivate();
-		virtual void _Update(float deltaTime);
-		virtual void _Draw();
-		virtual void _Finish();
+		virtual void _Activate() = 0;
+		virtual void _DeActivate() = 0;
+		virtual void _Update(float deltaTime) = 0;
+		virtual void _Draw() = 0;
+		virtual void _Finish() = 0;
 	};
 
 	/*
@@ -26,14 +26,30 @@ namespace Scenes
 		SceneBase(ResourceManager& manager) : resourceManager(manager) {}
 		virtual ~SceneBase() {}
 		/* IScene implementation */
-		void _Activate() override { static_cast<T*>(this)->Activate(); }
-		void _DeActivate() override { static_cast<T*>(this)->DeActivate(); }
-		void _Update(float deltaTime) override { static_cast<T*>(this)->Update(deltaTime); }
-		void _Draw() override { static_cast<T*>(this)->Draw(); }
-		void _Finish() override { static_cast<T*>(this)->Finish(); }
+		inline void _Activate() override { static_cast<T*>(this)->Activate(); }
+		inline void _DeActivate() override { static_cast<T*>(this)->DeActivate(); }
+		inline void _Update(float deltaTime) override { static_cast<T*>(this)->Update(deltaTime); }
+		inline void _Draw() override { static_cast<T*>(this)->Draw(); }
+		inline void _Finish() override { static_cast<T*>(this)->Finish(); }
 		/* ~~~~~~~~~~~~~~~~~~~~~ */	
 	protected:
 		ResourceManager& resourceManager;
 	};
 
 }
+
+class BackgroundScene : public Scenes::SceneBase<BackgroundScene> {
+public:
+	BackgroundScene(ResourceManager& manager) :Scenes::SceneBase<BackgroundScene>(manager) {}
+	void Activate() {}
+	void DeActivate() {}
+	inline void Update(float deltaTime) {
+		text = "Delta time: " + std::to_string(deltaTime);
+	}
+	inline void Draw() {
+		DrawText(text.c_str(), 50, 50, 30, Color { 255, 255, 255, 255 });
+	}
+	void Finish() {}
+private: 
+	std::string text;
+};
