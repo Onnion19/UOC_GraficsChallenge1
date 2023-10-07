@@ -3,7 +3,10 @@
 #include <functional>
 #include <chrono>
 #include "Core/window.h"
-#include "Scenes/Scene.h"
+
+namespace Scenes {
+	class IScene;
+}
 
 namespace Core {
 	namespace Internal {
@@ -31,7 +34,8 @@ namespace Core {
 	public:
 		GameLoop(StopFunctor&& func, Core::Window* win) : stopCondition(std::move(func)), window(win), activeScene(nullptr), isRunning(true) {}
 		void Loop();
-		void SetActiveScene(Scenes::IScene* scene);
+		void OnSceneLoaded(Scenes::IScene* scene);
+		void OnSceneUnloaded(Scenes::IScene* scene);
 		void TogglePause();
 	private:
 		Internal::Timer timer;

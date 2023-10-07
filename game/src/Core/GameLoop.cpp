@@ -1,6 +1,6 @@
 #include "GameLoop.h"
 #include <iostream>
-
+#include "Scenes/Scene.h"
 void Core::GameLoop::Loop()
 {
 	[[maybe_unused]] auto timeSinceInitialization = timer(); // Flush all the time from construction to first frame
@@ -33,16 +33,23 @@ void Core::GameLoop::Loop()
 		// 4. End drawing (Send all data to gpu)
 		window->EndDraw();
 
+#if DEBUG
 		if (IsKeyPressed(KEY_P))
 		{
 			TogglePause();
 		}
+#endif
 	}
 }
 
-void Core::GameLoop::SetActiveScene(Scenes::IScene* scene)
+void Core::GameLoop::OnSceneLoaded(Scenes::IScene* scene)
 {
 	activeScene = scene;
+}
+
+void Core::GameLoop::OnSceneUnloaded(Scenes::IScene* scene)
+{
+	activeScene = nullptr;
 }
 
 void Core::GameLoop::TogglePause()

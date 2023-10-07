@@ -1,5 +1,8 @@
 #pragma once
 #include "Resources/ResourceManager.h"
+#include <string>
+
+class SceneManager;
 
 namespace Scenes
 {
@@ -8,10 +11,16 @@ namespace Scenes
 	*/
 	class IScene {
 	public:
+		// Function to set up all the requirements for the scene to work (load resources if necessary).
 		virtual void _Activate() = 0;
+		// Function to free the scene memory before going out
 		virtual void _DeActivate() = 0;
+		// Update function of the scene
 		virtual void _Update(float deltaTime) = 0;
+		// Drawing function, populate buffers before sending to gpu.
 		virtual void _Draw() = 0;
+	protected:
+		// Finish will unload the scene and make it inactive
 		virtual void _Finish() = 0;
 	};
 
@@ -23,33 +32,25 @@ namespace Scenes
 	template<typename T>
 	class SceneBase : public IScene {
 	public:
-		SceneBase(ResourceManager& manager) : resourceManager(manager) {}
+		SceneBase(ResourceManager& rmanager, SceneManager* smanager) : resourceManager(rmanager), sceneManager(smanager) {}
 		virtual ~SceneBase() {}
 		/* IScene implementation */
-		inline void _Activate() override { static_cast<T*>(this)->Activate(); }
-		inline void _DeActivate() override { static_cast<T*>(this)->DeActivate(); }
-		inline void _Update(float deltaTime) override { static_cast<T*>(this)->Update(deltaTime); }
-		inline void _Draw() override { static_cast<T*>(this)->Draw(); }
-		inline void _Finish() override { static_cast<T*>(this)->Finish(); }
-		/* ~~~~~~~~~~~~~~~~~~~~~ */	
+		void _Activate() override { static_cast<T*>(this)->Activate(); }
+		void _DeActivate() override { static_cast<T*>(this)->DeActivate(); }
+		void _Update(float deltaTime) override { static_cast<T*>(this)->Update(deltaTime); }
+		void _Draw() override { static_cast<T*>(this)->Draw(); }
+		void _Finish() override { static_cast<T*>(this)->Finish(); }
+		/* ~~~~~~~~~~~~~~~~~~~~~ */
 	protected:
 		ResourceManager& resourceManager;
+		SceneManager* sceneManager;
 	};
 
 }
 
-class BackgroundScene : public Scenes::SceneBase<BackgroundScene> {
-public:
-	BackgroundScene(ResourceManager& manager) :Scenes::SceneBase<BackgroundScene>(manager) {}
-	void Activate() {}
-	void DeActivate() {}
-	inline void Update(float deltaTime) {
-		text = "Delta time: " + std::to_string(deltaTime);
-	}
-	inline void Draw() {
-		DrawText(text.c_str(), 50, 50, 30, Color { 255, 255, 255, 255 });
-	}
-	void Finish() {}
-private: 
-	std::string text;
-};
+using SceneHandle = Utils::Handle<Scenes::IScene>;
+
+template<typename T>
+SceneHandle MakeSceneHandle(ResourceManager& manager, SceneManager* smanager) {
+	return std::make_unique<T>(manager, smanager);
+}

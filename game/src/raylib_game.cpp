@@ -31,135 +31,136 @@ typedef enum GameScreen { LOGO, TITLE, GAMEPLAY, ENDING } GameScreen;
 int main()
 {
 
-    Core::Game game("Not Asteroids");
-    game.Start();
+	Core::Game game("Not Asteroids");
+	game.Start();
 
-    //// Initialization
-    ////--------------------------------------------------------------------------------------
-    //const int screenWidth = 800;
-    //const int screenHeight = 450;
 
-    //// LESSON 01: Window initialization and screens management
-    //InitWindow(screenWidth, screenHeight, "CHALLENGE 01: BLOCKS GAME");
+	//// Initialization
+	////--------------------------------------------------------------------------------------
+	//const int screenWidth = 800;
+	//const int screenHeight = 450;
 
-    //// NOTE: Load resources (textures, fonts, audio) after Window initialization
+	//// LESSON 01: Window initialization and screens management
+	//InitWindow(screenWidth, screenHeight, "CHALLENGE 01: BLOCKS GAME");
 
-    //// Game required variables
-    //GameScreen screen = LOGO;       // Current game screen state
+	//// NOTE: Load resources (textures, fonts, audio) after Window initialization
 
-    //int framesCounter = 0;          // General pourpose frames counter
-    //int gameResult = -1;            // Game result: 0 - Loose, 1 - Win, -1 - Not defined
-    //bool gamePaused = false;        // Game paused state toggle
+	//// Game required variables
+	//GameScreen screen = LOGO;       // Current game screen state
 
-    //// TODO: Define and Initialize game variables
+	//int framesCounter = 0;          // General pourpose frames counter
+	//int gameResult = -1;            // Game result: 0 - Loose, 1 - Win, -1 - Not defined
+	//bool gamePaused = false;        // Game paused state toggle
 
-    //SetTargetFPS(60);               // Set desired framerate (frames per second)
-    ////--------------------------------------------------------------------------------------
+	//// TODO: Define and Initialize game variables
 
-    //// Main game loop
-    //while (!WindowShouldClose())    // Detect window close button or ESC key
-    //{
-    //    // Update
-    //    //----------------------------------------------------------------------------------
-    //    switch (screen)
-    //    {
-    //    case LOGO:
-    //    {
-    //        // Update LOGO screen data here!
+	//SetTargetFPS(60);               // Set desired framerate (frames per second)
+	////--------------------------------------------------------------------------------------
 
-    //        framesCounter++;
+	//// Main game loop
+	//while (!WindowShouldClose())    // Detect window close button or ESC key
+	//{
+	//    // Update
+	//    //----------------------------------------------------------------------------------
+	//    switch (screen)
+	//    {
+	//    case LOGO:
+	//    {
+	//        // Update LOGO screen data here!
 
-    //        if (framesCounter > 180)
-    //        {
-    //            screen = TITLE;    // Change to TITLE screen after 3 seconds
-    //            framesCounter = 0;
-    //        }
+	//        framesCounter++;
 
-    //    } break;
-    //    case TITLE:
-    //    {
-    //        // Update TITLE screen data here!
+	//        if (framesCounter > 180)
+	//        {
+	//            screen = TITLE;    // Change to TITLE screen after 3 seconds
+	//            framesCounter = 0;
+	//        }
 
-    //        framesCounter++;
+	//    } break;
+	//    case TITLE:
+	//    {
+	//        // Update TITLE screen data here!
 
-    //        // LESSON 03: Inputs management (keyboard, mouse)
-    //        if (IsKeyPressed(KEY_ENTER)) screen = GAMEPLAY;
+	//        framesCounter++;
 
-    //    } break;
-    //    case GAMEPLAY:
-    //    {
-    //        // Update GAMEPLAY screen data here!
+	//        // LESSON 03: Inputs management (keyboard, mouse)
+	//        if (IsKeyPressed(KEY_ENTER)) screen = GAMEPLAY;
 
-    //        if (!gamePaused)
-    //        {
-    //            // TODO: Gameplay logic
-    //        }
+	//    } break;
+	//    case GAMEPLAY:
+	//    {
+	//        // Update GAMEPLAY screen data here!
 
-    //    } break;
-    //    case ENDING:
-    //    {
-    //        // Update END screen data here!
+	//        if (!gamePaused)
+	//        {
+	//            // TODO: Gameplay logic
+	//        }
 
-    //        framesCounter++;
+	//    } break;
+	//    case ENDING:
+	//    {
+	//        // Update END screen data here!
 
-    //        // LESSON 03: Inputs management (keyboard, mouse)
-    //        if (IsKeyPressed(KEY_ENTER)) screen = TITLE;
+	//        framesCounter++;
 
-    //    } break;
-    //    default: break;
-    //    }
-    //    //----------------------------------------------------------------------------------
+	//        // LESSON 03: Inputs management (keyboard, mouse)
+	//        if (IsKeyPressed(KEY_ENTER)) screen = TITLE;
 
-    //    // Draw
-    //    //----------------------------------------------------------------------------------
-    //    BeginDrawing();
+	//    } break;
+	//    default: break;
+	//    }
+	//    //----------------------------------------------------------------------------------
 
-    //    ClearBackground(RAYWHITE);
+	//    // Draw
+	//    //----------------------------------------------------------------------------------
+	//    BeginDrawing();
 
-    //    switch (screen)
-    //    {
-    //    case LOGO:
-    //    {
-    //        // Draw LOGO screen here!
+	//    ClearBackground(RAYWHITE);
 
-    //        DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
+	//    switch (screen)
+	//    {
+	//    case LOGO:
+	//    {
+	//        // Draw LOGO screen here!
 
-    //    } break;
-    //    case TITLE:
-    //    {
-    //        // Draw TITLE screen here!
+	//        DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
 
-    //        DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
+	//    } break;
+	//    case TITLE:
+	//    {
+	//        // Draw TITLE screen here!
 
-    //    } break;
-    //    case GAMEPLAY:
-    //    {
-    //        // Draw GAMEPLAY screen here!
+	//        DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
 
-    //        DrawText("GAMEPLAY SCREEN", 20, 20, 40, MAROON);
+	//    } break;
+	//    case GAMEPLAY:
+	//    {
+	//        // Draw GAMEPLAY screen here!
 
-    //    } break;
-    //    case ENDING:
-    //    {
-    //        // Draw END screen here!
+	//        DrawText("GAMEPLAY SCREEN", 20, 20, 40, MAROON);
 
-    //        DrawText("ENDING SCREEN", 20, 20, 40, DARKBLUE);
+	//    } break;
+	//    case ENDING:
+	//    {
+	//        // Draw END screen here!
 
-    //    } break;
-    //    default: break;
-    //    }
+	//        DrawText("ENDING SCREEN", 20, 20, 40, DARKBLUE);
 
-    //    EndDrawing();
-    //    //----------------------------------------------------------------------------------
-    //}
+	//    } break;
+	//    default: break;
+	//    }
 
-    //// De-Initialization
-    ////--------------------------------------------------------------------------------------
+	//    EndDrawing();
+	//    //----------------------------------------------------------------------------------
+	//}
 
-    //// NOTE: Unload any loaded resources (texture, fonts, audio)
+	//// De-Initialization
+	////--------------------------------------------------------------------------------------
 
-    //CloseWindow();              // Close window and OpenGL context
-    ////--------------------------------------------------------------------------------------
+	//// NOTE: Unload any loaded resources (texture, fonts, audio)
 
-    return 0;
+	//CloseWindow();              // Close window and OpenGL context
+	////--------------------------------------------------------------------------------------
+
+	return 0;
 }
