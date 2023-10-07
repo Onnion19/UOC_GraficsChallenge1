@@ -13,20 +13,30 @@ void Core::GameLoop::Loop()
 	while (!stopCondition())
 	{
 		auto deltaTime = timer(); //Frist frame delta time must be 0 or almost 0.
-		if (!activeScene || !isRunning) continue;
 
-		// 1. Update current scene
-		activeScene->_Update(deltaTime.count());
+		if (activeScene && isRunning) {
+			// 1. Update current scene
+			activeScene->_Update(deltaTime.count());
+		}
+
 
 		// 2. Prepare to Draw
 		window->BeginDraw();
 		window->Clear();
 
 		// 3. Draw Scene
-		activeScene->_Draw();
+		// TODO 2 ifs checking for the active scene seems to much for a game loop function. Must find a better way.
+		if (activeScene) {
+			activeScene->_Draw();
+		}
 
 		// 4. End drawing (Send all data to gpu)
 		window->EndDraw();
+
+		if (IsKeyPressed(KEY_P))
+		{
+			TogglePause();
+		}
 	}
 }
 
