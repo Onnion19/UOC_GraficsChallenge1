@@ -12,7 +12,8 @@ namespace Core {
 	// Types and constants definitions
 	using Position = Utils::Vector2f;
 	using Speed = Utils::Vector2f;
-	using ColliderId = const unsigned int;
+	using ColliderId = unsigned int;
+	using ConstColliderId = const ColliderId;
 	constexpr ColliderId InvalidCollider = std::numeric_limits<ColliderId>::max();
 
 	// any class Implementing OnCollision() can be a callback listener
@@ -34,10 +35,10 @@ namespace Core {
 	public:
 
 		template<ColliderShape Shape, typename ... Args>
-		ColliderId RegisterCollider(Args&& ... args);
+		ConstColliderId RegisterCollider(Args&& ... args);
 
 		template<ColliderShape Shape, ColliderCallback T, typename ... Args>
-		ColliderId RegisterCollider(T& listener, Args&& ... args);
+		ConstColliderId RegisterCollider(T& listener, Args&& ... args);
 
 		void UnregisterCollider(ColliderId id);
 
@@ -52,7 +53,7 @@ namespace Core {
 		struct Collider {
 
 			template<ColliderShape Shape, ColliderCallback T>
-			Collider(Shape&& shape, const T& t)
+			Collider(Shape&& shape, T& t)
 				: _ptr(&t)
 				, collider(std::move(shape)) {
 				_OnCollission = [](void* data) {static_cast<T*>(data)->OnCollision(); };
@@ -76,10 +77,10 @@ namespace Core {
 		};
 
 		struct ColliderIdFactory {
-			ColliderId operator()() { return generate(); }
-			ColliderId generate() { return ++id; }
+			ConstColliderId operator()() { return generate(); }
+			ConstColliderId generate() { return ++id; }
 		private:
-			std::remove_const_t<ColliderId> id = 0;
+			ColliderId id = 0;
 		};
 
 	private:
@@ -92,25 +93,20 @@ namespace Core {
 	};
 
 	template<ColliderShape Shape, typename ...Args>
-	inline ColliderId PhysicsManager::RegisterCollider(Args && ...args)
+	inline ConstColliderId PhysicsManager::RegisterCollider(Args && ...args)
 	{
-		//auto id = idFactory();
-		//Shape s{ std::forward<Args>(args)... };
-		//colliders[id] = Collider{ std::move(s) };
-		//return id;
-
-		colliders[0] = Geometry::GeometryData{ Geometry::Circle{} };
-
-		return 0;
+		auto id = idFactory();
+		colliders.emplace(std::make_pair(id, Shape{ std::forward<Args>(args)... }));
+		return id;
 
 	}
 
 	template<ColliderShape Shape, ColliderCallback T, typename ...Args>
-	inline ColliderId PhysicsManager::RegisterCollider(T& listener, Args && ...args)
+	inline ConstColliderId PhysicsManager::RegisterCollider(T& listener, Args && ...args)
 	{
 		auto id = idFactory();
 		Shape s{ std::forward<Args>(args)... };
-		colliders[id] = Collider{ listener, std::move(s) };
+		colliders.emplace(std::make_pair(id, Collider{ std::move(s), listener}));
 		return id;
 	}
 

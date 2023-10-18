@@ -61,12 +61,12 @@ bool Core::CollisionSolver::Collides(const Geometry::GeometryData& col1, const G
 	if (std::holds_alternative<Geometry::Circle>(col1))
 	{
 		auto circle1 = Geometry::GetGeometryData<Geometry::Circle>(col1);
-		if (std::holds_alternative<Geometry::Circle>(col1))
+		if (std::holds_alternative<Geometry::Circle>(col2))
 		{
 			auto circle2 = Geometry::GetGeometryData<Geometry::Circle>(col2);
 			return ResolveCollision(circle1, circle2);
 		}
-		else if (std::holds_alternative<Geometry::Rectangle>(col1))
+		else if (std::holds_alternative<Geometry::Rectangle>(col2))
 		{
 			auto rect2 = Geometry::GetGeometryData<Geometry::Rectangle>(col2);
 			return ResolveCollision(circle1, rect2);
@@ -75,7 +75,7 @@ bool Core::CollisionSolver::Collides(const Geometry::GeometryData& col1, const G
 	else
 	{
 		auto rect1 = Geometry::GetGeometryData<Geometry::Rectangle>(col1);
-		if (std::holds_alternative<Geometry::Rectangle>(col1)) {
+		if (std::holds_alternative<Geometry::Rectangle>(col2)) {
 			auto rect2 = Geometry::GetGeometryData<Geometry::Rectangle>(col2);
 			return ResolveCollision(rect1, rect2);
 		}
