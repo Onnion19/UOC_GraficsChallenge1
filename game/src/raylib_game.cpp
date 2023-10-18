@@ -15,6 +15,7 @@
 ********************************************************************************************/
 
 #include "Core/Game.h"
+#include "Core/Physics.h"
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -30,6 +31,9 @@ typedef enum GameScreen { LOGO, TITLE, GAMEPLAY, ENDING } GameScreen;
 //------------------------------------------------------------------------------------
 int main()
 {
+
+	Core::PhysicsManager manager;
+	manager.RegisterCollider<Geometry::Circle>();
 
 	Core::Game game("Not Asteroids");
 	game.Start();
