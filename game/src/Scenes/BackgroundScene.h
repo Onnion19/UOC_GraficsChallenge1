@@ -5,6 +5,7 @@
 class BackgroundScene : public Scenes::SceneBase<BackgroundScene> {
 public:
 	BackgroundScene(Core::GameManagers& manager) : Scenes::SceneBase<BackgroundScene>(manager) {}
+	BackgroundScene(const BackgroundScene& o) noexcept = default;
 	void Activate() {}
 	void DeActivate() {}
 	void Update(float deltaTime);

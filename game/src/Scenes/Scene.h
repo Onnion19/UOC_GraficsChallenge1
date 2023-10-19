@@ -33,8 +33,10 @@ namespace Scenes
 	template<typename T>
 	class SceneBase : public IScene {
 	public:
-		SceneBase(Core::GameManagers& manager) : managers(manager) {}
+		SceneBase(Core::GameManagers& manager) noexcept: managers(manager) {}
+		SceneBase(const SceneBase& o) noexcept : managers(o.managers) {}
 		virtual ~SceneBase() {}
+
 		/* IScene implementation */
 		void _Activate() override { static_cast<T*>(this)->Activate(); }
 		void _DeActivate() override { static_cast<T*>(this)->DeActivate(); }

@@ -41,7 +41,7 @@ int main()
 
 	auto result = manager.CheckCollisionOnCollider(id);
 
-	if (result)
+	if (true)
 	{
 		Core::Game game("Not Asteroids");
 		game.Start();

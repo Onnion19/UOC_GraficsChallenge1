@@ -37,6 +37,7 @@ namespace Scenes {
 class SceneManager {
 public:
 	SceneManager(Core::GameManagers& manager) : gameManagers(manager) {};
+	SceneManager(const SceneManager&) = delete;
 
 	void RegisterListener(Scenes::SceneManagerListenerTE listener);
 	void UnregisterListener(Scenes::SceneManagerListenerTE listener);
