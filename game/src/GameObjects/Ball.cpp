@@ -3,7 +3,7 @@
 #include "Core/Physics.h"
 #include "Utils/Geometry.h"
 
-GameObject::Ball::Ball(Core::GameManagers& manager, const BallProperties& prop) : GameObject(manager), properties(prop), collider()
+GameObject::Ball::Ball(Core::GameManagers& manager, const BallProperties& prop) : GameObject(manager), properties(prop), collider(), physics(gManager.GetManager<Core::PhysicsManager>())
 {
 	RegisterCollider();
 }
@@ -12,6 +12,7 @@ GameObject::Ball::Ball(const Ball& b)
 	: GameObject(b.gManager)
 	, properties(b.properties)
 	, position(b.position)
+	, physics(gManager.GetManager<Core::PhysicsManager>())
 {
 	RegisterCollider();
 }
@@ -21,6 +22,7 @@ GameObject::Ball& GameObject::Ball::operator=(const Ball& b)
 	properties = b.properties;
 	position = b.position;
 	gManager = b.gManager;
+	physics = gManager.GetManager<Core::PhysicsManager>();
 	RegisterCollider();
 
 	return *this;
@@ -36,15 +38,18 @@ const Utils::Vector2i& GameObject::Ball::GetPosition() const
 	return position;
 }
 
-Utils::Vector2i& GameObject::Ball::GetPosition()
-{
-	return position;
-}
 
 void GameObject::Ball::SetPosition(const Utils::Vector2i& pos)
 {
+	collider.UpdateColliderBounds(Geometry::Circle{ pos, properties.radius });
+
+	if (physics.CheckCollisionOnCollider(collider))
+	{
+		collider.UpdateColliderBounds(Geometry::Circle{ position, properties.radius });
+		return;
+	}
+
 	position = pos;
-	collider.UpdateColliderBounds(Geometry::Circle{ position, properties.radius });
 }
 
 void GameObject::Ball::Draw()
@@ -54,12 +59,11 @@ void GameObject::Ball::Draw()
 
 void GameObject::Ball::RegisterCollider()
 {
-	auto& physicsManager = gManager.GetManager<Core::PhysicsManager>();
-	collider = physicsManager.RegisterCollider<Geometry::Circle>(position, properties.radius);
+	collider = physics.RegisterCollider<Geometry::Circle>(position, properties.radius);
 }
 
 void GameObject::Ball::UnregisterCollider()
 {
 	if (!collider.Valid()) return;
-	gManager.GetManager<Core::PhysicsManager>().UnregisterCollider(collider);
+	physics.UnregisterCollider(collider);
 }

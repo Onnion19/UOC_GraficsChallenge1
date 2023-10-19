@@ -22,7 +22,6 @@ namespace GameObject {
 		~Ball();
 
 		const Utils::Vector2i& GetPosition()const;
-		Utils::Vector2i& GetPosition();
 		void SetPosition(const Utils::Vector2i& pos);
 
 		void Draw();
@@ -31,6 +30,7 @@ namespace GameObject {
 		void UnregisterCollider();
 	private:
 		BallProperties properties;
+		Core::PhysicsManager& physics;
 		Utils::Vector2i position;
 		Collider collider;
 	};

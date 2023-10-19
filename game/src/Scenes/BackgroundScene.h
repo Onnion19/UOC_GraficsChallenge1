@@ -14,5 +14,6 @@ public:
 private:
 	std::string text;
 	GameObject::Ball ball;
+	GameObject::Ball ball2;
 };
 
