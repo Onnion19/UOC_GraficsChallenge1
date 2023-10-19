@@ -16,7 +16,7 @@
 
 #include "Core/Game.h"
 #include "Core/Physics.h"
-
+#include "GameObjects/Ball.h"
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
@@ -34,19 +34,10 @@ struct Foo {
 };
 int main()
 {
-	Foo f{};
-	Core::PhysicsManager manager;
-	auto id = manager.RegisterCollider<Geometry::Circle>(Utils::Vector2f { 10.f , 10.f} , 1.f);
-	manager.RegisterCollider<Geometry::Rectangle>(f);
+	Core::Game game("Not Asteroids");
+	game.Start();
 
-	auto result = manager.CheckCollisionOnCollider(id);
 
-	if (true)
-	{
-		Core::Game game("Not Asteroids");
-		game.Start();
-
-	}
 
 
 	//// Initialization

@@ -1,28 +1,25 @@
 #include "Physics.h"
 #include "Core/CollisionSolver.h"
 
-void Core::PhysicsManager::UnregisterCollider(ColliderId id)
+void Core::PhysicsManager::UnregisterCollider(Collider& col)
 {
-	colliders.erase(id);
+	colliders.erase(col.id);
+	col = {};
 }
 
-bool Core::PhysicsManager::CheckCollisionOnCollider(ColliderId id)
+bool Core::PhysicsManager::CheckCollisionOnCollider(const Collider& collider)
 {
-	auto iter = colliders.find(id);
-	if (iter == colliders.end()) return false;
-	auto collider = iter->second;
-
 	// Only 1 colision algorithm
 	for (auto&& [colliderId, col] : colliders)
 	{
 		// no self collision
-		if (colliderId == id)continue;
+		if (colliderId == collider.id)continue;
 
-		const bool hasCollided = CollisionSolver::Collides(collider.GetBounds(), col.GetBounds());
+		const bool hasCollided = CollisionSolver::Collides(collider.internal_collider->bounds, col.bounds);
 		if (hasCollided)
 		{
 			col.OnCollision();
-			collider.OnCollision();
+			collider.internal_collider->OnCollision();
 			return true;
 		}
 	}

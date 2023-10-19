@@ -7,9 +7,12 @@
 
 namespace Core {
 
-	class Game {
+	class  Game final {
 	public:
 		Game(std::string_view name);
+		~Game();
+		Game(const Game&) = delete;
+		Game(Game&&) = delete;
 		void Start();
 	private:
 		void Initialize();

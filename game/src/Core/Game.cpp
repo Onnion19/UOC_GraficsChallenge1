@@ -2,20 +2,29 @@
 #include "Resources/ResourceManager.h"
 #include "Scenes/SceneManager.h"
 #include "Scenes/BackgroundScene.h"
+#include "Core/Physics.h"
+#include "GameObjects/GameOjbect.h"
 
 Core::Game::Game(std::string_view name)
 	: mainWindow(CreateWindow(800, 400, name))
 	, gameLoop([window = mainWindow.get()]() {return window->WantsToClose(); }, mainWindow.get())
-	, managers(){
+	, managers() {
 
-	auto& sceneManager = managers.RegisterManager<SceneManager>();
-	sceneManager.RegisterListener(&gameLoop); // Feels weird to reigster the game loop as scene listener. Probably this requires some decoupling
+	managers.RegisterManager<SceneManager>().RegisterListener(&gameLoop);
 	managers.RegisterManager<ResourceManager>();
+	managers.RegisterManager<PhysicsManager>();
+
+	GameObject::GameObjectFactory::gManager = &managers;
+}
+
+Core::Game::~Game()
+{
+	GameObject::GameObjectFactory::gManager = nullptr;
 }
 
 void Core::Game::Initialize()
 {
-	managers.GetManager<SceneManager>().AddAndLoadScene<BackgroundScene>(ResourceID{"Background"}, false);
+	managers.GetManager<SceneManager>().AddAndLoadScene<BackgroundScene>(ResourceID{ "Background" }, false);
 }
 
 void Core::Game::Start()
@@ -33,4 +42,5 @@ void Core::Game::Start()
 void Core::Game::DeInitialize()
 {
 	managers.GetManager<SceneManager>().Clear();
+
 }

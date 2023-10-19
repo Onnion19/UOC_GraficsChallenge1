@@ -34,7 +34,6 @@ namespace Scenes
 	class SceneBase : public IScene {
 	public:
 		SceneBase(Core::GameManagers& manager) noexcept: managers(manager) {}
-		SceneBase(const SceneBase& o) noexcept : managers(o.managers) {}
 		virtual ~SceneBase() {}
 
 		/* IScene implementation */

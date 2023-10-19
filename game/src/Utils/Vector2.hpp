@@ -19,7 +19,7 @@ namespace Utils
 
 		// Allow copying int vectors with floating point vectors... this might be dangerous but in the users we trust
 		template<typename Vec>
-		constexpr Vector2(const Vec& other) noexcept : x(other.x), y(other.y) {}
+		constexpr Vector2(const Vec& other) noexcept : x(static_cast<rep>(other.x)), y(static_cast<rep>(other.y)) {}
 
 
 		constexpr Vector2<T> operator* (T i) const { return { x * i, y * i }; }
