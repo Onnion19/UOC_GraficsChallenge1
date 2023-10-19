@@ -13,11 +13,12 @@ struct ResourceID
 {
 private:
 	inline static const std::hash<std::string_view>hashFactory{};
+	std::size_t id;
 public:
-	const std::size_t id;
-
 	explicit ResourceID(std::string_view name) noexcept : id(hashFactory(name)) {}
 	explicit ResourceID(const char* name) noexcept : id(hashFactory(name)) {}
+
+	size_t GetId()const { return id; }
 	inline operator size_t() const noexcept { return id; }
 };
 
@@ -36,7 +37,7 @@ namespace std
 	Resource Manager is a class that allows to handle and manage all type of objects, from loading from disk to release them.
 	The assets are not tied to any type so you are free to specify any type (Font, Image, String, CustomTypeTy).
 
-	The storage is a multimap where: 
+	The storage is a multimap where:
 	  - Key 1: asset type (using type hash which should be free (compile time))
 	  - Key 2: Resource ID (std::hash is not compile time, but could use a custom implementation if needed)
 	  - Value: void* containing the ResourceHandle. Rach resource speicifies the handle using type traits. @see ResourceLoader.h for more info

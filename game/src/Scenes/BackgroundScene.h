@@ -4,7 +4,7 @@
 
 class BackgroundScene : public Scenes::SceneBase<BackgroundScene> {
 public:
-	BackgroundScene(ResourceManager& manager, SceneManager* smanager) : Scenes::SceneBase<BackgroundScene>(manager, smanager) {}
+	BackgroundScene(Core::GameManagers& manager) : Scenes::SceneBase<BackgroundScene>(manager) {}
 	void Activate() {}
 	void DeActivate() {}
 	void Update(float deltaTime);

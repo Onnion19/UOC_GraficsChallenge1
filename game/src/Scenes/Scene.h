@@ -1,6 +1,7 @@
 #pragma once
 #include "Resources/ResourceManager.h"
 #include <string>
+#include "Core/GameManagers.h"
 
 class SceneManager;
 
@@ -32,7 +33,7 @@ namespace Scenes
 	template<typename T>
 	class SceneBase : public IScene {
 	public:
-		SceneBase(ResourceManager& rmanager, SceneManager* smanager) : resourceManager(rmanager), sceneManager(smanager) {}
+		SceneBase(Core::GameManagers& manager) : managers(manager) {}
 		virtual ~SceneBase() {}
 		/* IScene implementation */
 		void _Activate() override { static_cast<T*>(this)->Activate(); }
@@ -42,8 +43,7 @@ namespace Scenes
 		void _Finish() override { static_cast<T*>(this)->Finish(); }
 		/* ~~~~~~~~~~~~~~~~~~~~~ */
 	protected:
-		ResourceManager& resourceManager;
-		SceneManager* sceneManager;
+		Core::GameManagers& managers;
 	};
 
 }
@@ -51,6 +51,6 @@ namespace Scenes
 using SceneHandle = Utils::Handle<Scenes::IScene>;
 
 template<typename T>
-SceneHandle MakeSceneHandle(ResourceManager& manager, SceneManager* smanager) {
-	return std::make_unique<T>(manager, smanager);
+SceneHandle MakeSceneHandle(Core::GameManagers& managers) {
+	return std::make_unique<T>(managers);
 }

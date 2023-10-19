@@ -29,14 +29,24 @@ typedef enum GameScreen { LOGO, TITLE, GAMEPLAY, ENDING } GameScreen;
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
+struct Foo {
+	void OnCollision() {}
+};
 int main()
 {
-
+	Foo f{};
 	Core::PhysicsManager manager;
-	manager.RegisterCollider<Geometry::Circle>();
+	auto id = manager.RegisterCollider<Geometry::Circle>(Utils::Vector2f { 10.f , 10.f} , 1.f);
+	manager.RegisterCollider<Geometry::Rectangle>(f);
 
-	Core::Game game("Not Asteroids");
-	game.Start();
+	auto result = manager.CheckCollisionOnCollider(id);
+
+	if (result)
+	{
+		Core::Game game("Not Asteroids");
+		game.Start();
+
+	}
 
 
 	//// Initialization

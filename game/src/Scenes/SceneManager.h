@@ -1,6 +1,7 @@
 #pragma once
-#include "Resources/ResourceManager.h"
+#include "Core/GameManagers.h"
 #include "Scenes/Scene.h"
+#include <tuple>
 
 namespace Scenes {
 	// Concept verifying if a type can listen from scene manager callbacks
@@ -35,7 +36,7 @@ namespace Scenes {
 // Scene Manager handling and storing all the scenes.
 class SceneManager {
 public:
-	SceneManager(ResourceManager& manager) : resourceManager(manager) {};
+	SceneManager(Core::GameManagers& manager) : gameManagers(manager) {};
 
 	void RegisterListener(Scenes::SceneManagerListenerTE listener);
 	void UnregisterListener(Scenes::SceneManagerListenerTE listener);
@@ -56,7 +57,7 @@ private:
 	void LoadScene_Internal(Scenes::IScene* scene);
 	Scenes::IScene* FetchScene(ResourceID id);
 private:
-	ResourceManager& resourceManager;
+	Core::GameManagers& gameManagers;
 	std::unordered_map<ResourceID, SceneHandle> scenes;
 	std::vector<Scenes::SceneManagerListenerTE> listeners;
 	Scenes::IScene* currentScene = nullptr;
@@ -79,10 +80,11 @@ inline void SceneManager::AddAndLoadScene(ResourceID id, bool overrideScene)
 template<typename T>
 inline Scenes::IScene* SceneManager::AddScene_Internal(ResourceID id, bool overrideScene)
 {
+	static_assert(std::is_constructible_v<T, Core::GameManagers&>, "Scenes constructor must take GameManager reference");
 	Scenes::IScene* scene = FetchScene(id);
 	if (!scene || overrideScene)
 	{
-		auto handle = MakeSceneHandle<T>(resourceManager, this);
+		SceneHandle handle = MakeSceneHandle<T>(gameManagers);
 		scene = handle.get();
 		scenes[id] = std::move(handle);
 	}
