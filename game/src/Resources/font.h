@@ -25,6 +25,6 @@ namespace Resources {
 		static constexpr DelTy Deleter = [](Font* f) -> void {
 			assert(f && "Trying to delete a null font. Maybe it's trying to be freed twice?");
 			UnloadFont(*f);
-			};
+		};
 	};
 }

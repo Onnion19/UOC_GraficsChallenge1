@@ -6,6 +6,7 @@ namespace GameObject {
 	class GameObject {
 	public:
 		explicit GameObject(Core::GameManagers& manager) noexcept : gManager(manager) {}
+		virtual ~GameObject() {}
 	protected:
 		Core::GameManagers& gManager;
 	};

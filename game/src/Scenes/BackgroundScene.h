@@ -2,6 +2,7 @@
 
 #include "Scenes/Scene.h"
 #include "GameObjects/Ball.h"
+#include "GameObjects/Block.h"
 
 class BackgroundScene : public Scenes::SceneBase<BackgroundScene> {
 public:
@@ -14,6 +15,6 @@ public:
 private:
 	std::string text;
 	GameObject::Ball ball;
-	GameObject::Ball ball2;
+	GameObject::Block block;
 };
 
