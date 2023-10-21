@@ -21,7 +21,6 @@ namespace Utils
 		template<typename Vec>
 		constexpr Vector2(const Vec& other) noexcept : x(static_cast<rep>(other.x)), y(static_cast<rep>(other.y)) {}
 
-
 		constexpr Vector2<T> operator* (T i) const { return { x * i, y * i }; }
 		void operator *= (T i) const { return { x *= i, y *= i }; }
 		constexpr Vector2<T> operator+ (const Vector2<T>& i) const { return { x + i.x, y + i.y }; }

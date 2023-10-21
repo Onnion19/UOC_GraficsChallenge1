@@ -6,7 +6,7 @@
 #include "GameObjects/GameOjbect.h"
 
 Core::Game::Game(std::string_view name)
-	: mainWindow(CreateWindow(800, 400, name))
+	: mainWindow(CreateWindow(1920, 1080, name))
 	, gameLoop([window = mainWindow.get()]() {return window->WantsToClose(); }, mainWindow.get())
 	, managers() {
 

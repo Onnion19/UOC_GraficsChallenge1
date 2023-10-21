@@ -3,8 +3,6 @@
 #include <type_traits>
 #include <typeinfo>
 #include "Resources/ResourceLoader.h"
-#include "Resources/font.h"
-#include "Resources/music.h"
 
 
 // Resource ID is just to hash string into id's. 

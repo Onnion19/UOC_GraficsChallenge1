@@ -1,17 +1,9 @@
 #include "CollisionSolver.h"
-
+#include "raylib.h"
+#include "Utils/TypeConversion.hpp"
 // Internal functionalities.
 // This could be move to an internal class in another file, but the premake is not defined to handle private files.
 namespace {
-	Rectangle GeometryRectangleToRaylib(const Geometry::Rectangle& r)
-	{
-		return {
-			r.topLeft.x,
-			r.topLeft.y,
-			r.botRight.x - r.topLeft.x,
-			r.botRight.y - r.topLeft.y
-		};
-	}
 
 	template<typename T1, typename T2>
 	bool ResolveCollision(const T1& col1, const T2& col2) {
@@ -21,8 +13,8 @@ namespace {
 	template<>
 	bool ResolveCollision<Geometry::Rectangle, Geometry::Rectangle>(const Geometry::Rectangle& t1, const Geometry::Rectangle& t2)
 	{
-		const Rectangle r1 = GeometryRectangleToRaylib(t1);
-		const Rectangle r2 = GeometryRectangleToRaylib(t2);
+		const Rectangle r1 = GeometryToRaylib::RectangleToRaylib(t1);
+		const Rectangle r2 = GeometryToRaylib::RectangleToRaylib(t2);
 		return CheckCollisionRecs(r1, r2);
 	}
 
@@ -32,7 +24,7 @@ namespace {
 	template<>
 	bool ResolveCollision<Geometry::Rectangle, Geometry::Circle>(const Geometry::Rectangle& t1, const Geometry::Circle& t2)
 	{
-		const Rectangle r1 = GeometryRectangleToRaylib(t1);
+		const Rectangle r1 = GeometryToRaylib::RectangleToRaylib(t1);
 		const Vector2 center{ t2.center.x, t2.center.y };
 		return CheckCollisionCircleRec(center, t2.radius, r1);
 	}

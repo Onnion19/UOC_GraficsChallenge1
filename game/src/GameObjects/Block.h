@@ -23,6 +23,7 @@ namespace GameObject
 		void RegisterCollider();
 	private: 
 		BlockTransform transform;
+		Texture2D texture;
 		Collider colider;
 	};
 }

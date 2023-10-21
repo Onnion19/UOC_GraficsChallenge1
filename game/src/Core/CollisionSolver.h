@@ -1,7 +1,6 @@
 #pragma once 
 
 #include "Utils/Geometry.h"
-#include "raylib.h"
 
 namespace Core {
 
