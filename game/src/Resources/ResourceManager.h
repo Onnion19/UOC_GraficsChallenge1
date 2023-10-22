@@ -33,12 +33,12 @@ namespace std
 
 /*
 	Resource Manager is a class that allows to handle and manage all type of objects, from loading from disk to release them.
-	The assets are not tied to any type so you are free to specify any type (Font, Image, String, CustomTypeTy).
+	The assets are not tied to any type so you are free to specify any (Font, Image, String, CustomTypeTy).
 
 	The storage is a multimap where:
 	  - Key 1: asset type (using type hash which should be free (compile time))
 	  - Key 2: Resource ID (std::hash is not compile time, but could use a custom implementation if needed)
-	  - Value: void* containing the ResourceHandle. Rach resource speicifies the handle using type traits. @see ResourceLoader.h for more info
+	  - Value: void* containing the ResourceHandle. Each resource specifies the handle using type traits. @see ResourceLoader.h for more info
 */
 class ResourceManager {
 
@@ -84,10 +84,11 @@ private:
 
 	template<typename T, typename ... Args>
 	T& Load(ResourceID id, Args&& ... args) {
-		auto handle = new ResourceHandle<T>(resourceLoader.Load<T>(std::forward<Args>(args)...));
+		auto handle = new ResourceHandle<T>(Resources::Loader::Load<T>(std::forward<Args>(args)...));
 		auto& container = GetOrCreateContainerByType<T>();
-		auto h = container.emplace(id, handle).first->second;
-		return *(static_cast<ResourceHandlePtr<T>>(h)->get());
+		auto emplace = container.emplace(id, handle);
+		assert(emplace.second && "Failed to emplace the new resource");
+		return *(static_cast<ResourceHandlePtr<T>>(emplace.first->second)->get());
 	}
 
 	template<typename T>
@@ -121,6 +122,5 @@ private:
 	}
 
 private:
-	Resources::Loader	resourceLoader;
 	std::unordered_map<TypeHash, ResourceMap> resources;
 };
