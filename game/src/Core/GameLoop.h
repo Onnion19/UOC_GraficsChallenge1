@@ -12,6 +12,7 @@ namespace Core {
 	namespace Internal {
 		struct Timer {
 			using Duration = std::chrono::duration<float, std::milli>;
+			using UpdateDuration = std::chrono::duration<float>; // seconds
 			using Clock = std::chrono::steady_clock;
 			using Timepoint = Clock::time_point;
 

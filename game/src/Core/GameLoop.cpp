@@ -15,8 +15,8 @@ void Core::GameLoop::Loop()
 		auto deltaTime = timer(); //Frist frame delta time must be 0 or almost 0.
 
 		if (activeScene && isRunning) {
-			// 1. Update current scene
-			activeScene->_Update(deltaTime.count());
+			// 1. Update current scene 
+			activeScene->_Update(std::chrono::duration_cast<Internal::Timer::UpdateDuration>(deltaTime).count());
 		}
 
 

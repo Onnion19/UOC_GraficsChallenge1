@@ -3,6 +3,8 @@
 #include "Scenes/Scene.h"
 #include "GameObjects/Ball.h"
 #include "GameObjects/Block.h"
+#include "GameObjects/Asteroid.h"
+#include "GameObjects/Spaceship.h"
 
 class BackgroundScene : public Scenes::SceneBase<BackgroundScene> {
 public:
@@ -14,7 +16,7 @@ public:
 	void Finish();
 private:
 	std::string text;
-	GameObject::Ball ball;
-	GameObject::Block block;
+	GameObject::Asteroid asteroid;
+	GameObject::Spaceship spaceship;
 };
 

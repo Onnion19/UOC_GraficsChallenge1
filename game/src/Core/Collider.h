@@ -65,7 +65,7 @@ public:
 	Collider() : internal_collider(nullptr), id(InvalidCollider) {}
 	ConstColliderId GetId() const { return id; }
 	template<ColliderShape Shape>
-	void UpdateColliderBounds(Shape&& bound) { internal_collider->bounds = bound; }
+	void UpdateColliderBounds(Shape&& bound) { assert(Valid()); internal_collider->bounds = bound; }
 	bool Valid()const { return id != InvalidCollider; }
 private:
 	Collider(Internal::_InternalCollider& col, ConstColliderId i) : internal_collider(&col), id(i) {}

@@ -36,6 +36,9 @@ namespace Core {
 		::Internal::ColliderIdFactory idFactory{};
 	};
 
+
+	// Template functions implementation
+
 	template<ColliderShape Shape, typename ...Args>
 	inline Collider PhysicsManager::RegisterCollider(Args && ...args)
 	{
