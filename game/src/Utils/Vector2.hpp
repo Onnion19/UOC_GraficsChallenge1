@@ -22,7 +22,11 @@ namespace Utils
 		constexpr Vector2(const Vec& other) noexcept : x(static_cast<rep>(other.x)), y(static_cast<rep>(other.y)) {}
 
 		constexpr Vector2<T> operator* (T i) const { return { x * i, y * i }; }
-		void operator *= (T i) const { return { x *= i, y *= i }; }
+		void operator *= (T i) { x *= i; y *= i; }
+
+		Vector2<T> operator* (const Vector2<T>& other) const { return { x * other.x, y * other.y }; }
+		void operator*=(const Vector2<T>& other) { x *= other.x; y *= other.y; }
+
 		constexpr Vector2<T> operator+ (const Vector2<T>& i) const { return { x + i.x, y + i.y }; }
 		void operator+= (const Vector2<T>& i) { x += i.x; y += i.y; }
 		constexpr Vector2<T> operator- (const Vector2<T>& i) const { return { x - i.x, y - i.y }; }

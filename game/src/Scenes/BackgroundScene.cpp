@@ -3,7 +3,7 @@
 
 BackgroundScene::BackgroundScene(Core::GameManagers& manager)
 	: Scenes::SceneBase<BackgroundScene>(manager)
-	, asteroid(GameObject::GameObjectFactory::MakeGameObject<GameObject::Asteroid>(GameObject::AsteroidTransform{ {80, 80}, {10, 30}, {1,1} }))
+	, asteroid(GameObject::GameObjectFactory::MakeGameObject<GameObject::Asteroid>(GameObject::AsteroidTransform{ {80, 80}, {20,20}, {50,43} }))
 	, spaceship(GameObject::GameObjectFactory::MakeGameObject<GameObject::Spaceship>( Utils::Vector2f {500.f , 500.f})) {
 
 }

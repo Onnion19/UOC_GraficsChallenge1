@@ -26,7 +26,7 @@ namespace GameObject
 		void RegisterCollider();
 	private:
 		AsteroidTransform transform;
-		Texture2D texture;
+		Texture2D* texture;
 		Collider colider;
 		int health = 3;
 	};

@@ -4,6 +4,7 @@
 #include <string_view>
 #include <memory>
 #include "Utils/Handlers.h"
+#include "Utils/Vector2.hpp"
 #include <functional>
 namespace Core {
 
@@ -19,6 +20,8 @@ namespace Core {
 		// Drawing controllers
 		void BeginDraw() const;
 		void EndDraw() const;
+
+		Utils::Vector2i GetWindowSize()const;
 
 		// Clear the background of the window
 		void Clear(const Color& c = WindowBackground) const;

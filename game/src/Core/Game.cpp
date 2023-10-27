@@ -4,6 +4,7 @@
 #include "Scenes/BackgroundScene.h"
 #include "Core/Physics.h"
 #include "GameObjects/GameOjbect.h"
+#include "Utils/GameplayManager.h"
 
 Core::Game::Game(std::string_view name)
 	: mainWindow(CreateWindow(1920, 1080, name))
@@ -13,6 +14,7 @@ Core::Game::Game(std::string_view name)
 	managers.RegisterManager<SceneManager>().RegisterListener(&gameLoop);
 	managers.RegisterManager<ResourceManager>();
 	managers.RegisterManager<PhysicsManager>();
+	managers.RegisterManager<GameplayManager>();
 
 	GameObject::GameObjectFactory::gManager = &managers;
 }

@@ -37,6 +37,11 @@ void Core::Window::EndDraw() const
 	EndDrawing();
 }
 
+Utils::Vector2i Core::Window::GetWindowSize() const
+{
+	return { GetRenderWidth(), GetRenderHeight() };
+}
+
 void Core::Window::Clear(const Color& c) const
 {
 	// Clear background is doing a copy of color...
