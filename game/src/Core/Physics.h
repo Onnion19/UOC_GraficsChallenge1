@@ -18,15 +18,18 @@ namespace Core {
 		// Internals structs
 		using ColliderBounds = Geometry::GeometryData;
 	public:
-
+		// Add a collider to the registry.
 		template<ColliderShape Shape, typename ... Args>
 		Collider RegisterCollider(Args&& ... args);
 
+		// Add a collider with a listener when it collides to the registry.
 		template<ColliderShape Shape, ColliderCallback T, typename ... Args>
 		Collider RegisterCollider(T& listener, Args&& ... args);
 
+		// Removes collider from the registry and invalidates the data.
 		void UnregisterCollider(Collider& id);
 
+		// Verifies if the collider is colliding with any other inside the registry.
 		bool CheckCollisionOnCollider(const Collider& id);
 	private:
 

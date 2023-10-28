@@ -12,6 +12,7 @@ Core::Window::Window(int width, int height, std::string_view name) noexcept
 bool Core::Window::Init(int width, int height, std::string_view name) const
 {
 	InitWindow(width, height, name.data());
+	InitAudioDevice();
 	// Some what I'd expect a callback when the window is ready rather than polling it.
 	if (!IsWindowReady()) {
 		return false;

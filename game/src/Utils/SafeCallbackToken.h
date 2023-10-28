@@ -5,6 +5,13 @@
 namespace Utils
 {
 
+	/**
+	* Safe callbacks objects are a guarantee that a listener is alive when the callback is called.
+	* This is useful because the listeners does not require to explicit unregister or remove the callback
+	* and it will automatically do it when they are out of scope.
+	*/
+
+	// Observer observes if the listener is still alive.
 	struct ObserverCallbackObject
 	{
 		ObserverCallbackObject() = default;
@@ -16,6 +23,7 @@ namespace Utils
 	};
 
 
+	// SafeCallback is attached to the listener life cycle. It will be gone when listener goes out of scope.
 	struct SafeCallbackObject
 	{
 		SafeCallbackObject() = default;
@@ -26,6 +34,8 @@ namespace Utils
 		friend struct CallbackObjectsFactory;
 	};
 
+
+	// Helper factory to generate the safe callback objects
 	struct CallbackObjectsFactory {
 
 		static SafeCallbackObject MakeSafeCallbackObject()

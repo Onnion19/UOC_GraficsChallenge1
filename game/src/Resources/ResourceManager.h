@@ -47,6 +47,8 @@ namespace std
 */
 class ResourceManager {
 
+	// It should be using smart pointers, but don't want the overhead of atomic operations.
+	// Maybe implement non thread safe smart pointers?
 	template<typename T>
 	using ResourceHandle = Resources::Resource<T>::HandleTy;
 	template<typename T>

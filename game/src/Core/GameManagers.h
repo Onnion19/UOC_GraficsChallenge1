@@ -7,6 +7,10 @@
 #include <type_traits>
 
 namespace Core {
+	/**
+	* Game managers is the central storage for all the systems/managers. 
+	* It allows to register ANY class as a manager and retrieve it back later.
+	*/
 	struct GameManagers
 	{
 		template<typename T, typename ... Args>

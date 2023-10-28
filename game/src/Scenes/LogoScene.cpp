@@ -10,7 +10,7 @@ LogoScene::LogoScene(Core::GameManagers& manager) : SceneBase<LogoScene>(manager
 
 void LogoScene::Activate()
 {
-	logo = managers.GetManager<ResourceManager>().GetOrLoad<Texture2D>(LogoID, logoPath);
+	logo = &managers.GetManager<ResourceManager>().GetOrLoad<Texture2D>(LogoID, logoPath);
 	logoPosition = { 1920 / 2, 1080 / 2 };
 	logoPosition.x -= logoSize / 2;
 	logoPosition.y -= logoSize / 2;
@@ -33,7 +33,7 @@ void LogoScene::Update(float deltaTime)
 
 void LogoScene::Draw()
 {
-	static Rectangle textureQuad{ 0, 0, static_cast<float>(logo.width), static_cast<float>(logo.height) };
+	static Rectangle textureQuad{ 0, 0, static_cast<float>(logo->width), static_cast<float>(logo->height) };
 	static Rectangle renderQuad{
 		static_cast<float>(logoPosition.x),
 		static_cast<float>(logoPosition.y),
@@ -41,7 +41,7 @@ void LogoScene::Draw()
 		static_cast<float> (logoSize)
 	};
 
-	DrawTexturePro(logo, textureQuad, renderQuad, {}, 0.f, WHITE);
+	DrawTexturePro(*logo, textureQuad, renderQuad, {}, 0.f, WHITE);
 
 }
 

@@ -5,7 +5,7 @@
 #include "GameObjects/Spaceship.h"
 #include "GameObjects/HUD.h"
 #include "Utils/Timers.h"
-
+#include "Resources/music.h"
 
 class BackgroundScene : public Scenes::SceneBase<BackgroundScene> {
 public:
@@ -19,6 +19,10 @@ public:
 	void OnHealthUpdate(unsigned int newHealth);
 private:
 	void SpawnAsteroid();
+
+private: 
+	static constexpr auto backgroundMusicPath{ "resources/gameMusic.wav" };
+	inline static const ResourceID backgroundMusicId{ "BackgroundMusic" };
 private:
 	std::string text;
 
@@ -31,5 +35,7 @@ private:
 	Utils::SafeCallbackObject healthCallback;
 
 	Utils::RepeatingTimerWithVariation asteroidsSpawnerTimer;
+
+	Music* backgroundMusic;
 };
 

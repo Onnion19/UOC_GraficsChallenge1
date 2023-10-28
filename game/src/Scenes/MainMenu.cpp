@@ -21,7 +21,7 @@ MainMenu::MainMenu(Core::GameManagers& manager) : SceneBase<MainMenu>(manager)
 
 void MainMenu::Activate()
 {
-	mainMenuFont = managers.GetManager<ResourceManager>().GetOrLoad<Font>(fontID, fontPath);
+	mainMenuFont = &managers.GetManager<ResourceManager>().GetOrLoad<Font>(fontID, fontPath);
 }
 
 void MainMenu::DeActivate()
@@ -41,9 +41,9 @@ void MainMenu::Update(float deltaTime)
 void MainMenu::Draw()
 {
 	const auto color = ColorLerp(BLUE, RED, lerp);
-	DrawTextEx(mainMenuFont, title, { 700, 460 }, 80, 0, color);
-	DrawTextEx(mainMenuFont, author, { 770, 620 }, 30, 0, color);
-	DrawTextEx(mainMenuFont, action, { 790, 690 }, 30, 0, color);
+	DrawTextEx(*mainMenuFont, title, { 700, 460 }, 80, 0, color);
+	DrawTextEx(*mainMenuFont, author, { 770, 620 }, 30, 0, color);
+	DrawTextEx(*mainMenuFont, action, { 790, 690 }, 30, 0, color);
 }
 
 void MainMenu::Finish()

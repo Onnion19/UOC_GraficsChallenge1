@@ -40,6 +40,11 @@ void BackgroundScene::Activate()
 	healthCallback = gameplayManager.RegisterHealthCallback(*this);
 
 	asteroidsSpawnerObject = asteroidsSpawnerTimer.Start([this]() {SpawnAsteroid(); });
+
+	// Load background Music
+	backgroundMusic = &managers.GetManager<ResourceManager>().GetOrLoad<Music>(backgroundMusicId, backgroundMusicPath);
+	backgroundMusic->looping = true;
+	PlayMusicStream(*backgroundMusic);
 }
 
 void BackgroundScene::DeActivate()
@@ -48,12 +53,13 @@ void BackgroundScene::DeActivate()
 	auto& resourceManager = managers.GetManager<ResourceManager>();
 	resourceManager.Unload<Texture2D>(GameObject::Asteroid::asteroidTextureID);
 	resourceManager.Unload<Texture2D>(GameObject::Bullet::bulletTextureId);
-	resourceManager.Unload<Texture2D>(GameObject::Spaceship::sppaceshipTextureID);
-
+	resourceManager.Unload<Texture2D>(GameObject::Spaceship::spaceshipTextureID);
+	resourceManager.Unload<Music>(backgroundMusicId);
 	asteroids.clear();
 }
 
 void BackgroundScene::Update(float deltaTime) {
+	UpdateMusicStream(*backgroundMusic);
 	asteroidsSpawnerTimer.Update(deltaTime);
 	std::for_each(asteroids.begin(), asteroids.end(),
 		[deltaTime](GameObject::Asteroid& asteroid) {

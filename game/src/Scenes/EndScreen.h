@@ -14,7 +14,7 @@ public:
 private:
 	float flickeringEffect = 0.f;
 	std::string highscoreText; 
-	Font font;
+	Font* font;
 	static constexpr auto message = "GAME OVER";
 	static constexpr auto action1 = "Press space to start";
 	static constexpr auto action2 = "Developed by Aleix Rius";

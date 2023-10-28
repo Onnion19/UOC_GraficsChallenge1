@@ -8,6 +8,9 @@
 #include <functional>
 namespace Core {
 
+	/**
+	* Raylib window wrapper
+	*/
 	class Window {
 	public:
 

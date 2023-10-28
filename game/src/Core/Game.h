@@ -5,6 +5,10 @@
 
 namespace Core {
 
+	/**
+	* Game class is the top most clas owning the low level systems and coordinating the managers.
+	* Also owns the game loop which will execute the whole game logic.
+	*/
 	class  Game final {
 	public:
 		Game(std::string_view name);

@@ -18,7 +18,7 @@ private:
 	static constexpr int logoSize = 512;
 	static constexpr float timeInScreen = 3.f;
 private:
-	Texture2D logo;
+	Texture2D* logo;
 	Utils::Vector2i logoPosition;
 	Utils::SingleTimer logoTimer;
 	Utils::SafeCallbackObject callbackObject;

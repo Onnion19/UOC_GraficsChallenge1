@@ -5,6 +5,12 @@
 #include "Utils/Handlers.h"
 namespace GameObject {
 
+	/**
+	* Base class for game objects. The inheritance is not enforced but encouraged.
+	* When a an Object inheriting from GameObject will get the game managers injected when construced via 
+	* the GameObjectFactory.
+	*/
+
 	class GameObject {
 	public:
 		explicit GameObject(Core::GameManagers& manager) noexcept : gManager(manager) {}

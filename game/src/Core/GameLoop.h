@@ -10,6 +10,7 @@ namespace Scenes {
 
 namespace Core {
 	namespace Internal {
+		// High precision timer to compute delta times between frames.
 		struct Timer {
 			using Duration = std::chrono::duration<float, std::milli>;
 			using UpdateDuration = std::chrono::duration<float>; // seconds

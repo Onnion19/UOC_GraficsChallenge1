@@ -4,12 +4,18 @@
 #include "Utils/SafeCallbackToken.h"
 #include <chrono>
 
+
+/****************************************************************
+*			CONCEPTS AND CALLBACK TYPE DEFINITIONS
+****************************************************************/
 template<typename T>
 concept HealthCallbackTy = requires(T t)
 {
 	t.OnHealthUpdate(5u);
 };
 
+// Typea erasure for health callback.
+// Any class fullfilling the HealthCallbackTy concept can be a health callback
 struct HealthCallback {
 
 	template<HealthCallbackTy CallbackTy>
@@ -26,6 +32,7 @@ private:
 	void (*healthUpdate)(void*, unsigned);
 };
 
+/***********************************************************************************/
 
 template<typename T>
 concept ScoreCallbackTy = requires(T t)
@@ -33,7 +40,8 @@ concept ScoreCallbackTy = requires(T t)
 	t.OnScoreUpdate(150u);
 };
 
-
+// Typea erasure for score callback.
+// Any class fullfilling the ScoreCallbackTy concept can be a score callback
 struct ScoreCallback {
 
 	template<ScoreCallbackTy CallbackTy>
@@ -55,7 +63,11 @@ private:
 	void (*scorehUpdate)(void*, unsigned);
 };
 
+/***********************************************************************************/
 
+/**
+* Central storage for game related data.
+*/
 class GameplayManager
 {
 public:
@@ -75,12 +87,17 @@ public:
 
 
 private:
+	/**
+	* Helper struct for the listeners.
+	* Wraps the ObserverCallbackObject that ensure the listener is alive.
+	* Also contains the callback to call.
+	*/
 	template<typename Callback>
 	struct CallbackObserver
 	{
 
-		CallbackObserver(const Callback& c, const Utils::SafeCallbackObject& alive) : 
-			callback(c), 
+		CallbackObserver(const Callback& c, const Utils::SafeCallbackObject& alive) :
+			callback(c),
 			observer(Utils::CallbackObjectsFactory::MakeObserverCallback(alive)) {}
 
 		CallbackObserver(const CallbackObserver<Callback>& other) = default;
@@ -102,8 +119,8 @@ private:
 private:
 	unsigned score = 0;
 	unsigned health = 0;
-	std::chrono::steady_clock::time_point gameStart; 
-	std::chrono::steady_clock::time_point gameEnd; 
+	std::chrono::steady_clock::time_point gameStart;
+	std::chrono::steady_clock::time_point gameEnd;
 	std::vector<CallbackObserver<ScoreCallback>> scoreCallbacks;
 	std::vector<CallbackObserver<HealthCallback>> healthCallbacks;
 
@@ -114,7 +131,7 @@ private:
 template<typename T, typename ...Args>
 inline void GameplayManager::TriggerCallbacks(std::vector<T>& callbacks, Args && ...args)
 {
-	int i = callbacks.size() - 1;
+	int i = static_cast<int>(callbacks.size()) - 1;
 
 	while (i >= 0 && !callbacks.empty())
 	{

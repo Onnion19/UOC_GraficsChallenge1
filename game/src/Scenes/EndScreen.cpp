@@ -10,7 +10,7 @@ EndScene::EndScene(Core::GameManagers& manager) : SceneBase<EndScene>(manager), 
 
 void EndScene::Activate()
 {
-	font = managers.GetManager<ResourceManager>().GetOrLoad<Font>(fontID, fontPath);
+	font = &managers.GetManager<ResourceManager>().GetOrLoad<Font>(fontID, fontPath);
 	auto& gameplayManager = managers.GetManager<GameplayManager>();
 	auto score = gameplayManager.GetScore();
 	auto time = gameplayManager.GetGameDuration();
@@ -34,13 +34,13 @@ void EndScene::Update(float deltaTime)
 
 void EndScene::Draw()
 {
-	DrawTextEx(font, message, { 700, 460 }, 80, 0, RED);
-	DrawTextEx(font, highscoreText.c_str(), {650, 580}, 40, 0, WHITE);
+	DrawTextEx(*font, message, { 700, 460 }, 80, 0, RED);
+	DrawTextEx(*font, highscoreText.c_str(), {650, 580}, 40, 0, WHITE);
 	int timer = static_cast<int>(flickeringEffect * 1.5f);
 	if (timer % 2)
 	{
-		DrawTextEx(font, action1, { 700, 620 }, 30, 0, WHITE);
-		DrawTextEx(font, action2, { 720, 690 }, 30, 0, WHITE);
+		DrawTextEx(*font, action1, { 700, 620 }, 30, 0, WHITE);
+		DrawTextEx(*font, action2, { 720, 690 }, 30, 0, WHITE);
 	}
 }
 

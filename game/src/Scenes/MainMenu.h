@@ -12,7 +12,7 @@ public:
 	void Finish();
 private: 
 	float lerp = 0.f;
-	Font mainMenuFont;
+	Font* mainMenuFont;
 	static constexpr auto title = "Not Arkanoid";
 	static constexpr auto author = "Developed by Aleix Rius";
 	static constexpr auto action = "Press space to start";

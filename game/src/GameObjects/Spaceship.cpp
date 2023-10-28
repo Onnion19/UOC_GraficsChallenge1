@@ -9,7 +9,9 @@
 GameObject::Spaceship::Spaceship(Core::GameManagers& manager, const Utils::Vector2f& pos) : GameObject(manager), position(pos), collider(), physics(gManager.GetManager<Core::PhysicsManager>())
 {
 	RegisterCollider();
-	texture = &gManager.GetManager<ResourceManager>().GetOrLoad<Texture2D>(sppaceshipTextureID, "resources/spaceship.png");
+	auto& resourceManager = gManager.GetManager<ResourceManager>();
+	texture = &resourceManager.GetOrLoad<Texture2D>(spaceshipTextureID, spaceshipTexturePath);
+	shootingSound = &resourceManager.GetOrLoad<Sound>(shootingSoundID, shootingSoundPath);
 	bullets.reserve(150);
 }
 
@@ -19,7 +21,9 @@ GameObject::Spaceship::Spaceship(const Spaceship& b)
 	, physics(gManager.GetManager<Core::PhysicsManager>())
 {
 	RegisterCollider();
-	texture = &gManager.GetManager<ResourceManager>().GetOrLoad<Texture2D>(sppaceshipTextureID, "resources/spaceship.png");
+	auto& resourceManager = gManager.GetManager<ResourceManager>();
+	texture = &resourceManager.GetOrLoad<Texture2D>(spaceshipTextureID, spaceshipTexturePath);
+	shootingSound = &resourceManager.GetOrLoad<Sound>(shootingSoundID, shootingSoundPath);
 	bullets.reserve(150);
 }
 
@@ -53,11 +57,11 @@ void GameObject::Spaceship::SetPosition(const Utils::Vector2f& pos)
 	const auto y = (pos.y > 0) ? static_cast<int>(pos.y) % 1080 : 1080 - pos.y;
 	const Utils::Vector2f correctedPosition{ x,y };
 
-	collider.UpdateColliderBounds(Geometry::Circle{ correctedPosition, static_cast<float>(size.x) });
+	collider.UpdateColliderBounds(Geometry::Circle{ correctedPosition, static_cast<float>(size.x)/2.f });
 
 	if (physics.CheckCollisionOnCollider(collider))
 	{
-		collider.UpdateColliderBounds(Geometry::Circle{ position, static_cast<float>(size.x) });
+		collider.UpdateColliderBounds(Geometry::Circle{ position, static_cast<float>(size.x)/2.f });
 		return;
 	}
 
@@ -123,7 +127,7 @@ void GameObject::Spaceship::StartInvulnerability(float time)
 
 void GameObject::Spaceship::SpawnBullet()
 {
-	const Utils::Vector2f bulletOffset = Geometry::ForwardVector(rotation) * (-size.x * 1.25f);
+	const Utils::Vector2f bulletOffset = Geometry::ForwardVector(rotation) * (-size.x * 0.6f);
 	const Utils::Vector2f bulletSize{ 10,25 };
 	const Utils::Vector2f bulletMovement = Geometry::ForwardVector(rotation) * -300.f;
 	const BulletTransform transform{ bulletOffset + position, bulletSize, bulletMovement, rotation };
@@ -137,6 +141,9 @@ void GameObject::Spaceship::SpawnBullet()
 	{
 		*it = GameObjectFactory::MakeGameObject<Bullet>(transform);
 	}
+
+	// Play sound
+	PlaySound(*shootingSound);
 }
 
 void GameObject::Spaceship::RegisterCollider()
