@@ -50,6 +50,13 @@ void Utils::RepeatingTimer::Trigger()
 *           REPEATING TIMER WITH VARIATION
 */
 
+Utils::SafeCallbackObject Utils::RepeatingTimerWithVariation::Start(std::function<void()>&& functor)
+{
+	timesTriggered = 0;
+	timer = initialTime;
+	return RepeatingTimer::Start(std::move(functor));
+}
+
 void Utils::RepeatingTimerWithVariation::Trigger()
 {
 	RepeatingTimer::Trigger();

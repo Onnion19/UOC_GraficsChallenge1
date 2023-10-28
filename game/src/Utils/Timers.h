@@ -8,7 +8,7 @@ namespace Utils {
 	{
 	public:
 		SingleTimer(float time) : callback(), timer(time) {}
-		[[nodiscard]] Utils::SafeCallbackObject Start(std::function<void()>&& functor);
+		[[nodiscard]] virtual Utils::SafeCallbackObject Start(std::function<void()>&& functor);
 
 		void Update(float deltaTime);
 		void Invalidate();
@@ -34,8 +34,8 @@ namespace Utils {
 	class RepeatingTimerWithVariation : public RepeatingTimer {
 	public:
 		RepeatingTimerWithVariation(float time, std::function<float(unsigned, float)>&& functor) : RepeatingTimer(time), variationFunctor(std::move(functor)) {}
-
-	protected: 
+		[[nodiscard]] Utils::SafeCallbackObject Start(std::function<void()>&& functor) override;
+	protected:
 		void Trigger() override;
 	protected:
 		std::function<float(unsigned /*times triggered*/, float/*initial time*/)> variationFunctor;

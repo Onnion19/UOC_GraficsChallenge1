@@ -1,5 +1,21 @@
 #include "GameplayManager.h"
 
+void GameplayManager::StartGame()
+{
+	gameStart = std::chrono::steady_clock::now();
+}
+
+void GameplayManager::EndGame()
+{
+	gameEnd = std::chrono::steady_clock::now();
+}
+
+float GameplayManager::GetGameDuration()
+{
+	using DurationInSeconds = std::chrono::duration<float>;
+	return std::chrono::duration_cast<DurationInSeconds>(gameEnd - gameStart).count();
+}
+
 void GameplayManager::UpdateScore(int deltaScore)
 {
 	score += deltaScore;

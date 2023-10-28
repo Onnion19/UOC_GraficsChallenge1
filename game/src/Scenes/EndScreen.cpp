@@ -11,8 +11,10 @@ EndScene::EndScene(Core::GameManagers& manager) : SceneBase<EndScene>(manager), 
 void EndScene::Activate()
 {
 	font = managers.GetManager<ResourceManager>().GetOrLoad<Font>(fontID, fontPath);
-	auto score = managers.GetManager<GameplayManager>().GetScore();
-	highscoreText = "Score..................................................." + std::to_string(score);
+	auto& gameplayManager = managers.GetManager<GameplayManager>();
+	auto score = gameplayManager.GetScore();
+	auto time = gameplayManager.GetGameDuration();
+	highscoreText = timePlayed + std::to_string(time) + "    Score: " + std::to_string(score);
 }
 
 void EndScene::DeActivate()

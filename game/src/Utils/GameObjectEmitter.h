@@ -10,16 +10,6 @@
 namespace Utils {
 
 	class ObjectEmiter {
-		struct RandomGenerator {
-			RandomGenerator() : randomGenerator(std::random_device{}())
-			{}
-
-			float GenerateFloatInRange(float min, float max);
-		private:
-			std::mt19937 randomGenerator;
-		};
-
-		inline static RandomGenerator random= {};
 	public:
 		/*
 		Will spawn an asteorid at given origin point.

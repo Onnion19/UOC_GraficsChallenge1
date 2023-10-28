@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Utils/SafeCallbackToken.h"
+#include <chrono>
 
 template<typename T>
 concept HealthCallbackTy = requires(T t)
@@ -59,6 +60,10 @@ class GameplayManager
 {
 public:
 
+	void StartGame();
+	void EndGame();
+	float GetGameDuration();
+
 	void UpdateScore(int deltaScore);
 	void SetScore(unsigned newScore);
 	unsigned GetScore()const;
@@ -97,6 +102,8 @@ private:
 private:
 	unsigned score = 0;
 	unsigned health = 0;
+	std::chrono::steady_clock::time_point gameStart; 
+	std::chrono::steady_clock::time_point gameEnd; 
 	std::vector<CallbackObserver<ScoreCallback>> scoreCallbacks;
 	std::vector<CallbackObserver<HealthCallback>> healthCallbacks;
 

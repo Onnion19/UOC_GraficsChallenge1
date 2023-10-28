@@ -3,6 +3,7 @@
 
 GameObject::HUD::HUD(Core::GameManagers& manager) : GameObject::GameObject(manager)
 {
+	gameTime = 0.f;
 	auto& gameplayManager = gManager.GetManager<GameplayManager>();
 	healthCallback = gameplayManager.RegisterHealthCallback(*this);
 	scoreCallback = gameplayManager.RegisterScoreCallback(*this);
@@ -18,14 +19,14 @@ void GameObject::HUD::OnScoreUpdate(unsigned int newScore)
 {
 	score = newScore;
 	// expensive allocation :( 
-	scoreText = scoreTextPrefix + std::to_string(score);
+	scoreText = scoreTextPrefix.data() + std::to_string(score);
 }
 
 void GameObject::HUD::OnHealthUpdate(unsigned int newHealth)
 {
 	health = newHealth;
 	// expensive allocation :( 
-	healthText = healthTextPrefix + std::to_string(health);
+	healthText = healthTextPrefix.data() + std::to_string(health);
 	switch (health)
 	{
 	case 2: 
@@ -39,8 +40,14 @@ void GameObject::HUD::OnHealthUpdate(unsigned int newHealth)
 	}
 }
 
+void GameObject::HUD::Update(float deltatime)
+{
+	gameTime += deltatime;
+}
+
 void GameObject::HUD::Draw() const
 {
 	DrawText(healthText.c_str(), 5, 20, 20, healthColor);
 	DrawText(scoreText.c_str(), 5, 45, 20, BLUE);
+	DrawText(std::to_string(gameTime).c_str(), 5, 70, 20, WHITE);
 }

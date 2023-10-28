@@ -2,7 +2,7 @@
 #include "Scenes/SceneManager.h"
 #include "Utils/GameObjectEmitter.h"
 #include "Utils/GameplayManager.h"
-
+#include "Utils/RandomGenerator.h"
 namespace {
 	struct AsteroidsTimerFunctor
 	{
@@ -26,13 +26,16 @@ void BackgroundScene::Activate()
 	// Create actors
 	spaceship = GameObject::GameObjectFactory::MakeGameObjectHandle <GameObject::Spaceship>(Utils::Vector2f{ 500.f , 500.f });
 	hud = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::HUD>();
-	SpawnAsteroid();
+
+	auto initial_asteroids = Utils::RandomGenerator::GenerateRandom(1u, 5u);
+	for(auto i = 0u; i < initial_asteroids; i++)
+		SpawnAsteroid();
 
 	// Reset gameplay data
 	auto& gameplayManager = managers.GetManager<GameplayManager>();
 	gameplayManager.SetScore(0);
 	gameplayManager.SetHealth(3);
-
+	gameplayManager.StartGame();
 	// Register callbacks
 	healthCallback = gameplayManager.RegisterHealthCallback(*this);
 
@@ -56,10 +59,8 @@ void BackgroundScene::Update(float deltaTime) {
 		[deltaTime](GameObject::Asteroid& asteroid) {
 			asteroid.Update(deltaTime);
 		});
-
-
 	spaceship->Update(deltaTime);
-
+	hud->Update(deltaTime);
 }
 
 void BackgroundScene::Draw() {
@@ -79,6 +80,7 @@ void BackgroundScene::OnHealthUpdate(unsigned int newHealth)
 {
 	if (newHealth == 0)
 	{
+		managers.GetManager<GameplayManager>().EndGame();
 		managers.GetManager<SceneManager>().LoadScene(ResourceID{ "EndScene" });
 	}
 }

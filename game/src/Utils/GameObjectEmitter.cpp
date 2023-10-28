@@ -1,6 +1,6 @@
 #include "GameObjectEmitter.h"
 #include "GameObjects/GameOjbect.h"
-
+#include <Utils/RandomGenerator.h>
 
 namespace {
 	GameObject::AsteroidTransform MakeAsteroidTransfromFrom(const Geometry::Point& origin, const Geometry::Point& dest, float speed, int size)
@@ -24,8 +24,8 @@ GameObject::Asteroid Utils::ObjectEmiter::SpawnAsteroidInRange(const Geometry::P
 GameObject::Asteroid Utils::ObjectEmiter::SpawnAsteroidInRange(const Geometry::Line& origin, const Geometry::Point& dest, float speed, int size)
 {
 	const Geometry::Point origin_p{
-		random.GenerateFloatInRange(origin.begin.x, origin.end.x),
-		random.GenerateFloatInRange(origin.begin.y, origin.end.y)
+		Utils::RandomGenerator::GenerateRandom(origin.begin.x, origin.end.x),
+		Utils::RandomGenerator::GenerateRandom(origin.begin.y, origin.end.y)
 	};
 
 	return SpawnAsteroidInRange(origin_p, dest, speed, size);
@@ -34,15 +34,9 @@ GameObject::Asteroid Utils::ObjectEmiter::SpawnAsteroidInRange(const Geometry::L
 GameObject::Asteroid Utils::ObjectEmiter::SpawnAsteroidInRange(const Geometry::Line& origin, const Geometry::Line& dest, float speed, int size)
 {
 	const Geometry::Point end_p{
-			random.GenerateFloatInRange(dest.begin.x, dest.end.x),
-			random.GenerateFloatInRange(dest.begin.y, dest.end.y)
+		Utils::RandomGenerator::GenerateRandom(dest.begin.x, dest.end.x),
+		Utils::RandomGenerator::GenerateRandom(dest.begin.y, dest.end.y)
 	};
 
 	return SpawnAsteroidInRange(origin, end_p, speed, size);
-}
-
-float Utils::ObjectEmiter::RandomGenerator::GenerateFloatInRange(float min, float max)
-{
-	std::uniform_real_distribution distribution(min, max);
-	return distribution(randomGenerator);
 }
