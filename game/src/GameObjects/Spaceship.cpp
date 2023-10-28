@@ -23,7 +23,7 @@ GameObject::Spaceship::Spaceship(const Spaceship& b)
 	, texture(b.texture)
 {
 	RegisterCollider();
-	bullets.reserve(15);
+	bullets.reserve(150);
 }
 
 GameObject::Spaceship& GameObject::Spaceship::operator=(const Spaceship& b)
@@ -50,18 +50,20 @@ Utils::Vector2i GameObject::Spaceship::GetPosition() const
 
 void GameObject::Spaceship::SetPosition(const Utils::Vector2f& pos)
 {
-	collider.UpdateColliderBounds(Geometry::Circle{ pos, static_cast<float>(size.x) });
+
+	const auto x = (pos.x > 0) ? static_cast<int>(pos.x) % 1920 : 1920 - pos.x;
+	const auto y = (pos.y > 0) ? static_cast<int>(pos.y) % 1080 : 1080 - pos.y;
+	const Utils::Vector2f correctedPosition{ x,y };
+
+	collider.UpdateColliderBounds(Geometry::Circle{ correctedPosition, static_cast<float>(size.x) });
 
 	if (physics.CheckCollisionOnCollider(collider))
 	{
 		collider.UpdateColliderBounds(Geometry::Circle{ position, static_cast<float>(size.x) });
-		DrawCircle(position.x, position.y, size.x/2, RED);
 		return;
 	}
 
-	DrawCircle(pos.x, pos.y, size.x/2, RED);
-
-	position = pos;
+	position = correctedPosition;
 }
 
 
@@ -71,8 +73,8 @@ void GameObject::Spaceship::Update(float deltatime)
 	// Movement logic
 	float movement{};
 
-	if (IsKeyDown(KEY_A))	rotation += rotationSpeed * deltatime;
-	else if (IsKeyDown(KEY_D))	rotation -= rotationSpeed * deltatime;
+	if (IsKeyDown(KEY_A))	rotation -= rotationSpeed * deltatime;
+	else if (IsKeyDown(KEY_D))	rotation += rotationSpeed * deltatime;
 
 
 	if (IsKeyDown(KEY_W))movement = -1;
@@ -125,7 +127,7 @@ void GameObject::Spaceship::SpawnBullet()
 {
 	const Utils::Vector2f bulletOffset = Geometry::ForwardVector(rotation) * (-size.x * 1.25f);
 	const Utils::Vector2f bulletSize{ 10,25 };
-	const Utils::Vector2f bulletMovement = Geometry::ForwardVector(rotation) * -100.f;
+	const Utils::Vector2f bulletMovement = Geometry::ForwardVector(rotation) * -300.f;
 	const BulletTransform transform{ bulletOffset + position, bulletSize, bulletMovement, rotation };
 	auto it = std::find_if(bullets.begin(), bullets.end(), [](const Bullet& b) {return !b.Active(); });
 

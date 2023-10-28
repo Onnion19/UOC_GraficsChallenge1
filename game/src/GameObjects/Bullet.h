@@ -14,7 +14,7 @@ namespace GameObject
 	};
 
 	class Bullet : public GameObject {
-		static constexpr float lifespan = 10.f;
+		static constexpr float lifespan = 3.f;
 	public:
 		Bullet(Core::GameManagers& manager, const BulletTransform& trans);
 		~Bullet();

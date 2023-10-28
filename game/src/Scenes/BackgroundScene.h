@@ -5,6 +5,8 @@
 #include "GameObjects/Block.h"
 #include "GameObjects/Asteroid.h"
 #include "GameObjects/Spaceship.h"
+#include "GameObjects/HUD.h"
+
 
 class BackgroundScene : public Scenes::SceneBase<BackgroundScene> {
 public:
@@ -15,8 +17,11 @@ public:
 	void Draw();
 	void Finish();
 private:
+	void SpawnAsteroid();
+private:
 	std::string text;
-	GameObject::Asteroid asteroid;
+	std::vector<GameObject::Asteroid> asteroids;
 	GameObject::Spaceship spaceship;
+	GameObject::HUD hud;
 };
 

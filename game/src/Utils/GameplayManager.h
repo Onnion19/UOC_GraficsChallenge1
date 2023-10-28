@@ -65,7 +65,7 @@ public:
 
 	void UpdateHealth(int deltaHp);
 	void SetHealth(unsigned hp);
-	[[nodiscard]] Utils::SafeCallbackObject RegisterHealthCallback(ScoreCallback callback);
+	[[nodiscard]] Utils::SafeCallbackObject RegisterHealthCallback(HealthCallback callback);
 
 
 private:
@@ -106,7 +106,7 @@ private:
 template<typename T, typename ...Args>
 inline void GameplayManager::TriggerCallbacks(std::vector<T>& callbacks, Args && ...args)
 {
-	auto i = callbacks.size() - 1;
+	int i = callbacks.size() - 1;
 
 	while (i >= 0 && !callbacks.empty())
 	{

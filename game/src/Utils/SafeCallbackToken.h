@@ -18,6 +18,7 @@ namespace Utils
 
 	struct SafeCallbackObject
 	{
+		SafeCallbackObject() = default;
 		void Release() { objectAlive.reset(); }
 	private:
 		SafeCallbackObject(std::shared_ptr<bool>&& object) : objectAlive(object) {}

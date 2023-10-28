@@ -2,6 +2,7 @@
 #include "Resources/ResourceManager.h"
 #include "Scenes/SceneManager.h"
 #include "Scenes/BackgroundScene.h"
+#include "Scenes/EndScreen.h"
 #include "Core/Physics.h"
 #include "GameObjects/GameOjbect.h"
 #include "Utils/GameplayManager.h"
@@ -26,7 +27,9 @@ Core::Game::~Game()
 
 void Core::Game::Initialize()
 {
-	managers.GetManager<SceneManager>().AddAndLoadScene<BackgroundScene>(ResourceID{ "Background" }, false);
+	managers.GetManager<SceneManager>().AddScene<BackgroundScene>(ResourceID{ "GameScene" }, false);
+	managers.GetManager<SceneManager>().AddAndLoadScene<EndScene>(ResourceID{ "EndScene" }, false);
+
 }
 
 void Core::Game::Start()

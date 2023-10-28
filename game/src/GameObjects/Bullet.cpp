@@ -43,8 +43,7 @@ void GameObject::Bullet::Update(float deltaTime)
 
 	transform.position += transform.movement * deltaTime;
 	auto postion =transform.position + Geometry::ForwardVector(transform.rotation) * (transform.size.x/2.f);
-	colider.UpdateColliderBounds<Geometry::Circle>({ Geometry::Point{ postion }, transform.size.x/2.f });
-	DrawCircle(postion.x, postion.y, transform.size.x/2,  GREEN);
+	colider.UpdateColliderBounds<Geometry::Circle>({ Geometry::Point{ postion }, static_cast<float>(transform.size.x)/2.f });
 
 	physicsManager.CheckCollisionOnCollider(colider);
 	lifespanTimer -= deltaTime;
@@ -68,7 +67,7 @@ void GameObject::Bullet::Draw()const
 
 void GameObject::Bullet::OnCollision()
 {
-	//UnRegisterCollider();
+	UnRegisterCollider();
 }
 
 void GameObject::Bullet::Invalidate()

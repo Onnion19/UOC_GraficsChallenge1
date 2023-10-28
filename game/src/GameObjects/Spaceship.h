@@ -11,7 +11,8 @@ namespace GameObject {
 	class Spaceship : public GameObject
 	{
 		static constexpr float invulerabilityTime = 3.f; // safe time after being hit
-		static constexpr float rotationSpeed = 80.f;
+		static constexpr float rotationSpeed = 120.f;
+		static constexpr float speed = 200.f;
 	public:
 		Spaceship(Core::GameManagers& manager, const Utils::Vector2f& initialPosition);
 		Spaceship(const Spaceship& b);
@@ -35,7 +36,6 @@ namespace GameObject {
 		Utils::Vector2f position;
 		float rotation = 0.f;
 		const Utils::Vector2i size{ 100,100 };
-		const float speed = 45.f;
 		Collider collider;
 		Texture2D* texture;
 		float invulnerableTime;

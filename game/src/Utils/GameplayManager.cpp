@@ -31,10 +31,10 @@ void GameplayManager::SetHealth(unsigned hp)
 	TriggerHealthCallbacks();
 }
 
-Utils::SafeCallbackObject GameplayManager::RegisterHealthCallback(ScoreCallback callback)
+Utils::SafeCallbackObject GameplayManager::RegisterHealthCallback(HealthCallback callback)
 {
 	auto safeObject = Utils::CallbackObjectsFactory::MakeSafeCallbackObject();
-	scoreCallbacks.emplace_back(callback, safeObject);
+	healthCallbacks.emplace_back(callback, safeObject);
 	return safeObject;
 }
 

@@ -4,6 +4,7 @@
 #include "Utils/TypeConversion.hpp"
 #include "Resources/ResourceManager.h"
 #include "Resources/Texture.h"
+#include "Utils/GameplayManager.h"
 
 GameObject::Asteroid::Asteroid(Core::GameManagers& manager, const AsteroidTransform& trans) : GameObject::GameObject(manager), transform(trans)
 {
@@ -11,10 +12,23 @@ GameObject::Asteroid::Asteroid(Core::GameManagers& manager, const AsteroidTransf
 	texture = &gManager.GetManager<ResourceManager>().GetOrLoad<Texture2D>(ResourceID{ "asteroid" }, "resources/asteroid.png");
 }
 
+GameObject::Asteroid::Asteroid(const Asteroid& other) : GameObject::GameObject(other.gManager), transform(other.transform)
+{
+	RegisterCollider();
+	texture = other.texture;
+}
+
+GameObject::Asteroid& GameObject::Asteroid::operator=(const Asteroid& other)
+{
+	transform = other.transform;
+	UnregisterCollider();
+	RegisterCollider();
+	return *this;
+}
+
 GameObject::Asteroid::~Asteroid()
 {
-	if (!colider.Valid())return;
-	gManager.GetManager<Core::PhysicsManager>().UnregisterCollider(colider);
+	UnregisterCollider();
 }
 
 void GameObject::Asteroid::Update(float deltaTime)
@@ -23,7 +37,6 @@ void GameObject::Asteroid::Update(float deltaTime)
 	transform.position += transform.movement * deltaTime;
 	auto bot_right = transform.position + (transform.size * health);
 	colider.UpdateColliderBounds<Geometry::Rectangle>({ Geometry::Point{ transform.position }, Geometry::Point{ bot_right } });
-	DrawRectangle(transform.position.x, transform.position.y, transform.size.x * health, transform.size.y * health, YELLOW);
 }
 
 void GameObject::Asteroid::Draw()
@@ -36,9 +49,18 @@ void GameObject::Asteroid::Draw()
 	DrawTexturePro(*texture, textureQuad, renderQuad, {}, 0, WHITE);
 }
 
+bool GameObject::Asteroid::Valid() const
+{
+	return colider.Valid();
+}
+
 void GameObject::Asteroid::OnCollision()
 {
 	--health;
+	// Send the event to update the score
+	gManager.GetManager<GameplayManager>().UpdateScore(10 * (InitialHP - health));
+
+	// Invalidate if the asteroid is destroyed
 	if (health <= 0)
 		gManager.GetManager<Core::PhysicsManager>().UnregisterCollider(colider);
 }
@@ -48,4 +70,10 @@ void GameObject::Asteroid::RegisterCollider()
 	auto bot_right = transform.position + transform.size;
 	colider = gManager.GetManager<Core::PhysicsManager>().RegisterCollider<Geometry::Rectangle>(*this, Geometry::Point{ transform.position }, Geometry::Point{ bot_right });
 
+}
+
+void GameObject::Asteroid::UnregisterCollider()
+{
+	if (!colider.Valid())return;
+	gManager.GetManager<Core::PhysicsManager>().UnregisterCollider(colider);
 }

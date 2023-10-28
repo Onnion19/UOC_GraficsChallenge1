@@ -31,7 +31,7 @@ namespace Geometry {
 	T GetGeometryData(const GeometryData& data)
 	{
 #if NDEBUG
-		return std::get<T>(&data);
+		return std::get<T>(data);
 #else
 		auto ptr = std::get_if<T>(&data);
 		assert(ptr != nullptr && "Trying to get the geometry data using the wrong type");
@@ -50,5 +50,4 @@ namespace Geometry {
 		const float angle = roationDeg * DEG_TO_RAD;
 		return { std::cos(angle) , std::sin(angle) };
 	}
-
 }
