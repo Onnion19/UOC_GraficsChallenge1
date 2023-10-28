@@ -3,9 +3,11 @@
 #include "Scenes/SceneManager.h"
 #include "Scenes/BackgroundScene.h"
 #include "Scenes/EndScreen.h"
+#include "Scenes/MainMenu.h"
 #include "Core/Physics.h"
 #include "GameObjects/GameOjbect.h"
 #include "Utils/GameplayManager.h"
+#include "Resources/Texture.h"
 
 Core::Game::Game(std::string_view name)
 	: mainWindow(CreateWindow(1920, 1080, name))
@@ -28,7 +30,8 @@ Core::Game::~Game()
 void Core::Game::Initialize()
 {
 	managers.GetManager<SceneManager>().AddScene<BackgroundScene>(ResourceID{ "GameScene" }, false);
-	managers.GetManager<SceneManager>().AddAndLoadScene<EndScene>(ResourceID{ "EndScene" }, false);
+	managers.GetManager<SceneManager>().AddScene<EndScene>(ResourceID{ "EndScene" }, false);
+	managers.GetManager<SceneManager>().AddAndLoadScene<MainMenu>(ResourceID{ "MainMenu" }, false);
 }
 
 void Core::Game::Start()

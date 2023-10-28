@@ -9,7 +9,7 @@ namespace GameObject
 		inline static const std::string healthTextPrefix{ "Lives: " };
 	public:
 		HUD(Core::GameManagers& manager);
-
+		~HUD();
 		void OnScoreUpdate(unsigned int newScore);
 		void OnHealthUpdate(unsigned int newHealth);
 		void Draw() const;

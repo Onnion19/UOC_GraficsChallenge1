@@ -3,35 +3,68 @@
 #include "Utils/GameObjectEmitter.h"
 #include "Utils/GameplayManager.h"
 
+namespace {
+	struct AsteroidsTimerFunctor
+	{
+		float operator()(unsigned timesTriggered, float initialTime)
+		{
+			return std::max(1.f, initialTime * (1 - (timesTriggered * 0.1f)));
+		}
+	};
+}
+
+
 BackgroundScene::BackgroundScene(Core::GameManagers& manager)
 	: Scenes::SceneBase<BackgroundScene>(manager)
-	, spaceship(GameObject::GameObjectFactory::MakeGameObject<GameObject::Spaceship>(Utils::Vector2f{ 500.f , 500.f }))
-	, hud(GameObject::GameObjectFactory::MakeGameObject<GameObject::HUD>()) {
+	, asteroidsSpawnerTimer(5.f, AsteroidsTimerFunctor{}) {
 	asteroids.reserve(100);
 }
 
 
 void BackgroundScene::Activate()
 {
-	managers.GetManager<GameplayManager>().SetScore(0);
-	managers.GetManager<GameplayManager>().SetHealth(3);
+	// Create actors
+	spaceship = GameObject::GameObjectFactory::MakeGameObjectHandle <GameObject::Spaceship>(Utils::Vector2f{ 500.f , 500.f });
+	hud = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::HUD>();
 	SpawnAsteroid();
+
+	// Reset gameplay data
+	auto& gameplayManager = managers.GetManager<GameplayManager>();
+	gameplayManager.SetScore(0);
+	gameplayManager.SetHealth(3);
+
+	// Register callbacks
+	healthCallback = gameplayManager.RegisterHealthCallback(*this);
+
+	asteroidsSpawnerObject = asteroidsSpawnerTimer.Start([this]() {SpawnAsteroid(); });
+}
+
+void BackgroundScene::DeActivate()
+{
+	// Unload all resources. This should be automated but the current core can't do it....
+	auto& resourceManager = managers.GetManager<ResourceManager>();
+	resourceManager.Unload<Texture2D>(GameObject::Asteroid::asteroidTextureID);
+	resourceManager.Unload<Texture2D>(GameObject::Bullet::bulletTextureId);
+	resourceManager.Unload<Texture2D>(GameObject::Spaceship::sppaceshipTextureID);
+
+	asteroids.clear();
 }
 
 void BackgroundScene::Update(float deltaTime) {
+	asteroidsSpawnerTimer.Update(deltaTime);
 	std::for_each(asteroids.begin(), asteroids.end(),
 		[deltaTime](GameObject::Asteroid& asteroid) {
 			asteroid.Update(deltaTime);
 		});
 
 
-	spaceship.Update(deltaTime);
+	spaceship->Update(deltaTime);
 
 }
 
 void BackgroundScene::Draw() {
-	hud.Draw();
-	spaceship.Draw();
+	hud->Draw();
+	spaceship->Draw();
 	std::for_each(asteroids.begin(), asteroids.end(),
 		[](GameObject::Asteroid& asteroid) {
 			asteroid.Draw();
@@ -39,7 +72,15 @@ void BackgroundScene::Draw() {
 }
 
 void BackgroundScene::Finish() {
-	
+
+}
+
+void BackgroundScene::OnHealthUpdate(unsigned int newHealth)
+{
+	if (newHealth == 0)
+	{
+		managers.GetManager<SceneManager>().LoadScene(ResourceID{ "EndScene" });
+	}
 }
 
 void BackgroundScene::SpawnAsteroid()
@@ -57,7 +98,7 @@ void BackgroundScene::SpawnAsteroid()
 	const GameObject::Asteroid newAsteroid = Utils::ObjectEmiter::SpawnAsteroidInRange(OriginLine, EndLine, 50.f, 20);
 
 	// Search for an invalid asteroid to re-use
-	auto iter = std::find_if(asteroids.begin(), asteroids.end(), [](const GameObject::Asteroid& asteroid) {return asteroid.Valid(); });
+	auto iter = std::find_if(asteroids.begin(), asteroids.end(), [](const GameObject::Asteroid& asteroid) {return !asteroid.Valid(); });
 	if (iter != asteroids.end())
 	{
 		*iter = newAsteroid;

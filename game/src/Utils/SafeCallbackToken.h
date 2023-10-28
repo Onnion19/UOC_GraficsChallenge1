@@ -7,7 +7,7 @@ namespace Utils
 
 	struct ObserverCallbackObject
 	{
-
+		ObserverCallbackObject() = default;
 		operator bool() const { return !objectAlive.expired(); }
 	private:
 		ObserverCallbackObject(std::shared_ptr<bool> object) : objectAlive(object) {}
@@ -37,6 +37,13 @@ namespace Utils
 		static ObserverCallbackObject MakeObserverCallback(const SafeCallbackObject& safeObject)
 		{
 			return { safeObject.objectAlive };
+		}
+
+		static std::tuple<SafeCallbackObject, ObserverCallbackObject> MakeCallbacks()
+		{
+			auto safeCallback = MakeSafeCallbackObject();
+			auto observerCallback = MakeObserverCallback(safeCallback);
+			return { std::move(safeCallback) , std::move(observerCallback) };
 		}
 
 	};

@@ -3,26 +3,23 @@
 #include "Core/Physics.h"
 #include "Utils/Geometry.h"
 #include "Utils/GameplayManager.h"
-#include "Resources/ResourceManager.h"
 #include "Resources/Texture.h"
 
-namespace {
-	const ResourceID sppaceshipTextureID{ "SpaceshipTexture" };
-}
 
 GameObject::Spaceship::Spaceship(Core::GameManagers& manager, const Utils::Vector2f& pos) : GameObject(manager), position(pos), collider(), physics(gManager.GetManager<Core::PhysicsManager>())
 {
 	RegisterCollider();
 	texture = &gManager.GetManager<ResourceManager>().GetOrLoad<Texture2D>(sppaceshipTextureID, "resources/spaceship.png");
+	bullets.reserve(150);
 }
 
 GameObject::Spaceship::Spaceship(const Spaceship& b)
 	: GameObject(b.gManager)
 	, position(b.position)
 	, physics(gManager.GetManager<Core::PhysicsManager>())
-	, texture(b.texture)
 {
 	RegisterCollider();
+	texture = &gManager.GetManager<ResourceManager>().GetOrLoad<Texture2D>(sppaceshipTextureID, "resources/spaceship.png");
 	bullets.reserve(150);
 }
 
@@ -40,6 +37,7 @@ GameObject::Spaceship& GameObject::Spaceship::operator=(const Spaceship& b)
 GameObject::Spaceship::~Spaceship()
 {
 	UnregisterCollider();
+	bullets.clear();
 }
 
 Utils::Vector2i GameObject::Spaceship::GetPosition() const

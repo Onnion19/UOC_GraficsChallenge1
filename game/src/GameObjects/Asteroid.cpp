@@ -2,14 +2,25 @@
 #include "Utils/Geometry.h"
 #include "Core/Physics.h"
 #include "Utils/TypeConversion.hpp"
-#include "Resources/ResourceManager.h"
 #include "Resources/Texture.h"
 #include "Utils/GameplayManager.h"
+
+
+namespace {
+	void EnsurePositionInScreen(Utils::Vector2f& pos)
+	{
+		if (pos.x > 1920.f) pos.x = pos.x - 1920.f;
+		else if (pos.x < 0.f) pos.x = 1920.f + pos.x;
+
+		if (pos.y > 1080.f) pos.y = pos.y - 1080.f;
+		else if (pos.y < 0.f) pos.y = 1080.f + pos.y;
+	}
+}
 
 GameObject::Asteroid::Asteroid(Core::GameManagers& manager, const AsteroidTransform& trans) : GameObject::GameObject(manager), transform(trans)
 {
 	RegisterCollider();
-	texture = &gManager.GetManager<ResourceManager>().GetOrLoad<Texture2D>(ResourceID{ "asteroid" }, "resources/asteroid.png");
+	texture = &gManager.GetManager<ResourceManager>().GetOrLoad<Texture2D>(asteroidTextureID, "resources/asteroid.png");
 }
 
 GameObject::Asteroid::Asteroid(const Asteroid& other) : GameObject::GameObject(other.gManager), transform(other.transform)
@@ -28,13 +39,15 @@ GameObject::Asteroid& GameObject::Asteroid::operator=(const Asteroid& other)
 
 GameObject::Asteroid::~Asteroid()
 {
-	UnregisterCollider();
+ 	UnregisterCollider();
 }
 
 void GameObject::Asteroid::Update(float deltaTime)
 {
 	if (!colider.Valid())return;
 	transform.position += transform.movement * deltaTime;
+	EnsurePositionInScreen(transform.position);
+
 	auto bot_right = transform.position + (transform.size * health);
 	colider.UpdateColliderBounds<Geometry::Rectangle>({ Geometry::Point{ transform.position }, Geometry::Point{ bot_right } });
 }

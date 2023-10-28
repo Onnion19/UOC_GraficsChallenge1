@@ -13,5 +13,12 @@ public:
 	void Finish();
 private:
 	float flickeringEffect = 0.f;
+	std::string highscoreText; 
+	Font font;
+	static constexpr auto message = "GAME OVER";
+	static constexpr auto action1 = "Press space to start";
+	static constexpr auto action2 = "Developed by Aleix Rius";
+	static constexpr auto fontPath = "resources/Agbalumo-Regular.ttf";
+	inline static const ResourceID fontID{ "EndScreenFont" };
 };
 

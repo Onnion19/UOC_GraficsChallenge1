@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Core/Game.h"
+#include "Resources/ResourceManager.h"
+#include "Utils/Handlers.h"
 namespace GameObject {
 
 	class GameObject {
@@ -29,6 +31,23 @@ namespace GameObject {
 			else
 			{
 				return T(std::forward<Args>(args)...);
+			}
+		}
+
+		/**
+		* @brief constructs a game object handle and injects the manager if possible
+		*/
+		template<typename T, typename ... Args>
+		static Utils::Handle<T> MakeGameObjectHandle(Args&& ... args)
+		{
+			assert(gManager != nullptr && "GameObjectFactory has not initialized");
+			if constexpr (std::is_constructible_v<T, Core::GameManagers&, Args...>)
+			{
+				return std::make_unique<T>(*gManager, std::forward<Args>(args)...);
+			}
+			else
+			{
+				return std::make_unique<T>(std::forward<Args>(args)...);
 			}
 		}
 

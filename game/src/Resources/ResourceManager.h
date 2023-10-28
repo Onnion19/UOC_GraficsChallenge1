@@ -4,6 +4,11 @@
 #include <typeinfo>
 #include "Resources/ResourceLoader.h"
 
+// Include known types
+#include "Texture.h"
+#include "font.h"
+#include "music.h"
+
 
 // Resource ID is just to hash string into id's. 
 // It would be nice to have constpexr hashing but this is probably out of the scope.

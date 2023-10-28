@@ -4,6 +4,7 @@
 #include "Core/Collider.h"
 #include "Core/Physics.h"
 #include "Utils/Vector2.hpp"
+
 namespace GameObject
 {
 	struct BulletTransform {
@@ -16,6 +17,8 @@ namespace GameObject
 	class Bullet : public GameObject {
 		static constexpr float lifespan = 3.f;
 	public:
+		inline static const ResourceID bulletTextureId{ "bulletTexture" };
+
 		Bullet(Core::GameManagers& manager, const BulletTransform& trans);
 		~Bullet();
 

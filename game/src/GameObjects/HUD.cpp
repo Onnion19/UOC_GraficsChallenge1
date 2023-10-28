@@ -8,6 +8,12 @@ GameObject::HUD::HUD(Core::GameManagers& manager) : GameObject::GameObject(manag
 	scoreCallback = gameplayManager.RegisterScoreCallback(*this);
 }
 
+GameObject::HUD::~HUD()
+{
+	healthCallback.Release();
+	scoreCallback.Release();
+}
+
 void GameObject::HUD::OnScoreUpdate(unsigned int newScore)
 {
 	score = newScore;

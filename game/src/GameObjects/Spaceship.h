@@ -14,6 +14,8 @@ namespace GameObject {
 		static constexpr float rotationSpeed = 120.f;
 		static constexpr float speed = 200.f;
 	public:
+		inline static const ResourceID sppaceshipTextureID{ "SpaceshipTexture" };
+
 		Spaceship(Core::GameManagers& manager, const Utils::Vector2f& initialPosition);
 		Spaceship(const Spaceship& b);
 		Spaceship& operator=(const Spaceship& b);

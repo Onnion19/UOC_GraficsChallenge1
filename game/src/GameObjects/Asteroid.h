@@ -14,6 +14,7 @@ namespace GameObject
 	class Asteroid : public GameObject {
 		static constexpr int InitialHP = 3;
 	public:
+		inline static const ResourceID asteroidTextureID{ "asteroid" };
 		Asteroid(Core::GameManagers& manager, const AsteroidTransform& trans);
 		Asteroid(const Asteroid& other);
 		Asteroid& operator=(const Asteroid& other);

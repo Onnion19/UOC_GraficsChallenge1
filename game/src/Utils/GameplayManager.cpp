@@ -12,6 +12,11 @@ void GameplayManager::SetScore(unsigned newScore)
 	TriggerScoreCallbacks();
 }
 
+unsigned GameplayManager::GetScore() const
+{
+	return score;
+}
+
 Utils::SafeCallbackObject GameplayManager::RegisterScoreCallback(ScoreCallback callback)
 {
 	auto safeObject = Utils::CallbackObjectsFactory::MakeSafeCallbackObject();

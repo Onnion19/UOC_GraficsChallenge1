@@ -1,6 +1,8 @@
 #include "EndScreen.h"
 #include "raylib.h"
 #include "Scenes/SceneManager.h"
+#include "Scenes/BackgroundScene.h"
+#include "Utils/GameplayManager.h"
 
 EndScene::EndScene(Core::GameManagers& manager) : SceneBase<EndScene>(manager), flickeringEffect(0.f)
 {
@@ -8,10 +10,14 @@ EndScene::EndScene(Core::GameManagers& manager) : SceneBase<EndScene>(manager), 
 
 void EndScene::Activate()
 {
+	font = managers.GetManager<ResourceManager>().GetOrLoad<Font>(fontID, fontPath);
+	auto score = managers.GetManager<GameplayManager>().GetScore();
+	highscoreText = "Score..................................................." + std::to_string(score);
 }
 
 void EndScene::DeActivate()
 {
+	managers.GetManager<ResourceManager>().Unload<Font>(fontID);
 }
 
 void EndScene::Update(float deltaTime)
@@ -26,14 +32,14 @@ void EndScene::Update(float deltaTime)
 
 void EndScene::Draw()
 {
-	DrawText("GAME OVER", 700, 460, 80, RED);
+	DrawTextEx(font, message, { 700, 460 }, 80, 0, RED);
+	DrawTextEx(font, highscoreText.c_str(), {650, 580}, 40, 0, WHITE);
 	int timer = static_cast<int>(flickeringEffect * 1.5f);
 	if (timer % 2)
 	{
-		DrawText("Press Space to restart", 780, 620, 30, WHITE);
-		DrawText("Press ESC to Exit", 800, 690, 30, WHITE);
+		DrawTextEx(font, action1, { 700, 620 }, 30, 0, WHITE);
+		DrawTextEx(font, action2, { 720, 690 }, 30, 0, WHITE);
 	}
-
 }
 
 void EndScene::Finish()
