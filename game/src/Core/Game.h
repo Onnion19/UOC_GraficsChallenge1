@@ -3,8 +3,6 @@
 #include "Core/GameLoop.h"
 #include "Core/GameManagers.h"
 
-
-
 namespace Core {
 
 	class  Game final {

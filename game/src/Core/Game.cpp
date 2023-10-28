@@ -4,6 +4,7 @@
 #include "Scenes/BackgroundScene.h"
 #include "Scenes/EndScreen.h"
 #include "Scenes/MainMenu.h"
+#include "Scenes/LogoScene.h"
 #include "Core/Physics.h"
 #include "GameObjects/GameOjbect.h"
 #include "Utils/GameplayManager.h"
@@ -31,7 +32,8 @@ void Core::Game::Initialize()
 {
 	managers.GetManager<SceneManager>().AddScene<BackgroundScene>(ResourceID{ "GameScene" }, false);
 	managers.GetManager<SceneManager>().AddScene<EndScene>(ResourceID{ "EndScene" }, false);
-	managers.GetManager<SceneManager>().AddAndLoadScene<MainMenu>(ResourceID{ "MainMenu" }, false);
+	managers.GetManager<SceneManager>().AddScene<MainMenu>(ResourceID{ "MainMenu" }, false);
+	managers.GetManager<SceneManager>().AddAndLoadScene<LogoScene>(ResourceID{ "Logo" }, false);
 }
 
 void Core::Game::Start()
