@@ -28,7 +28,7 @@ namespace Geometry {
 
 
 	template<typename T>
-	T GetGeometryData(const GeometryData& data)
+	inline T GetGeometryData(const GeometryData& data)
 	{
 #if NDEBUG
 		return std::get<T>(data);

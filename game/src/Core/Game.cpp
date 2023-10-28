@@ -29,7 +29,6 @@ void Core::Game::Initialize()
 {
 	managers.GetManager<SceneManager>().AddScene<BackgroundScene>(ResourceID{ "GameScene" }, false);
 	managers.GetManager<SceneManager>().AddAndLoadScene<EndScene>(ResourceID{ "EndScene" }, false);
-
 }
 
 void Core::Game::Start()
@@ -47,5 +46,4 @@ void Core::Game::Start()
 void Core::Game::DeInitialize()
 {
 	managers.GetManager<SceneManager>().Clear();
-
 }

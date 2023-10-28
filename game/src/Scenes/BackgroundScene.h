@@ -1,8 +1,6 @@
 #pragma once 
 
 #include "Scenes/Scene.h"
-#include "GameObjects/Ball.h"
-#include "GameObjects/Block.h"
 #include "GameObjects/Asteroid.h"
 #include "GameObjects/Spaceship.h"
 #include "GameObjects/HUD.h"
