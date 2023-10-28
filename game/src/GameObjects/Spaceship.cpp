@@ -127,9 +127,9 @@ void GameObject::Spaceship::StartInvulnerability(float time)
 
 void GameObject::Spaceship::SpawnBullet()
 {
-	const Utils::Vector2f bulletOffset = Geometry::ForwardVector(rotation) * (-size.x * 0.6f);
+	const Utils::Vector2f bulletOffset = Geometry::ForwardVector(rotation) * (-size.x * 0.8f);
 	const Utils::Vector2f bulletSize{ 10,25 };
-	const Utils::Vector2f bulletMovement = Geometry::ForwardVector(rotation) * -300.f;
+	const Utils::Vector2f bulletMovement = Geometry::ForwardVector(rotation) * -speed * 1.5f;
 	const BulletTransform transform{ bulletOffset + position, bulletSize, bulletMovement, rotation };
 	auto it = std::find_if(bullets.begin(), bullets.end(), [](const Bullet& b) {return !b.Active(); });
 

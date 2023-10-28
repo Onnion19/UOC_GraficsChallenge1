@@ -3,6 +3,12 @@
 #include "Utils/GameObjectEmitter.h"
 #include "Utils/GameplayManager.h"
 #include "Utils/RandomGenerator.h"
+
+#if DEBUG
+#include "Core/Physics.h"
+#endif
+
+
 namespace {
 	struct AsteroidsTimerFunctor
 	{
@@ -59,6 +65,9 @@ void BackgroundScene::DeActivate()
 }
 
 void BackgroundScene::Update(float deltaTime) {
+
+
+
 	UpdateMusicStream(*backgroundMusic);
 	asteroidsSpawnerTimer.Update(deltaTime);
 	std::for_each(asteroids.begin(), asteroids.end(),
@@ -67,6 +76,9 @@ void BackgroundScene::Update(float deltaTime) {
 		});
 	spaceship->Update(deltaTime);
 	hud->Update(deltaTime);
+#if DEBUG
+	managers.GetManager<Core::PhysicsManager>().DrawDebugColliders();
+#endif
 }
 
 void BackgroundScene::Draw() {

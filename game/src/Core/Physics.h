@@ -31,6 +31,10 @@ namespace Core {
 
 		// Verifies if the collider is colliding with any other inside the registry.
 		bool CheckCollisionOnCollider(const Collider& id);
+
+#if DEBUG
+		void DrawDebugColliders();
+#endif
 	private:
 
 		// This is expensive, a flat hash map would be better.
