@@ -29,18 +29,7 @@ bool Core::PhysicsManager::CheckCollisionOnCollider(const Collider& collider)
 }
 
 #if DEBUG
-#include "Utils/RandomGenerator.h"
 #include "Utils/TypeConversion.hpp"
-Color RandomDebugColor()
-{
-	return {
-		static_cast<unsigned char>(Utils::RandomGenerator::GenerateRandom(50u, 255u)),
-		static_cast<unsigned char>(Utils::RandomGenerator::GenerateRandom(50u, 255u)),
-		static_cast<unsigned char>(Utils::RandomGenerator::GenerateRandom(50u, 255u)),
-		255
-	};
-}
-
 void Core::PhysicsManager::DrawDebugColliders()
 {
 	for (auto&& [colliderId, col] : colliders)
@@ -48,13 +37,13 @@ void Core::PhysicsManager::DrawDebugColliders()
 		if (std::holds_alternative<Geometry::Circle>(col.bounds))
 		{
 			auto circle = Geometry::GetGeometryData<Geometry::Circle>(col.bounds);
-			DrawCircle(static_cast<int>(circle.center.x), static_cast<int>(circle.center.y), circle.radius, RandomDebugColor());
+			DrawCircle(static_cast<int>(circle.center.x), static_cast<int>(circle.center.y), circle.radius, col.debugColor);
 		}
 		else if (std::holds_alternative<Geometry::Rectangle>(col.bounds))
 		{
 			auto rectangle = Geometry::GetGeometryData<Geometry::Rectangle>(col.bounds);
 			auto raylibRectangle = GeometryToRaylib::RectangleToRaylib(rectangle);
-			DrawRectangle(static_cast<int>(raylibRectangle.x), static_cast<int>(raylibRectangle.y), static_cast<int>(raylibRectangle.width), static_cast<int>(raylibRectangle.height), RandomDebugColor());
+			DrawRectangle(static_cast<int>(raylibRectangle.x), static_cast<int>(raylibRectangle.y), static_cast<int>(raylibRectangle.width), static_cast<int>(raylibRectangle.height), col.debugColor);
 		}
 	}
 }

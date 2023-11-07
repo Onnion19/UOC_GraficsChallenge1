@@ -5,6 +5,7 @@
 class MainMenu : public Scenes::SceneBase<MainMenu> {
 public:
 	MainMenu(Core::GameManagers& manager);
+	~MainMenu() = default;
 	void Activate();
 	void DeActivate();
 	void Update(float deltaTime);

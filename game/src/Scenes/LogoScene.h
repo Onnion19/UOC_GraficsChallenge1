@@ -8,6 +8,7 @@
 class LogoScene : public Scenes::SceneBase<LogoScene> {
 public:
 	LogoScene(Core::GameManagers& manager);
+	~LogoScene() = default;
 	void Activate();
 	void DeActivate();
 	void Update(float deltaTime);

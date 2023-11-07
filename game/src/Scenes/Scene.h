@@ -35,10 +35,7 @@ namespace Scenes
 	class SceneBase : public IScene {
 	public:
 		SceneBase(Core::GameManagers& manager) noexcept: managers(manager) {}
-		virtual ~SceneBase()
-		{
-			std::cout << "Removing scene" << std::endl;
-		}
+		virtual ~SceneBase() = default;
 		/* IScene implementation */
 		void _Activate() override { static_cast<T*>(this)->Activate(); }
 		void _DeActivate() override { static_cast<T*>(this)->DeActivate(); }

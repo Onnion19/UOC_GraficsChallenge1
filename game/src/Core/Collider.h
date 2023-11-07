@@ -1,6 +1,8 @@
 #pragma once 
 
 #include "Utils/Geometry.h"
+#include "Utils/RandomGenerator.h"
+
 namespace Core
 {
 	class PhysicsManager;
@@ -62,6 +64,10 @@ namespace Internal{
 
 		// Collider geometry used to compute physics.
 		ColliderBounds bounds;
+
+#if DEBUG
+		Color debugColor = Utils::RandomGenerator::GenerateRandom(BLACK, WHITE);
+#endif
 
 		// Type erasure lambda.
 		void (*_OnCollission)(void* ptr);

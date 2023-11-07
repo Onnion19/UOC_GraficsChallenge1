@@ -14,7 +14,7 @@ namespace Utils {
 				return distribution(randomGenerator);
 
 			}
-			
+
 			if constexpr (std::is_integral_v<T>)
 			{
 				std::uniform_int_distribution distribution(min, max);
@@ -24,7 +24,20 @@ namespace Utils {
 			assert(false);
 			return {};
 		}
+
+		template<>
+		static Color GenerateRandom<Color>(Color min, Color max)
+		{
+			return {
+					static_cast<unsigned char>(Utils::RandomGenerator::GenerateRandom(static_cast<int>(min.r), static_cast<int>(max.r))),
+					static_cast<unsigned char>(Utils::RandomGenerator::GenerateRandom(static_cast<int>(min.g), static_cast<int>(max.g))),
+					static_cast<unsigned char>(Utils::RandomGenerator::GenerateRandom(static_cast<int>(min.b), static_cast<int>(max.b))),
+					static_cast<unsigned char>(Utils::RandomGenerator::GenerateRandom(static_cast<int>(min.a), static_cast<int>(max.a)))
+			};
+		}
+
+
 	private:
-		static inline std::mt19937 randomGenerator{ std::random_device{}()};
+		static inline std::mt19937 randomGenerator{ std::random_device{}() };
 	};
 }

@@ -6,6 +6,7 @@
 class EndScene : public Scenes::SceneBase<EndScene> {
 public:
 	EndScene(Core::GameManagers& manager);
+	~EndScene() = default;
 	void Activate();
 	void DeActivate();
 	void Update(float deltaTime);
