@@ -10,8 +10,8 @@ GameObject::Spaceship::Spaceship(Core::GameManagers& manager, const Utils::Vecto
 {
 	RegisterCollider();
 	auto& resourceManager = gManager.GetManager<ResourceManager>();
-	texture = &resourceManager.GetOrLoad<Texture2D>(spaceshipTextureID, spaceshipTexturePath);
-	shootingSound = &resourceManager.GetOrLoad<Sound>(shootingSoundID, shootingSoundPath);
+	texture = resourceManager.GetOrLoad<Texture2D>(spaceshipTextureID, spaceshipTexturePath);
+	shootingSound = resourceManager.GetOrLoad<Sound>(shootingSoundID, shootingSoundPath);
 	bullets.reserve(150);
 }
 
@@ -22,8 +22,8 @@ GameObject::Spaceship::Spaceship(const Spaceship& b)
 {
 	RegisterCollider();
 	auto& resourceManager = gManager.GetManager<ResourceManager>();
-	texture = &resourceManager.GetOrLoad<Texture2D>(spaceshipTextureID, spaceshipTexturePath);
-	shootingSound = &resourceManager.GetOrLoad<Sound>(shootingSoundID, shootingSoundPath);
+	texture = resourceManager.GetOrLoad<Texture2D>(spaceshipTextureID, spaceshipTexturePath);
+	shootingSound = resourceManager.GetOrLoad<Sound>(shootingSoundID, shootingSoundPath);
 	bullets.reserve(150);
 }
 
@@ -57,11 +57,11 @@ void GameObject::Spaceship::SetPosition(const Utils::Vector2f& pos)
 	const auto y = (pos.y > 0) ? static_cast<int>(pos.y) % 1080 : 1080 - pos.y;
 	const Utils::Vector2f correctedPosition{ x,y };
 
-	collider.UpdateColliderBounds(Geometry::Circle{ correctedPosition, static_cast<float>(size.x)/2.f });
+	collider.UpdateColliderBounds(Geometry::Circle{ correctedPosition, static_cast<float>(size.x) / 2.f });
 
 	if (physics.CheckCollisionOnCollider(collider))
 	{
-		collider.UpdateColliderBounds(Geometry::Circle{ position, static_cast<float>(size.x)/2.f });
+		collider.UpdateColliderBounds(Geometry::Circle{ position, static_cast<float>(size.x) / 2.f });
 		return;
 	}
 

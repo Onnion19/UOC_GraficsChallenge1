@@ -38,7 +38,7 @@ class SceneManager {
 public:
 	SceneManager(Core::GameManagers& manager) : gameManagers(manager) {};
 	SceneManager(const SceneManager&) = delete;
-
+	~SceneManager();
 	void RegisterListener(Scenes::SceneManagerListenerTE listener);
 	void UnregisterListener(Scenes::SceneManagerListenerTE listener);
 
@@ -85,9 +85,8 @@ inline Scenes::IScene* SceneManager::AddScene_Internal(ResourceID id, bool overr
 	Scenes::IScene* scene = FetchScene(id);
 	if (!scene || overrideScene)
 	{
-		SceneHandle handle = MakeSceneHandle<T>(gameManagers);
-		scene = handle.get();
-		scenes[id] = std::move(handle);
+		scenes[id] = MakeSceneHandle<T>(gameManagers);
+		scene = scenes[id].get();
 	}
 	return scene;
 }

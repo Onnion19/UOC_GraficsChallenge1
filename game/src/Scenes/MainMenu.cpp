@@ -21,12 +21,12 @@ MainMenu::MainMenu(Core::GameManagers& manager) : SceneBase<MainMenu>(manager)
 
 void MainMenu::Activate()
 {
-	mainMenuFont = &managers.GetManager<ResourceManager>().GetOrLoad<Font>(fontID, fontPath);
+	mainMenuFont = managers.GetManager<ResourceManager>().GetOrLoad<Font>(fontID, fontPath);
 }
 
 void MainMenu::DeActivate()
 {
-	managers.GetManager<ResourceManager>().Unload<Font>(fontID);
+	mainMenuFont.reset();
 }
 
 void MainMenu::Update(float deltaTime)

@@ -5,6 +5,7 @@
 #include "GameObjects/Spaceship.h"
 #include "GameObjects/HUD.h"
 #include "Utils/Timers.h"
+#include "Utils/Handlers.h"
 #include "Resources/music.h"
 
 class BackgroundScene : public Scenes::SceneBase<BackgroundScene> {
@@ -15,8 +16,9 @@ public:
 	void Update(float deltaTime);
 	void Draw();
 	void Finish();
-	
 	void OnHealthUpdate(unsigned int newHealth);
+
+	~BackgroundScene();
 private:
 	void SpawnAsteroid();
 
@@ -36,6 +38,6 @@ private:
 
 	Utils::RepeatingTimerWithVariation asteroidsSpawnerTimer;
 
-	Music* backgroundMusic;
+	Utils::ResourceHandle<Music> backgroundMusic;
 };
 

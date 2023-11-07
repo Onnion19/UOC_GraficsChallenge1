@@ -48,26 +48,17 @@ void BackgroundScene::Activate()
 	asteroidsSpawnerObject = asteroidsSpawnerTimer.Start([this]() {SpawnAsteroid(); });
 
 	// Load background Music
-	backgroundMusic = &managers.GetManager<ResourceManager>().GetOrLoad<Music>(backgroundMusicId, backgroundMusicPath);
+	backgroundMusic = managers.GetManager<ResourceManager>().GetOrLoad<Music>(backgroundMusicId, backgroundMusicPath);
 	backgroundMusic->looping = true;
 	PlayMusicStream(*backgroundMusic);
 }
 
 void BackgroundScene::DeActivate()
 {
-	// Unload all resources. This should be automated but the current core can't do it....
-	auto& resourceManager = managers.GetManager<ResourceManager>();
-	resourceManager.Unload<Texture2D>(GameObject::Asteroid::asteroidTextureID);
-	resourceManager.Unload<Texture2D>(GameObject::Bullet::bulletTextureId);
-	resourceManager.Unload<Texture2D>(GameObject::Spaceship::spaceshipTextureID);
-	resourceManager.Unload<Music>(backgroundMusicId);
 	asteroids.clear();
 }
 
 void BackgroundScene::Update(float deltaTime) {
-
-
-
 	UpdateMusicStream(*backgroundMusic);
 	asteroidsSpawnerTimer.Update(deltaTime);
 	std::for_each(asteroids.begin(), asteroids.end(),
@@ -101,6 +92,11 @@ void BackgroundScene::OnHealthUpdate(unsigned int newHealth)
 		managers.GetManager<GameplayManager>().EndGame();
 		managers.GetManager<SceneManager>().LoadScene(ResourceID{ "EndScene" });
 	}
+}
+
+BackgroundScene::~BackgroundScene()
+{
+	asteroids.clear();
 }
 
 void BackgroundScene::SpawnAsteroid()

@@ -2,7 +2,7 @@
 #include "Resources/ResourceManager.h"
 #include <string>
 #include "Core/GameManagers.h"
-
+#include <iostream>
 class SceneManager;
 
 namespace Scenes
@@ -12,6 +12,7 @@ namespace Scenes
 	*/
 	class IScene {
 	public:
+		virtual ~IScene() {};
 		// Function to set up all the requirements for the scene to work (load resources if necessary).
 		virtual void _Activate() = 0;
 		// Function to free the scene memory before going out
@@ -34,8 +35,10 @@ namespace Scenes
 	class SceneBase : public IScene {
 	public:
 		SceneBase(Core::GameManagers& manager) noexcept: managers(manager) {}
-		virtual ~SceneBase() {}
-
+		virtual ~SceneBase()
+		{
+			std::cout << "Removing scene" << std::endl;
+		}
 		/* IScene implementation */
 		void _Activate() override { static_cast<T*>(this)->Activate(); }
 		void _DeActivate() override { static_cast<T*>(this)->DeActivate(); }

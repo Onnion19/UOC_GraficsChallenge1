@@ -3,6 +3,11 @@
 #include <algorithm>
 #include "Scenes/Scene.h"
 
+SceneManager::~SceneManager()
+{
+	Clear();
+}
+
 void SceneManager::RegisterListener(Scenes::SceneManagerListenerTE listener)
 {
 	auto iter = std::find(listeners.begin(), listeners.end(), listener);
@@ -44,6 +49,10 @@ void SceneManager::UnloadScene()
 void SceneManager::Clear()
 {
 	UnloadScene();
+	for (auto&& [id, scene] : scenes)
+	{
+		scene.reset();
+	}
 	scenes.clear();
 }
 

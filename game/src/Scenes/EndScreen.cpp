@@ -10,7 +10,7 @@ EndScene::EndScene(Core::GameManagers& manager) : SceneBase<EndScene>(manager), 
 
 void EndScene::Activate()
 {
-	font = &managers.GetManager<ResourceManager>().GetOrLoad<Font>(fontID, fontPath);
+	font = managers.GetManager<ResourceManager>().GetOrLoad<Font>(fontID, fontPath);
 	auto& gameplayManager = managers.GetManager<GameplayManager>();
 	auto score = gameplayManager.GetScore();
 	auto time = gameplayManager.GetGameDuration();
@@ -19,7 +19,7 @@ void EndScene::Activate()
 
 void EndScene::DeActivate()
 {
-	managers.GetManager<ResourceManager>().Unload<Font>(fontID);
+	font.reset();
 }
 
 void EndScene::Update(float deltaTime)

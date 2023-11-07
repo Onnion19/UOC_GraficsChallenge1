@@ -25,6 +25,10 @@ Core::Game::Game(std::string_view name)
 
 Core::Game::~Game()
 {
+	managers.UnregisterManager<SceneManager>();
+	managers.UnregisterManager<ResourceManager>();
+	managers.UnregisterManager<PhysicsManager>();
+	managers.UnregisterManager<GameplayManager>();
 	GameObject::GameObjectFactory::gManager = nullptr;
 }
 

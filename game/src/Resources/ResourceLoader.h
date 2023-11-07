@@ -21,8 +21,6 @@ namespace Resources {
 		using DelTy = std::default_delete<T>;
 		// Specific loader, by default it's void meaning it will use new() statement.
 		using LoadTy = void;
-		// Generated Handler. (This should not be configurable, as it's a product of previous types).
-		using HandleTy = Utils::Handle<Type, DelTy>;
 
 		/**
 		* In case of using custom loader and/or deleter, it must implement the lambda defining the functors to use.
@@ -38,26 +36,26 @@ namespace Resources {
 	concept DefaultDestroyed = std::is_same_v<typename Resource<T>::LoadTy, std::default_delete<T>>;
 
 	/**
-	* 
+	*
 	* Loader can load any object type as long as the type_traits of the given object are valid.
-	* 
+	*
 	* By default the type traits will create an object using the new() and delete using std::default_delete.
-	* 
+	*
 	* If the type requires specific loader or deleter, it must define it's own type_traits
-	* 
+	*
 	*/
 
 	class Loader {
 	public:
 
 		template<typename T, typename ... Args>
-		static Resource<T>::HandleTy Load(Args&& ... args)
+		static auto Load(Args&& ... args)
 		{
 			typename Resource<T>::Type* res = MakeObject<T>(std::forward<Args>(args)...);
 			return MakeHandle<T>(res);
 		}
 
-	private: 
+	private:
 		// Object Generators
 		template<DefaultConstructed T, typename ... Args>
 		static Resource<T>::Type* MakeObject(Args&& ... args)
@@ -74,13 +72,13 @@ namespace Resources {
 		//Handle Generators
 
 		template<DefaultDestroyed T>
-		static Resource<T>::HandleTy MakeHandle(Resource<T>::Type* ptr)
+		static Utils::ResourceHandle<typename Resource<T>::Type> MakeHandle(Resource<T>::Type* ptr)
 		{
-			return std::make_unique<Resource<T>::Type>(ptr);
+			return std::make_shared<Resource<T>::Type>(ptr);
 		}
 
 		template<typename T>
-		static Resource<T>::HandleTy MakeHandle(Resource<T>::Type* ptr)
+		static Utils::ResourceHandle<typename Resource<T>::Type> MakeHandle(Resource<T>::Type* ptr)
 		{
 			return { ptr, Resource<T>::Deleter };
 		}

@@ -10,4 +10,7 @@ namespace Utils {
 
 	template<typename T, typename deleter = std::default_delete<T>>
 	using  Handle = std::unique_ptr<T, deleter>;
+
+	template<typename T>
+	using ResourceHandle = std::shared_ptr<T>;
 }

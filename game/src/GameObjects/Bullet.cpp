@@ -6,7 +6,7 @@
 GameObject::Bullet::Bullet(Core::GameManagers& manager, const BulletTransform& trans) : GameObject::GameObject(manager), transform(trans), physicsManager(gManager.GetManager < Core::PhysicsManager>())
 {
 	RegisterCollider();
-	texture = &gManager.GetManager<ResourceManager>().GetOrLoad<Texture2D>(bulletTextureId, "resources/bullet.png");
+	texture = gManager.GetManager<ResourceManager>().GetOrLoad<Texture2D>(bulletTextureId, "resources/bullet.png");
 }
 
 GameObject::Bullet::~Bullet()

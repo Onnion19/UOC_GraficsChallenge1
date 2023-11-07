@@ -3,6 +3,7 @@
 #include "GameObjects/GameOjbect.h"
 #include "Core/Collider.h"
 #include "Utils/Vector2.hpp"
+#include "Utils/Handlers.h"
 namespace GameObject
 {
 	struct AsteroidTransform {
@@ -29,7 +30,7 @@ namespace GameObject
 		void UnregisterCollider();
 	private:
 		AsteroidTransform transform;
-		Texture2D* texture;
+		Utils::ResourceHandle<Texture2D> texture;
 		Collider colider;
 		int health = InitialHP;
 	};

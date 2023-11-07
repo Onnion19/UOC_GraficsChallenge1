@@ -2,8 +2,9 @@
 #include <unordered_map>
 #include <type_traits>
 #include <typeinfo>
+#include <optional>
 #include "Resources/ResourceLoader.h"
-
+#include "Utils/Handlers.h"
 // Include known types
 #include "Texture.h"
 #include "font.h"
@@ -36,6 +37,7 @@ namespace std
 	};
 }
 
+
 /*
 	Resource Manager is a class that allows to handle and manage all type of objects, from loading from disk to release them.
 	The assets are not tied to any type so you are free to specify any (Font, Image, String, CustomTypeTy).
@@ -45,57 +47,71 @@ namespace std
 	  - Key 2: Resource ID (std::hash is not compile time, but could use a custom implementation if needed)
 	  - Value: void* containing the ResourceHandle. Each resource specifies the handle using type traits. @see ResourceLoader.h for more info
 */
+
 class ResourceManager {
 
-	// It should be using smart pointers, but don't want the overhead of atomic operations.
-	// Maybe implement non thread safe smart pointers?
+	// Struct holding the ref counting of the resoruce.
+	struct ResourceData {
+		template<typename shared_ptr>
+		ResourceData(const shared_ptr& ptr);
+		int GetUsageCount()const;
+		bool Valid()const;
+		template<typename T>
+		std::shared_ptr<T> GetDataAs() const;
+	private:
+		std::function<bool()> _valid;
+		std::function<void* ()> _data;
+		std::function<int()> _usage;
+	};
+
+
+private:
 	template<typename T>
-	using ResourceHandle = Resources::Resource<T>::HandleTy;
-	template<typename T>
-	using ResourceHandlePtr = ResourceHandle<T>*;
-	using ResourceMap = std::unordered_map < ResourceID, void*>;
+	using ResourceHandle = Utils::ResourceHandle<T>;
+	using ResourceMap = std::unordered_map < ResourceID, ResourceData>;
 	using TypeHash = std::size_t;
 
 public:
 	template <typename ResourceTy, typename ... Args>
-	ResourceTy& GetOrLoad(ResourceID id, Args&& ... args) {
+	ResourceHandle< ResourceTy> GetOrLoad(ResourceID id, Args&& ... args) {
 
-		if (auto ptr = FetchLoadedResource<ResourceTy>(id))
+		const std::optional<ResourceHandle<ResourceTy>> resource = FetchLoadedResource<ResourceTy>(id);
+		if (resource.has_value())
 		{
-			assert(ptr && "Holding a handle with null data.");
-			return *(ptr->get());
+			return resource.value();
 		}
 
 		return Load<ResourceTy>(id, std::forward<Args>(args)...);
 	}
 
 	template <typename ResourceTy>
-	void Unload(ResourceID id) {
-		// TODO: this will do a double look up and can be optimized. 
-		if (auto ptr = FetchLoadedResource<ResourceTy>(id))
+	unsigned int ResourceUsage(ResourceID id) {
+		unsigned int usage = 0;
+		const std::optional<ResourceHandle<ResourceTy>> resource = FetchLoadedResource<ResourceTy>(id);
+		if (resource.has_value())
 		{
-			// clean the resource --> call the deleter functor
-			ptr->reset();
-			// remove the resource entry in the manager
+			usage = resource.value().use_count() - 1; //Withdraw self usage
+		}
+		else
+		{
+			// remove unused resource
 			GetContainerByType<ResourceTy>()->erase(id);
 		}
+
+		return usage;
 	}
 
-	// HEAVY BUG: destructor will clean up all the containers. Due to is storing wiht void* the destructor does not guarantee to call the deleters
-	// of the underlying type but just the raw memory. This might cause memory leaking or malfunctions in raylib.
-	// Current work around is to manually unload the previously loaded resources.
-	// working with shared_ptr this might solvable, but then have to pay the overhead tax.
 	~ResourceManager() = default;
 
 private:
 
 	template<typename T, typename ... Args>
-	T& Load(ResourceID id, Args&& ... args) {
-		auto handle = new ResourceHandle<T>(Resources::Loader::Load<T>(std::forward<Args>(args)...));
+	auto Load(ResourceID id, Args&& ... args) {
+		ResourceHandle<T> shared_ptr = Resources::Loader::Load<T>(std::forward<Args>(args)...);
 		auto& container = GetOrCreateContainerByType<T>();
-		auto emplace = container.emplace(id, handle);
+		auto emplace = container.emplace(id, shared_ptr);
 		assert(emplace.second && "Failed to emplace the new resource");
-		return *(static_cast<ResourceHandlePtr<T>>(emplace.first->second)->get());
+		return shared_ptr;
 	}
 
 	template<typename T>
@@ -119,15 +135,46 @@ private:
 	}
 
 	template<typename T>
-	ResourceHandlePtr<T> FetchLoadedResource(ResourceID id) {
+	std::optional<ResourceHandle<T>> FetchLoadedResource(ResourceID id) {
 		const auto container = GetContainerByType<T>();
-		if (!container) return nullptr;
+		if (!container) return std::nullopt;
 		const auto it = container->find(id);
-		// Getting the void* and casting back to the handle
-		return (it != container->end()) ? static_cast<ResourceHandlePtr<T>>(it->second) : nullptr;
 
+		if (it == container->end()) return std::nullopt;
+
+		ResourceData data = it->second;
+		if (data.Valid())
+			return data.GetDataAs<T>();
+		else
+			return std::nullopt;
 	}
 
 private:
 	std::unordered_map<TypeHash, ResourceMap> resources;
 };
+
+template<typename T>
+struct functor {
+	std::weak_ptr<T> ptr;
+
+	void* operator()() {
+		return &ptr;
+	}
+};
+
+template<typename shared_ptr>
+inline ResourceManager::ResourceData::ResourceData(const shared_ptr& ptr)
+{
+	std::weak_ptr <typename shared_ptr::element_type> weak{ ptr };
+	_data = functor<typename shared_ptr::element_type>{ weak };
+	_valid = [=]() {return !weak.expired(); };
+	_usage = [=]() {return weak.use_count(); };
+}
+
+template<typename T>
+inline std::shared_ptr<T> ResourceManager::ResourceData::GetDataAs() const
+{
+	std::weak_ptr<T> weak_ptr = *(static_cast<std::weak_ptr<T>*>(_data()));
+	std::shared_ptr<T> shared_ptr = weak_ptr.lock();
+	return std::move(shared_ptr);
+}

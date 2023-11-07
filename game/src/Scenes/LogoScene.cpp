@@ -10,7 +10,7 @@ LogoScene::LogoScene(Core::GameManagers& manager) : SceneBase<LogoScene>(manager
 
 void LogoScene::Activate()
 {
-	logo = &managers.GetManager<ResourceManager>().GetOrLoad<Texture2D>(LogoID, logoPath);
+	logo = managers.GetManager<ResourceManager>().GetOrLoad<Texture2D>(LogoID, logoPath);
 	logoPosition = { 1920 / 2, 1080 / 2 };
 	logoPosition.x -= logoSize / 2;
 	logoPosition.y -= logoSize / 2;
@@ -23,7 +23,7 @@ void LogoScene::Activate()
 
 void LogoScene::DeActivate()
 {
-	managers.GetManager<ResourceManager>().Unload<Texture2D>(LogoID);
+	logo.reset();
 }
 
 void LogoScene::Update(float deltaTime)

@@ -38,7 +38,7 @@ namespace Core {
 			auto id = GetManagerHash<T>();
 			auto iter = managers.find(id);
 			assert(iter != managers.end() && "Unregistering an unexisting manager");
-			delete static_cast<T*>(iter.second);
+			delete static_cast<T*>(iter->second);
 			managers.erase(id);
 		}
 

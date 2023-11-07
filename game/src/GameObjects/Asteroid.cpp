@@ -20,7 +20,7 @@ namespace {
 GameObject::Asteroid::Asteroid(Core::GameManagers& manager, const AsteroidTransform& trans) : GameObject::GameObject(manager), transform(trans)
 {
 	RegisterCollider();
-	texture = &gManager.GetManager<ResourceManager>().GetOrLoad<Texture2D>(asteroidTextureID, "resources/asteroid.png");
+	texture = gManager.GetManager<ResourceManager>().GetOrLoad<Texture2D>(asteroidTextureID, "resources/asteroid.png");
 }
 
 GameObject::Asteroid::Asteroid(const Asteroid& other) : GameObject::GameObject(other.gManager), transform(other.transform)

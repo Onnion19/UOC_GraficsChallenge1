@@ -4,6 +4,7 @@
 #include "Core/Collider.h"
 #include "Core/Physics.h"
 #include "Utils/Vector2.hpp"
+#include "Utils/Handlers.h"
 
 namespace GameObject
 {
@@ -36,7 +37,7 @@ namespace GameObject
 		void UnRegisterCollider();
 	private:
 		BulletTransform transform;
-		Texture2D* texture;
+		Utils::ResourceHandle<Texture2D> texture;
 		Collider colider;
 		Core::PhysicsManager& physicsManager;
 		float lifespanTimer = lifespan;

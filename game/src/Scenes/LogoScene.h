@@ -3,6 +3,7 @@
 #include "Scenes/Scene.h"
 #include "Utils/Vector2.hpp"
 #include "Utils/Timers.h"
+#include "Utils/Handlers.h"
 
 class LogoScene : public Scenes::SceneBase<LogoScene> {
 public:
@@ -18,7 +19,7 @@ private:
 	static constexpr int logoSize = 512;
 	static constexpr float timeInScreen = 3.f;
 private:
-	Texture2D* logo;
+	Utils::ResourceHandle<Texture2D> logo;
 	Utils::Vector2i logoPosition;
 	Utils::SingleTimer logoTimer;
 	Utils::SafeCallbackObject callbackObject;

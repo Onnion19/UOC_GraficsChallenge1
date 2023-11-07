@@ -42,8 +42,8 @@ namespace GameObject {
 		float rotation = 0.f;
 		const Utils::Vector2i size{ 100,100 };
 		Collider collider;
-		Texture2D* texture;
-		Sound* shootingSound;
+		Utils::ResourceHandle<Texture2D> texture;
+		Utils::ResourceHandle<Sound> shootingSound;
 		float invulnerableTime;
 		std::vector<Bullet> bullets;
 

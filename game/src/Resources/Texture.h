@@ -8,7 +8,6 @@ namespace Resources {
 	struct Resource<Texture2D> {
 		using Type = Texture;
 		using DelTy = void(*)(Type*);
-		using HandleTy = Utils::Handle<Type, DelTy>;
 		using LoadTy = Type(*)(std::string_view);
 
 		static constexpr LoadTy Loader = [](std::string_view path) -> Type {
@@ -25,7 +24,6 @@ namespace Resources {
 	struct Resource<Image> {
 		using Type = Image;
 		using DelTy = void(*)(Type*);
-		using HandleTy = Utils::Handle<Type, DelTy>;
 		using LoadTy = Type(*)(std::string_view);
 
 		static constexpr LoadTy Loader = [](std::string_view path) -> Type {
