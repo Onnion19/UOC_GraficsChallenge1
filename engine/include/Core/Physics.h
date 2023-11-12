@@ -8,6 +8,10 @@
 #include <unordered_map>
 #include "Core/Collider.h"
 
+namespace GameObject {
+	class GameObject;
+}
+
 namespace Core {
 
 	// Types and constants definitions
@@ -20,11 +24,11 @@ namespace Core {
 	public:
 		// Add a collider to the registry.
 		template<ColliderShape Shape, typename ... Args>
-		Collider RegisterCollider(Args&& ... args);
+		Collider RegisterCollider(GameObject::GameObject* owner, Args&& ... args);
 
 		// Add a collider with a listener when it collides to the registry.
 		template<ColliderShape Shape, ColliderCallback T, typename ... Args>
-		Collider RegisterCollider(T& listener, Args&& ... args);
+		Collider RegisterCollider(T& listener, GameObject::GameObject* owner, Args&& ... args);
 
 		// Removes collider from the registry and invalidates the data.
 		void UnregisterCollider(Collider& id);
@@ -47,20 +51,20 @@ namespace Core {
 	// Template functions implementation
 
 	template<ColliderShape Shape, typename ...Args>
-	inline Collider PhysicsManager::RegisterCollider(Args && ...args)
+	inline Collider PhysicsManager::RegisterCollider(GameObject::GameObject* owner, Args && ...args)
 	{
 		auto id = idFactory();
-		auto result = colliders.emplace(std::make_pair(id, Shape{ std::forward<Args>(args)... }));
+		auto result = colliders.emplace(std::make_pair(id, { Shape{ std::forward<Args>(args)... } , owner }));
 		return {result.first->second, id};
 
 	}
 
 	template<ColliderShape Shape, ColliderCallback T, typename ...Args>
-	inline Collider PhysicsManager::RegisterCollider(T& listener, Args && ...args)
+	inline Collider PhysicsManager::RegisterCollider(T& listener, GameObject::GameObject* owner, Args && ...args)
 	{
 		auto id = idFactory();
 		Shape s{ std::forward<Args>(args)... };
-		auto result = colliders.emplace(std::make_pair(id, ::Internal::_InternalCollider{ std::move(s), listener}));
+		auto result = colliders.emplace(std::make_pair(id, ::Internal::_InternalCollider{ std::move(s), listener, owner}));
 		return {result.first->second, id };
 	}
 

@@ -7,10 +7,15 @@ namespace Core
 {
 	class PhysicsManager;
 }
+
+namespace GameObject {
+	class GameObject;
+}
+
 // any class Implementing OnCollision() can be a callback listener
 template<typename T>
-concept ColliderCallback = requires (T t) {
-	t.OnCollision();
+concept ColliderCallback = requires (T t, GameObject::GameObject* owner) {
+	t.OnCollision(owner);
 };
 
 
@@ -27,40 +32,44 @@ using ColliderId = unsigned int;
 using ConstColliderId = const ColliderId;
 constexpr ColliderId InvalidCollider = std::numeric_limits<ColliderId>::max();
 
-namespace Internal{
+namespace Internal {
 
 	// Struct to hold collider internal data as type erasure so any object can receive collision events.
 	// This will be stored inside the physics manager, which will own all the data.
 	struct _InternalCollider {
 		using ColliderBounds = Geometry::GeometryData;
-		
+
 		/**
 		* Constructor taking a callback OnCollision()
 		*/
 		template<ColliderShape Shape, ColliderCallback T>
-		_InternalCollider(Shape&& shape, T& t)
+		_InternalCollider(Shape&& shape, T& t, GameObject::GameObject* go = nullptr)
 			: _ptr(&t)
-			, bounds(std::move(shape)) {
-			_OnCollission = [](void* data) {static_cast<T*>(data)->OnCollision(); };
+			, bounds(std::move(shape))
+			, owner(go) {
+			_OnCollission = [](void* data, GameObject::GameObject* owner) {static_cast<T*>(data)->OnCollision(owner); };
 		}
 
 		/**
 		* Constructor without callback
 		*/
 		template<ColliderShape Shape>
-		_InternalCollider(Shape&& shape)
+		_InternalCollider(Shape&& shape, GameObject::GameObject* go = nullptr)
 			: _ptr(nullptr)
 			, bounds(std::move(shape))
-			, _OnCollission(nullptr) {}
+			, _OnCollission(nullptr)
+			, owner(go) {}
 
 
-		void OnCollision() { if (_ptr)_OnCollission(_ptr); }
+		void OnCollision(GameObject::GameObject* owner) { if (_ptr)_OnCollission(_ptr, owner); }
 
 		/*
 			RAW DATA, CAUTION HERE
 		*/
 		// Pointer to the object callback. can be null if no callback is registered.
 		void* _ptr;
+
+		GameObject::GameObject* owner;
 
 		// Collider geometry used to compute physics.
 		ColliderBounds bounds;
@@ -70,7 +79,7 @@ namespace Internal{
 #endif
 
 		// Type erasure lambda.
-		void (*_OnCollission)(void* ptr);
+		void (*_OnCollission)(void* ptr, GameObject::GameObject* owner);
 
 		friend class Collider;
 	};

@@ -18,8 +18,10 @@ bool Core::PhysicsManager::CheckCollisionOnCollider(const Collider& collider)
 		const bool hasCollided = CollisionSolver::Collides(collider.internal_collider->bounds, col.bounds);
 		if (hasCollided)
 		{
-			col.OnCollision();
-			collider.internal_collider->OnCollision();
+			GameObject::GameObject* checkedGameObject = collider.internal_collider->owner;
+			GameObject::GameObject* collidedGameObject = col.owner;
+			col.OnCollision(checkedGameObject);
+			collider.internal_collider->OnCollision(collidedGameObject);
 			return true;
 		}
 	}
