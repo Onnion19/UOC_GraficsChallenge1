@@ -47,7 +47,7 @@ void GameObject::HUD::Update(float deltatime)
 
 void GameObject::HUD::Draw() const
 {
-	/*DrawText(healthText.c_str(), 5, 20, 20, healthColor);
+	DrawText(healthText.c_str(), 5, 20, 20, healthColor);
 	DrawText(scoreText.c_str(), 5, 45, 20, Resources::Blue);
-	DrawText(std::to_string(gameTime).c_str(), 5, 70, 20, Resources::White);*/
+	DrawText(std::to_string(gameTime).c_str(), 5, 70, 20, Resources::White);
 }

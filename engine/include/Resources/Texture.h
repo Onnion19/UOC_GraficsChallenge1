@@ -1,15 +1,15 @@
 #pragma once 
+
+#include "ResourceManager.h"
 #include <cassert>
 #include "raylib.h"
-
-
-
 
 namespace Resources {
 	using Texture = ::Texture2D;
 	using Image = ::Image;
+
 	template<>
-	struct Resource<Texture2D> {
+	struct Resource<Texture> {
 		using Type = Texture;
 		using DelTy = void(*)(Type*);
 		using LoadTy = Type(*)(std::string_view);

@@ -38,7 +38,7 @@ namespace Core {
 	struct WindowDispatch {
 		void operator()(Core::Window* w)
 		{
-			CloseWin();
+			EndWindow();
 			delete w;
 		}
 	};

@@ -3,20 +3,29 @@
 #include "Core/GameManagers.h"
 #include "Resources/ResourceManager.h"
 #include "Utils/Handlers.h"
+#include "GameObjects/GameObjectID.h"
 namespace GameObject {
+
 
 	/**
 	* Base class for game objects. The inheritance is not enforced but encouraged.
-	* When a an Object inheriting from GameObject will get the game managers injected when construced via 
+	* When a an Object inheriting from GameObject will get the game managers injected when construced via
 	* the GameObjectFactory.
 	*/
-	class GameObject {
+	class GameObject : public IdentifiedObject {
 	public:
-		explicit GameObject(Core::GameManagers& manager) noexcept : gManager(manager) {}
+		explicit GameObject(Core::GameManagers& manager) noexcept : IdentifiedObject(), gManager(manager) {}
 		virtual ~GameObject() {}
 	protected:
 		Core::GameManagers& gManager;
 	};
+
+
+
+
+	template<typename T>
+	concept DerivesFromGameObject = std::is_base_of_v<GameObject, T>;
+
 
 	// I'd like to have global access to this functionalities but singletons meh.
 	// So far I'll do it static but this must be improved.
@@ -25,7 +34,7 @@ namespace GameObject {
 		/**
 		* @brief constructs a game object and injects the manager if possible
 		*/
-		template<typename T, typename ... Args>
+		template<DerivesFromGameObject T, typename ... Args>
 		static T MakeGameObject(Args&& ... args)
 		{
 			assert(gManager != nullptr && "GameObjectFactory has not initialized");
@@ -42,7 +51,7 @@ namespace GameObject {
 		/**
 		* @brief constructs a game object handle and injects the manager if possible
 		*/
-		template<typename T, typename ... Args>
+		template<DerivesFromGameObject T, typename ... Args>
 		static Utils::Handle<T> MakeGameObjectHandle(Args&& ... args)
 		{
 			assert(gManager != nullptr && "GameObjectFactory has not initialized");
