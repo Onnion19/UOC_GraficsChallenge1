@@ -1,20 +1,24 @@
 #pragma once
 
 #include "Core/GameManagers.h"
-#include "Resources/ResourceManager.h"
+#include "Core/Tag.h"
 #include "Utils/Handlers.h"
+#include "Resources/ResourceManager.h"
 #include "GameObjects/GameObjectID.h"
 namespace GameObject {
-
 
 	/**
 	* Base class for game objects. The inheritance is not enforced but encouraged.
 	* When a an Object inheriting from GameObject will get the game managers injected when construced via
 	* the GameObjectFactory.
 	*/
-	class GameObject : public IdentifiedObject {
+	class GameObject : public IdentifiedObject, public Core::TaggedObject {
 	public:
 		explicit GameObject(Core::GameManagers& manager) noexcept : IdentifiedObject(), gManager(manager) {}
+
+		template<Core::StringLike T>
+		explicit GameObject(Core::GameManagers& manager, T tag) noexcept : IdentifiedObject(), Core::TaggedObject(tag), gManager(manager) {}
+
 		virtual ~GameObject() {}
 	protected:
 		Core::GameManagers& gManager;
