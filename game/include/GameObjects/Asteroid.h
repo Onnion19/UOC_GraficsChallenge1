@@ -25,7 +25,7 @@ namespace GameObject
 		void Update(float deltaTime);
 		void Draw();
 		bool Valid()const;
-		void OnCollision();
+		void OnCollision(GameObject* owner);
 	private:
 		void RegisterCollider();
 		void UnregisterCollider();
