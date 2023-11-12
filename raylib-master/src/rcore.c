@@ -947,7 +947,7 @@ void InitWindow(int width, int height, const char *title)
 }
 
 // Close window and unload OpenGL context
-void CloseWindow(void)
+void EndWindow(void)
 {
 #if defined(SUPPORT_GIF_RECORDING)
     if (gifRecording)
@@ -5944,7 +5944,7 @@ static void AndroidCommandCallback(struct android_app *app, int32_t cmd)
                 CORE.Android.contextRebindRequired = true;
             }
             // If 'CORE.Window.device' is already set to 'EGL_NO_DISPLAY'
-            // this means that the user has already called 'CloseWindow()'
+            // this means that the user has already called 'EndWindow()'
 
         } break;
         case APP_CMD_SAVE_STATE: break;
