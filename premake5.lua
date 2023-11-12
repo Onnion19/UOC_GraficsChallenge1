@@ -17,11 +17,6 @@ function string.starts(String,Start)
     return string.sub(String,1,string.len(Start))==Start
 end
 
-function link_to(lib)
-    links (lib)
-    includedirs ("../"..lib.."/include")
-    includedirs ("../"..lib.."/" )
-end
 
 function download_progress(total, current)
     local ratio = current / total;
@@ -45,19 +40,17 @@ function check_raylib()
     end
 end
 
-workspaceName = path.getbasename(os.getcwd())
 
-if (string.lower(workspaceName) == "raylib") then
-    print("raylib is a reserved name. Name your project directory something else.")
-    -- Project generation will succeed, but compilation will definitely fail, so just abort here.
-    os.exit()
-end
-
-workspace (workspaceName)
+workspace "GraphicsUOC"
     configurations { "Debug", "Release"}
     platforms { "x64", "x86", "ARM64"}
-	
 	defaultplatform ("x64")
+	cdialect "C99"
+    cppdialect "C++latest"
+	
+	startproject "game" 
+	targetdir "_bin/%{cfg.buildcfg}/"
+
 
     filter "configurations:Debug"
         defines { "DEBUG" }
@@ -75,28 +68,17 @@ workspace (workspaceName)
 
     filter {}
 
-    targetdir "_bin/%{cfg.buildcfg}/"
+	project "game"
+		kind "ConsoleApp"
+		location "game"
+		language "C++"
+		includedirs{"game/include", "engine/include", "raylib-master/src"}
+		files {"game/**.h","game/*.hpp", "game/**.cpp"}
+		links {"engine"}
 
-    if(os.isdir("game")) then
-        startproject(workspaceName)
-    end
-
-    cdialect "C99"
-    cppdialect "C++latest"
+	
+	
+	
 check_raylib();
-
 include ("raylib_premake5.lua")
-
-if(os.isdir("game")) then
-    include ("game")
-end
-
-folders = os.matchdirs("*")
-for _, folderName in ipairs(folders) do
-    if (string.starts(folderName, "raylib") == false and string.starts(folderName, "_") == false and string.starts(folderName, ".") == false) then
-        if (os.isfile(folderName .. "/premake5.lua")) then
-            print(folderName)
-            include (folderName)
-        end
-    end
-end
+include ("engine_premake5.lua")

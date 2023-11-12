@@ -2,3 +2,8 @@ raylib-master
 _build
 _bin
 .vs
+**/obj
+*.vcxproj**
+*.filters
+*.sln
+*.bak

@@ -59,7 +59,7 @@ function link_raylib()
     filter "system:windows"
         defines{"_WIN32"}
         links {"winmm", "kernel32", "opengl32", "gdi32"}
-        libdirs {"../_bin/%{cfg.buildcfg}"}
+        libdirs {"_bin/%{cfg.buildcfg}"}
 
     filter "system:linux"
         links {"pthread", "GL", "m", "dl", "rt", "X11"}
@@ -97,7 +97,6 @@ project "raylib"
         characterset ("MBCS")
 
     filter{}
-
     raylib_dir = get_raylib_dir();
     print ("Using raylib dir " .. raylib_dir);
     includedirs {raylib_dir .. "/src", raylib_dir .. "/src/external/glfw/include" }
