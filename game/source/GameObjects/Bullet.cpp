@@ -60,7 +60,7 @@ void GameObject::Bullet::Draw()const
 	DrawTexturePro(*texture, textureQuad, renderQuad, { static_cast<float>(transform.size.x), static_cast<float>(transform.size.y) }, transform.rotation, WHITE);
 }
 
-void GameObject::Bullet::OnCollision()
+void GameObject::Bullet::OnCollision(GameObject* owner)
 {
 	UnRegisterCollider();
 }
@@ -72,7 +72,7 @@ void GameObject::Bullet::Invalidate()
 
 void GameObject::Bullet::RegisterCollider()
 {
-	colider = gManager.GetManager<Core::PhysicsManager>().RegisterCollider<Geometry::Circle>(*this, Geometry::Point{ transform.position }, transform.size.x/2.f);
+	colider = gManager.GetManager<Core::PhysicsManager>().RegisterCollider<Geometry::Circle>(*this, this, Geometry::Point{ transform.position }, transform.size.x/2.f);
 
 }
 

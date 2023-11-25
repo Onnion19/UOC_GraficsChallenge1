@@ -3,7 +3,7 @@
 #include "Utils/Geometry.h"
 #include "Utils/GameplayManager.h"
 
-
+#include <iostream>
 
 GameObject::Spaceship::Spaceship(Core::GameManagers& manager, const Utils::Vector2f& pos) : GameObject(manager), position(pos), collider(), physics(gManager.GetManager<Core::PhysicsManager>())
 {
@@ -97,8 +97,10 @@ void GameObject::Spaceship::Update(float deltatime)
 	std::for_each(bullets.begin(), bullets.end(), [deltatime](Bullet& b) {b.Update(deltatime); });
 }
 
-void GameObject::Spaceship::OnCollision()
+void GameObject::Spaceship::OnCollision(GameObject* owner)
 {
+	if (owner)
+		std::cout <<"Collided with: " << owner->GetTag() << std::endl;
 	if (invulnerableTime > 0)return;
 
 	gManager.GetManager<GameplayManager>().UpdateHealth(-1);
@@ -147,7 +149,7 @@ void GameObject::Spaceship::SpawnBullet()
 
 void GameObject::Spaceship::RegisterCollider()
 {
-	collider = physics.RegisterCollider<Geometry::Circle>(*this, Geometry::Point{ position }, static_cast<float>(size.x));
+	collider = physics.RegisterCollider<Geometry::Circle>(*this, this, Geometry::Point{ position }, static_cast<float>(size.x));
 }
 
 void GameObject::Spaceship::UnregisterCollider()

@@ -30,7 +30,7 @@ namespace GameObject
 		bool Active()const;
 		void Draw()const;
 
-		void OnCollision();
+		void OnCollision(GameObject* owner);
 	private:
 		void Invalidate();
 		void RegisterCollider();

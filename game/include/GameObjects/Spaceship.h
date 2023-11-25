@@ -30,7 +30,7 @@ namespace GameObject {
 		void SetPosition(const Utils::Vector2f& pos);
 
 		void Update(float detltaTime);
-		void OnCollision();
+		void OnCollision(GameObject* owner);
 		void Draw();
 
 		void StartInvulnerability(float time = invulerabilityTime);
