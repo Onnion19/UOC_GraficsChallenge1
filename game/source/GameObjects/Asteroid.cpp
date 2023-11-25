@@ -19,6 +19,7 @@ namespace {
 
 GameObject::Asteroid::Asteroid(Core::GameManagers& manager, const AsteroidTransform& trans) : GameObject::GameObject(manager), transform(trans)
 {
+	SetTag(AsteroidTag);
 	RegisterCollider();
 	texture = gManager.GetManager<ResourceManager>().GetOrLoad<Texture2D>(asteroidTextureID, "resources/asteroid.png");
 	SetTag("Asteroid");
@@ -73,7 +74,9 @@ bool GameObject::Asteroid::Valid() const
 	return colider.Valid();
 }
 
+
 void GameObject::Asteroid::OnCollision(GameObject* owner)
+
 {
 	--health;
 	// Send the event to update the score
@@ -87,8 +90,8 @@ void GameObject::Asteroid::OnCollision(GameObject* owner)
 void GameObject::Asteroid::RegisterCollider()
 {
 	auto bot_right = transform.position + transform.size;
-	colider = gManager.GetManager<Core::PhysicsManager>().RegisterCollider<Geometry::Rectangle>(*this, this, Geometry::Point{ transform.position }, Geometry::Point{ bot_right });
 
+	colider = gManager.GetManager<Core::PhysicsManager>().RegisterCollider<Geometry::Rectangle>(*this, this, Geometry::Point{ transform.position }, Geometry::Point{ bot_right });
 }
 
 void GameObject::Asteroid::UnregisterCollider()

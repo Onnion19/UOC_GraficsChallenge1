@@ -3,6 +3,10 @@
 #include "Utils/Geometry.h"
 #include "Utils/RandomGenerator.h"
 
+namespace GameObject {
+	class GameObject;
+}
+
 namespace Core
 {
 	class PhysicsManager;
@@ -16,6 +20,7 @@ namespace GameObject {
 template<typename T>
 concept ColliderCallback = requires (T t, GameObject::GameObject* owner) {
 	t.OnCollision(owner);
+
 };
 
 
@@ -40,7 +45,7 @@ namespace Internal {
 		using ColliderBounds = Geometry::GeometryData;
 
 		/**
-		* Constructor taking a callback OnCollision()
+		* Constructor taking a callback OnCollision(const Collider*)
 		*/
 		template<ColliderShape Shape, ColliderCallback T>
 		_InternalCollider(Shape&& shape, T& t, GameObject::GameObject* go = nullptr)
@@ -48,6 +53,7 @@ namespace Internal {
 			, bounds(std::move(shape))
 			, owner(go) {
 			_OnCollission = [](void* data, GameObject::GameObject* owner) {static_cast<T*>(data)->OnCollision(owner); };
+
 		}
 
 		/**
@@ -62,6 +68,7 @@ namespace Internal {
 
 
 		void OnCollision(GameObject::GameObject* owner) { if (_ptr)_OnCollission(_ptr, owner); }
+
 
 		/*
 			RAW DATA, CAUTION HERE
@@ -81,6 +88,7 @@ namespace Internal {
 		// Type erasure lambda.
 		void (*_OnCollission)(void* ptr, GameObject::GameObject* owner);
 
+
 		friend class Collider;
 	};
 
@@ -91,6 +99,11 @@ namespace Internal {
 		ColliderId id = 0;
 	};
 }
+
+
+enum class ColliderTag : std::uint8_t {
+	NONE, PLAYER, INTERACTABLE, FLOOR, BARREL
+};
 
 /**
 * Public collider class, it's a safe wrapper of the internal data used by the "engine".
@@ -103,11 +116,16 @@ public:
 	ConstColliderId GetId() const { return id; }
 	template<ColliderShape Shape>
 	void UpdateColliderBounds(Shape&& bound) { assert(Valid()); internal_collider->bounds = bound; }
+
 	bool Valid()const { return id != InvalidCollider; }
+
+	void SetGameObject(GameObject::GameObject& object);
+	GameObject::GameObject* GetGameObject();
 private:
 	Collider(Internal::_InternalCollider& col, ConstColliderId i) : internal_collider(&col), id(i) {}
 
 	Internal::_InternalCollider* internal_collider;
 	ColliderId id;
+	GameObject::GameObject* gameObject = nullptr;
 	friend Core::PhysicsManager;
 };
