@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/GameManagers.h"
+#include "Components/ComponentManager.h"
 #include "Core/Tag.h"
 #include "Utils/Handlers.h"
 #include "Resources/ResourceManager.h"
@@ -14,14 +15,32 @@ namespace GameObject {
 	*/
 	class GameObject : public IdentifiedObject, public Core::TaggedObject {
 	public:
-		explicit GameObject(Core::GameManagers& manager) noexcept : IdentifiedObject(), gManager(manager) {}
+		explicit GameObject(Core::GameManagers& manager) noexcept : IdentifiedObject(), gManager(manager), componentManager(manager.GetManager<Components::ComponentManager>()) {}
 
 		template<Core::StringLike T>
 		explicit GameObject(Core::GameManagers& manager, T tag) noexcept : IdentifiedObject(), Core::TaggedObject(tag), gManager(manager) {}
 
 		virtual ~GameObject() {}
+
+		template<typename T, typename ... Args>
+		T& GetOrAddComponent(Args&& ... args) {
+			return componentManager.GetOrAddComponent<T>(GetId(), std::forward<Args>(args)...);
+		}
+
+		template<typename T>
+		T* GetComponent()
+		{
+			return componentManager.GetComponent<T>(GetId());
+		}
+
+		template<typename T>
+		bool RemoveComponent() {
+			return componentManager.RemoveComponent<T>();
+		}
+
 	protected:
 		Core::GameManagers& gManager;
+		Components::ComponentManager& componentManager;
 	};
 
 
