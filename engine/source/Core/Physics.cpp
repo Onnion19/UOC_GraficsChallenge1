@@ -18,7 +18,7 @@ bool Core::PhysicsManager::CheckCollisionOnCollider(const Collider& collider)
 		const bool hasCollided = CollisionSolver::Collides(collider.internal_collider->bounds, col.bounds);
 		if (hasCollided)
 		{
-			col.OnCollision();
+			col.OnCollision(&collider);
 			collider.internal_collider->OnCollision();
 			return true;
 		}

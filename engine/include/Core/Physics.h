@@ -52,7 +52,6 @@ namespace Core {
 		auto id = idFactory();
 		auto result = colliders.emplace(std::make_pair(id, Shape{ std::forward<Args>(args)... }));
 		return {result.first->second, id};
-
 	}
 
 	template<ColliderShape Shape, ColliderCallback T, typename ...Args>

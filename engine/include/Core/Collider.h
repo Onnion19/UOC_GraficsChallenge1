@@ -3,14 +3,20 @@
 #include "Utils/Geometry.h"
 #include "Utils/RandomGenerator.h"
 
+namespace GameObject {
+	class GameObject;
+}
+
 namespace Core
 {
 	class PhysicsManager;
 }
-// any class Implementing OnCollision() can be a callback listener
+
+class Collider;
+// any class Implementing OnCollision(const Collider*) can be a callback listener
 template<typename T>
-concept ColliderCallback = requires (T t) {
-	t.OnCollision();
+concept ColliderCallback = requires (T t, const Collider* c) {
+	t.OnCollision(c);
 };
 
 
@@ -35,13 +41,13 @@ namespace Internal{
 		using ColliderBounds = Geometry::GeometryData;
 		
 		/**
-		* Constructor taking a callback OnCollision()
+		* Constructor taking a callback OnCollision(const Collider*)
 		*/
 		template<ColliderShape Shape, ColliderCallback T>
 		_InternalCollider(Shape&& shape, T& t)
 			: _ptr(&t)
 			, bounds(std::move(shape)) {
-			_OnCollission = [](void* data) {static_cast<T*>(data)->OnCollision(); };
+			_OnCollission = [](void* data, const Collider* c) {static_cast<T*>(data)->OnCollision(c); };
 		}
 
 		/**
@@ -54,7 +60,7 @@ namespace Internal{
 			, _OnCollission(nullptr) {}
 
 
-		void OnCollision() { if (_ptr)_OnCollission(_ptr); }
+		void OnCollision(const Collider* otherCollider) { if (_ptr)_OnCollission(_ptr, otherCollider); }
 
 		/*
 			RAW DATA, CAUTION HERE
@@ -70,7 +76,7 @@ namespace Internal{
 #endif
 
 		// Type erasure lambda.
-		void (*_OnCollission)(void* ptr);
+		void (*_OnCollission)(void* ptr, const Collider* c);
 
 		friend class Collider;
 	};
@@ -83,6 +89,11 @@ namespace Internal{
 	};
 }
 
+
+enum class ColliderTag : std::uint8_t {
+	NONE, PLAYER, INTERACTABLE, FLOOR, BARREL
+};
+
 /**
 * Public collider class, it's a safe wrapper of the internal data used by the "engine".
 * Collider has as a raw pointer the internals, this is dangerous and probably can be improved.
@@ -94,11 +105,16 @@ public:
 	ConstColliderId GetId() const { return id; }
 	template<ColliderShape Shape>
 	void UpdateColliderBounds(Shape&& bound) { assert(Valid()); internal_collider->bounds = bound; }
+
 	bool Valid()const { return id != InvalidCollider; }
+
+	void SetGameObject(GameObject::GameObject& object);
+	GameObject::GameObject* GetGameObject();
 private:
 	Collider(Internal::_InternalCollider& col, ConstColliderId i) : internal_collider(&col), id(i) {}
 
 	Internal::_InternalCollider* internal_collider;
 	ColliderId id;
+	GameObject::GameObject* gameObject = nullptr;
 	friend Core::PhysicsManager;
 };
