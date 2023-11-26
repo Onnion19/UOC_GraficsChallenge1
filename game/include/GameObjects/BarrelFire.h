@@ -12,28 +12,5 @@ namespace GameObject
 		Utils::Vector2f movement{ 15.f, 54.f };
 	};
 
-	class Asteroid : public GameObject {
-		static constexpr int InitialHP = 3;
-		inline static const Core::Tag AsteroidTag = Core::Tag{ "Asteroid" };
-	public:
-		inline static const ResourceID asteroidTextureID{ "asteroid" };
-		Asteroid(Core::GameManagers& manager, const AsteroidTransform& trans);
-		Asteroid(Core::GameManagers& manager, Utils::Vector2f position, int size, Utils::Vector2f movement);
-		Asteroid(const Asteroid& other);
-		Asteroid& operator=(const Asteroid& other);
-		~Asteroid();
-
-		void Update(float deltaTime);
-		void Draw();
-		bool Valid()const;
-		void OnCollision(GameObject* owner);
-	private:
-		void RegisterCollider();
-		void UnregisterCollider();
-	private:
-		AsteroidTransform transform;
-		Utils::ResourceHandle<Texture2D> texture;
-		Collider colider;
-		int health = InitialHP;
-	};
+	class BarrelFire : public GameObject {};
 }

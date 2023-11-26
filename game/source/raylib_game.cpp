@@ -10,7 +10,7 @@
 
 int main()
 {
-	Core::Game game("Aleix-Rius-Asteroids");
+	Core::Game game("Aleix-Rius-DK");
 	game.Start();
 	return 0;
 }

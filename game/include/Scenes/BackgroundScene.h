@@ -1,8 +1,6 @@
 #pragma once 
 
 #include "Scenes/Scene.h"
-#include "GameObjects/Asteroid.h"
-#include "GameObjects/Spaceship.h"
 #include "GameObjects/HUD.h"
 #include "Utils/Timers.h"
 #include "Utils/Handlers.h"
@@ -20,17 +18,13 @@ public:
 
 	~BackgroundScene();
 private:
-	void SpawnAsteroid();
+
 
 private: 
 	static constexpr auto backgroundMusicPath{ "resources/gameMusic.wav" };
 	inline static const ResourceID backgroundMusicId{ "BackgroundMusic" };
 private:
 	std::string text;
-
-	std::vector<GameObject::Asteroid> asteroids;
-
-	Utils::Handle<GameObject::Spaceship> spaceship;
 	Utils::Handle<GameObject::HUD> hud;
 
 	Utils::SafeCallbackObject asteroidsSpawnerObject; 
