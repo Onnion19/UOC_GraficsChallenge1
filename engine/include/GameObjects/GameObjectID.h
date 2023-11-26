@@ -15,6 +15,8 @@ namespace GameObject
 	// https://learn.microsoft.com/en-us/windows/win32/api/guiddef/ns-guiddef-guid
 	struct ID {
 
+		using rep = unsigned int;
+
 		ID(const ID&) = delete;
 		ID(ID&&) = delete;
 		ID& operator=(const ID&) = delete;
@@ -24,7 +26,7 @@ namespace GameObject
 		bool operator <(const ID& i)const { return id < i.id; }
 		bool operator >(const ID& i)const { return id > i.id; }
 
-		operator unsigned int() const { return id; }
+		operator rep() const { return id; }
 
 	private:
 		ID(unsigned int i) : id(i) {}

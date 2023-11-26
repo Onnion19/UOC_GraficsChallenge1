@@ -7,39 +7,45 @@
 #include "Resources/Texture.h"
 #include "Resources/music.h"
 
+namespace Components {
+	class Atlas;
+	class SpriteSheetAnimation;
+	class Transform;
+}
+
 namespace GameObject {
 
 	class Mario : public GameObject
 	{
-		static constexpr float invulerabilityTime = 3.f; // safe time after being hit
-		static constexpr float rotationSpeed = 120.f;
 		static constexpr float speed = 200.f;
-		static constexpr auto spaceshipTexturePath{ "resources/spaceship.png" };
-		static constexpr auto shootingSoundPath{ "resources/shoot.wav" };
+		static constexpr auto marioTexturePath{ "resources/Characters/MarioAtlas.png" };
+		inline static const ResourceID marioTextureID{ "MarioAtlas" };
 	public:
-		inline static const ResourceID spaceshipTextureID{ "SpaceshipTexture" };
-		inline static const ResourceID shootingSoundID{ "ShootingSound" };
 
 		Mario(Core::GameManagers& manager, const Utils::Vector2f& initialPosition);
-	//	Mario(const Mario& b);
-	//	Mario& operator=(const Mario& b);
-	//	~Mario();
+		//	Mario(const Mario& b);
+		//	Mario& operator=(const Mario& b);
+		//	~Mario();
 
-	//	Utils::Vector2i GetPosition()const;
-	//	void SetPosition(const Utils::Vector2f& pos);
+		//	Utils::Vector2i GetPosition()const;
+		//	void SetPosition(const Utils::Vector2f& pos);
 
-	//	void Update(float detltaTime);
-	//	void OnCollision(GameObject* owner);
-	//	void Draw();
+		void Update(float detltaTime);
+		//	void OnCollision(GameObject* owner);
+		void Draw();
 
-	//	void StartInvulnerability(float time = invulerabilityTime);
-	//private:
-	//	void SpawnBullet();
-	//	void RegisterCollider();
-	//	void UnregisterCollider();
+		//	void StartInvulnerability(float time = invulerabilityTime);
+		//private:
+		//	void SpawnBullet();
+		//	void RegisterCollider();
+		//	void UnregisterCollider();
 	private:
 		Core::PhysicsManager& physics;
 		Collider collider;
-		Utils::ResourceHandle<Resources::Texture> texture;
+		
+		
+		Components::Transform* transform;
+		Components::Atlas* atlasComponent;
+		Components::SpriteSheetAnimation* spriteAnimation;
 	};
 }

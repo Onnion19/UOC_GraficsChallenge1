@@ -2,6 +2,7 @@
 
 #include "Scenes/Scene.h"
 #include "GameObjects/HUD.h"
+#include "GameObjects/Mario.h"
 #include "Utils/Timers.h"
 #include "Utils/Handlers.h"
 #include "Resources/music.h"
@@ -27,11 +28,10 @@ private:
 	std::string text;
 	Utils::Handle<GameObject::HUD> hud;
 
-	Utils::SafeCallbackObject asteroidsSpawnerObject; 
+	Utils::Handle<GameObject::Mario> mario;
+
 	Utils::SafeCallbackObject healthCallback;
-
 	Utils::RepeatingTimerWithVariation asteroidsSpawnerTimer;
-
 	Utils::ResourceHandle<Music> backgroundMusic;
 };
 

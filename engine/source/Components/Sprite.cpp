@@ -1,5 +1,5 @@
 #include "Components/Sprite.h"
-#include "raylib.h"
+#include "Render/RenderUtils.h"
 
 Components::Sprite::Sprite(const Utils::ResourceHandle<Resources::Texture>& handle) : texture(handle)
 {
@@ -13,6 +13,5 @@ Components::Sprite::Sprite(Utils::ResourceHandle<Resources::Texture>&& handle) :
 
 void Components::Sprite::Render(const Components::Transform& transform) const
 {
-	Rectangle renderQuad{ transform.position.x, transform.position.y, static_cast<float>(transform.size.x),static_cast<float> (transform.size.y) };
-	DrawTexturePro(*texture, textureQuad, renderQuad, { transform.size.x / 2.f, transform.size.y / 2.f }, transform.rotation, WHITE);
+	RenderUtils::RenderImage(texture.get(), textureQuad, transform);
 }

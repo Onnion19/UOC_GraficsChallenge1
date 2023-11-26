@@ -15,7 +15,7 @@ namespace Components {
 			template<typename T>
 			ComponentTE(T* t) noexcept {
 				_data = t;
-				Deleter = [](void* ptr) {delete static_cast<T*>(_data); };
+				Deleter = [](void* ptr) {delete static_cast<T*>(ptr); };
 			}
 
 			ComponentTE(ComponentTE&& other) noexcept {
@@ -25,7 +25,7 @@ namespace Components {
 				other.Deleter = nullptr;
 			}
 
-			~ComponentTE() { Deleter(_data); }
+			~ComponentTE() { if(Deleter) Deleter(_data); }
 			template<typename T>
 			T* GetDataAs() const { return static_cast<T*>(_data); }
 
@@ -40,7 +40,7 @@ namespace Components {
 	class ComponentManager {
 	public:
 		using TypeId = std::size_t;
-		using GameObjectID = GameObject::ID;
+		using GameObjectID = GameObject::ID::rep;
 		using GameObjectMap = std::unordered_map<GameObjectID, _internal::ComponentTE>;
 		using ComponentMap = std::unordered_map<TypeId, GameObjectMap>;
 	public:
@@ -93,11 +93,11 @@ namespace Components {
 		}
 
 		template<typename T, typename ... Args>
-		T& AddComponent(const GameObjectID& id, GameObjectMap& map, Args&& ... args)
+		T& AddComponent(GameObjectID id, GameObjectMap& map, Args&& ... args)
 		{
 			assert(map.find(id) == map.end());
 			T* t = new T(std::forward<Args>(args)...);
-			auto result = map.emplace(id, t);
+			auto result = map.emplace(id, _internal::ComponentTE{ t });
 			assert(result.second);
 			return *result.first->second.GetDataAs<T>();
 		}

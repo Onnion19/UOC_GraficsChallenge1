@@ -31,6 +31,9 @@ namespace Utils
 		void operator+= (const Vector2<T>& i) { x += i.x; y += i.y; }
 		constexpr Vector2<T> operator- (const Vector2<T>& i) const { return { x - i.x, y - i.y }; }
 		void operator-= (const Vector2<T>& i) { x -= i.x; y -= i.y; }
+
+		bool operator == (const Vector2<T>& i) const { return x == i.x && y == i.y; }
+		bool operator != (const Vector2<T>& i) const { return !(*this == i); }
 	};
 
 

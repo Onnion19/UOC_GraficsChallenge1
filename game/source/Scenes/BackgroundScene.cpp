@@ -28,19 +28,23 @@ BackgroundScene::BackgroundScene(Core::GameManagers& manager)
 
 void BackgroundScene::Activate()
 {
+	mario = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Mario>(Utils::Vector2f{ 500,500 });
 }
 
 void BackgroundScene::DeActivate()
 {
+	mario.reset();
 }
 
 void BackgroundScene::Update(float deltaTime) {
+	mario->Update(deltaTime);
 #if DEBUG
 	managers.GetManager<Core::PhysicsManager>().DrawDebugColliders();
 #endif
 }
 
 void BackgroundScene::Draw() {
+	mario->Draw();
 }
 
 void BackgroundScene::Finish() {

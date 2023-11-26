@@ -15,6 +15,7 @@ Core::Game::Game(std::string_view name)
 	, gameLoop([window = mainWindow.get()]() {return window->WantsToClose(); }, mainWindow.get())
 	, managers() {
 
+	managers.RegisterManager<Components::ComponentManager>();
 	managers.RegisterManager<SceneManager>().RegisterListener(&gameLoop);
 	managers.RegisterManager<ResourceManager>();
 	managers.RegisterManager<PhysicsManager>();
@@ -25,6 +26,7 @@ Core::Game::Game(std::string_view name)
 
 Core::Game::~Game()
 {
+	managers.UnregisterManager<Components::ComponentManager>();
 	managers.UnregisterManager<SceneManager>();
 	managers.UnregisterManager<ResourceManager>();
 	managers.UnregisterManager<PhysicsManager>();
@@ -34,10 +36,11 @@ Core::Game::~Game()
 
 void Core::Game::Initialize()
 {
-	managers.GetManager<SceneManager>().AddScene<BackgroundScene>(ResourceID{ "GameScene" }, false);
-	managers.GetManager<SceneManager>().AddScene<EndScene>(ResourceID{ "EndScene" }, false);
-	managers.GetManager<SceneManager>().AddScene<MainMenu>(ResourceID{ "MainMenu" }, false);
-	managers.GetManager<SceneManager>().AddAndLoadScene<LogoScene>(ResourceID{ "Logo" }, false);
+	//managers.GetManager<SceneManager>().AddScene<BackgroundScene>(ResourceID{ "GameScene" }, false);
+	//managers.GetManager<SceneManager>().AddScene<EndScene>(ResourceID{ "EndScene" }, false);
+	//managers.GetManager<SceneManager>().AddScene<MainMenu>(ResourceID{ "MainMenu" }, false);
+	//managers.GetManager<SceneManager>().AddAndLoadScene<LogoScene>(ResourceID{ "Logo" }, false);
+	managers.GetManager<SceneManager>().AddAndLoadScene<BackgroundScene>(ResourceID{ "GameScene" }, false);
 }
 
 void Core::Game::Start()
