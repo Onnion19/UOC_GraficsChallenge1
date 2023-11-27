@@ -3,6 +3,11 @@
 #include "Utils/GameObjectEmitter.h"
 #include "Utils/GameplayManager.h"
 #include "Utils/RandomGenerator.h"
+#include "Components/Sprite.h"
+
+#include "GameObjects/Mario.h"
+#include "GameObjects/HUD.h"
+#include "GameObjects/Scenario.h"
 
 #if DEBUG
 #include "Core/Physics.h"
@@ -28,7 +33,10 @@ BackgroundScene::BackgroundScene(Core::GameManagers& manager)
 
 void BackgroundScene::Activate()
 {
-	mario = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Mario>(Utils::Vector2f{ 500,500 });
+	mario = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Mario>(Utils::Vector2f{ 30	,1020 });
+
+	auto handle = managers.GetManager<ResourceManager>().GetOrLoad<Resources::Texture>(mapTextureId, mapTexturePath);
+	map = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Scenario>(std::move(handle));
 }
 
 void BackgroundScene::DeActivate()
@@ -44,6 +52,7 @@ void BackgroundScene::Update(float deltaTime) {
 }
 
 void BackgroundScene::Draw() {
+	map->Draw();
 	mario->Draw();
 }
 
