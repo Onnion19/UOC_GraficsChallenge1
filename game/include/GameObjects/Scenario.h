@@ -3,6 +3,8 @@
 #include "GameObjects/GameOjbect.h"
 #include "Resources/Texture.h"
 #include <string_view>
+#include "Core/Physics.h"
+#include <vector>
 
 namespace Components {
 	class Sprite;
@@ -22,5 +24,6 @@ namespace GameObject {
 	private: 
 		Components::Transform* transformComponent;
 		Components::Sprite* spriteComponent;
+		std::vector<Collider> colliders;
 	};
 }

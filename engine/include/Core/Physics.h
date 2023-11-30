@@ -54,7 +54,8 @@ namespace Core {
 	inline Collider PhysicsManager::RegisterCollider(GameObject::GameObject* owner, Args && ...args)
 	{
 		auto id = idFactory();
-		auto result = colliders.emplace(std::make_pair(id, { Shape{ std::forward<Args>(args)... } , owner }));
+		Shape s{ std::forward<Args>(args)... };
+		auto result = colliders.emplace(std::make_pair(id, ::Internal::_InternalCollider{std::move(s), owner}));
 		return {result.first->second, id};
 	}
 

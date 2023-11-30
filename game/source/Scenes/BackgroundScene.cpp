@@ -46,14 +46,16 @@ void BackgroundScene::DeActivate()
 
 void BackgroundScene::Update(float deltaTime) {
 	mario->Update(deltaTime);
-#if DEBUG
-	managers.GetManager<Core::PhysicsManager>().DrawDebugColliders();
-#endif
+
 }
 
 void BackgroundScene::Draw() {
 	map->Draw();
 	mario->Draw();
+
+#if DEBUG
+	managers.GetManager<Core::PhysicsManager>().DrawDebugColliders();
+#endif
 }
 
 void BackgroundScene::Finish() {
