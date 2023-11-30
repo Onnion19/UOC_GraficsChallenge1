@@ -1,4 +1,5 @@
 #include "Core/Game.h"
+#include "Core/WindowManager.h"
 #include "Resources/ResourceManager.h"
 #include "Scenes/SceneManager.h"
 #include "Scenes/BackgroundScene.h"
@@ -11,17 +12,17 @@
 #include "Resources/Texture.h"
 
 Core::Game::Game(std::string_view name)
-	: mainWindow(CreateWindow(1920, 1080, name))
-	, gameLoop([window = mainWindow.get()]() {return window->WantsToClose(); }, mainWindow.get())
-	, managers() {
+{
 
 	managers.RegisterManager<Components::ComponentManager>();
 	managers.RegisterManager<SceneManager>().RegisterListener(&gameLoop);
 	managers.RegisterManager<ResourceManager>();
 	managers.RegisterManager<PhysicsManager>();
 	managers.RegisterManager<GameplayManager>();
-
+	auto& windowManager = managers.RegisterManager<WindowManager>(name, 1920, 1080);
 	GameObject::GameObjectFactory::RegisterGameManagers(managers);
+
+	gameLoop = { [window = windowManager.GetCurrentWindow()]() {return window->WantsToClose(); }, windowManager.GetCurrentWindow() };
 }
 
 Core::Game::~Game()

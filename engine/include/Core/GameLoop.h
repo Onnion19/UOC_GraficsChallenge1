@@ -34,6 +34,7 @@ namespace Core {
 	class GameLoop {
 		using StopFunctor = std::function<bool()>;
 	public:
+		GameLoop() = default;
 		GameLoop(StopFunctor&& func, Core::Window* win) : stopCondition(std::move(func)), window(win), activeScene(nullptr), isRunning(true) {}
 		void Loop();
 		void OnSceneLoaded(Scenes::IScene* scene);

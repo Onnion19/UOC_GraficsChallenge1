@@ -23,27 +23,23 @@ namespace GameObject {
 	public:
 
 		Mario(Core::GameManagers& manager, const Utils::Vector2f& initialPosition);
-		//	Mario(const Mario& b);
-		//	Mario& operator=(const Mario& b);
-		//	~Mario();
-
-		//	Utils::Vector2i GetPosition()const;
-		//	void SetPosition(const Utils::Vector2f& pos);
+		const Utils::Vector2f& GetPosition()const;
+		void SetPosition(const Utils::Vector2f& pos);
 
 		void Update(float detltaTime);
-		//	void OnCollision(GameObject* owner);
+		void OnCollision(GameObject* owner);
 		void Draw();
 
-		//	void StartInvulnerability(float time = invulerabilityTime);
-		//private:
-		//	void SpawnBullet();
-		//	void RegisterCollider();
-		//	void UnregisterCollider();
+	private:
+		void RegisterCollider();
+		void UpdateCollider();
+		void UnregisterCollider();
 	private:
 		Core::PhysicsManager& physics;
 		Collider collider;
-		
-		
+
+		bool collidedThisFrame = false;
+
 		Components::Transform* transform;
 		Components::Atlas* atlasComponent;
 		Components::SpriteSheetAnimation* spriteAnimation;

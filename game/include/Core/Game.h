@@ -21,8 +21,6 @@ namespace Core {
 		void DeInitialize();
 	private:
 		GameManagers managers;
-		// Window will be auto closed and released (RAII).
-		WindowHandle mainWindow;
 		GameLoop gameLoop;
 	};
 }

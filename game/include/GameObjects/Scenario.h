@@ -8,7 +8,7 @@
 
 namespace Components {
 	class Sprite;
-	struct Transform;
+	class Transform;
 };
 
 namespace GameObject {
@@ -21,9 +21,11 @@ namespace GameObject {
 		void Draw();
 	private: 
 		void SetupTransform();
+		void RegisterWalls();
+		void RegisterStairs();
 	private: 
 		Components::Transform* transformComponent;
 		Components::Sprite* spriteComponent;
-		std::vector<Collider> colliders;
+		std::vector<Utils::Handle<GameObject>> colliders;
 	};
 }

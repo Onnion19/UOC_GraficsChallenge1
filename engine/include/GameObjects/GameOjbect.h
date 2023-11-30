@@ -88,6 +88,23 @@ namespace GameObject {
 			}
 		}
 
+		template<DerivesFromGameObject T, typename ... Args>
+		static Utils::Handle<GameObject> MakePureGameObjectHandle(Args&& ... args)
+		{
+			assert(gManager != nullptr && "GameObjectFactory has not initialized");
+			T* gameObject = nullptr;
+			if constexpr (std::is_constructible_v<T, Core::GameManagers&, Args...>)
+			{
+				gameObject = new T{ *gManager, std::forward<Args>(args)... };
+			}
+			else
+			{
+				gameObject = new T{ std::forward<Args>(args)... };
+			}
+
+			return Utils::Handle<GameObject>{ gameObject };
+		}
+
 		static void RegisterGameManagers(Core::GameManagers& managers) {
 			gManager = &managers;
 		}

@@ -4,8 +4,9 @@
 
 namespace Components
 {
-	struct Transform
+	class Transform
 	{
+	public:
 		Utils::Vector2f position;
 		float rotation; 
 		Utils::Vector2f size;

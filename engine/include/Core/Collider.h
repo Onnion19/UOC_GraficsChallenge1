@@ -119,6 +119,9 @@ public:
 
 	bool Valid()const { return id != InvalidCollider; }
 
+	const Geometry::GeometryData* GetBounds() const { return (internal_collider) ? &internal_collider->bounds : nullptr; }
+
+
 	void SetGameObject(GameObject::GameObject& object);
 	GameObject::GameObject* GetGameObject();
 private:
