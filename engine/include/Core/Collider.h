@@ -82,7 +82,7 @@ namespace Internal {
 		ColliderBounds bounds;
 
 #if DEBUG
-		Color debugColor = Utils::RandomGenerator::GenerateRandom(BLACK, WHITE);
+		Color debugColor = Utils::RandomGenerator::GenerateRandom(Color{ 0,0,0,155 }, Color{255,255,255,155});
 #endif
 
 		// Type erasure lambda.
