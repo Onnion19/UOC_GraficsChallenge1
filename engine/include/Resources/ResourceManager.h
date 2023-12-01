@@ -6,34 +6,11 @@
 #include <cassert>
 #include "Resources/ResourceLoader.h"
 #include "Utils/Handlers.h"
+#include "Utils/StringHash.h"
 
 
 
-// Resource ID is just to hash string into id's. 
-// It would be nice to have constpexr hashing but this is probably out of the scope.
-struct ResourceID
-{
-private:
-	inline static const std::hash<std::string_view>hashFactory{};
-	std::size_t id;
-public:
-	explicit ResourceID(std::string_view name) noexcept : id(hashFactory(name)) {}
-	explicit ResourceID(const char* name) noexcept : id(hashFactory(name)) {}
-
-	size_t GetId()const { return id; }
-	inline operator size_t() const noexcept { return id; }
-};
-
-namespace std
-{
-	template<>
-	struct std::hash<ResourceID> {
-		size_t operator()(const ResourceID& resourceID) const noexcept {
-			// implicit size_t cast
-			return resourceID;
-		}
-	};
-}
+ 
 
 
 /*
@@ -46,8 +23,10 @@ namespace std
 	  - Value: void* containing the ResourceHandle. Each resource specifies the handle using type traits. @see ResourceLoader.h for more info
 */
 
-class ResourceManager {
+using ResourceID = StringHash;
 
+class ResourceManager {
+private:
 	// Struct holding the ref counting of the resoruce.
 	struct ResourceData {
 		template<typename shared_ptr>

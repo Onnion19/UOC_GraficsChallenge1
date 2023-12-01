@@ -23,7 +23,7 @@ namespace Components {
 		Atlas(const Atlas& other);
 		Atlas(Atlas&& other);
 
-		void Draw(const Utils::Vector2i& cell, const Components::Transform& transform);
+		void Draw(const Utils::Vector2i& cell, const Components::Transform& transform) const;
 
 		Utils::Vector2i GetAtlasSize()const;
 	private: 

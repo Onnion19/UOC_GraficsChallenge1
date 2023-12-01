@@ -51,11 +51,12 @@ void BackgroundScene::Update(float deltaTime) {
 
 void BackgroundScene::Draw() {
 	map->Draw();
-	mario->Draw();
-
 #if DEBUG
 	managers.GetManager<Core::PhysicsManager>().DrawDebugColliders();
 #endif
+	mario->Draw();
+
+
 }
 
 void BackgroundScene::Finish() {

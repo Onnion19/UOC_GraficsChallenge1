@@ -21,7 +21,7 @@ Components::Atlas::Atlas(Atlas&& other)
 	, _properties(std::move(other._properties))
 {}
 
-void Components::Atlas::Draw(const Utils::Vector2i& cell, const Components::Transform& transform)
+void Components::Atlas::Draw(const Utils::Vector2i& cell, const Components::Transform& transform) const
 {
 	const auto textureQuad = GetTextureQuadFromCell(cell);
 	RenderUtils::RenderImage(_texture.get(), textureQuad, transform);

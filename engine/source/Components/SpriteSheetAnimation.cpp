@@ -2,14 +2,16 @@
 
 Components::SpriteSheetAnimation::SpriteSheetAnimation(const Atlas& atlas, const Utils::Vector2i& initialSpriteAtlas, const Utils::Vector2i& lastSpriteAtlas, int framesSpeed, bool repeat)
 	: sprites(BuildSpritesVectorFromRange(atlas, initialSpriteAtlas, lastSpriteAtlas))
+	, atlas(&atlas)
 	, currentSprite(0)
 	, speed(framesSpeed)
 	, loop(repeat)
 	, currentFrame(0)
 {}
 
-Components::SpriteSheetAnimation::SpriteSheetAnimation(const std::vector<Utils::Vector2i>& sprites, int framesSpeed, bool repeat)
+Components::SpriteSheetAnimation::SpriteSheetAnimation(const Atlas& atlas, const std::vector<Utils::Vector2i>& sprites, int framesSpeed, bool repeat)
 	: sprites(sprites)
+	, atlas(&atlas)
 	, currentSprite(0)
 	, speed(framesSpeed)
 	, loop(repeat)
@@ -27,9 +29,19 @@ void Components::SpriteSheetAnimation::Update()
 	}
 }
 
+void Components::SpriteSheetAnimation::Draw(const Transform& transform) const
+{
+	atlas->Draw(sprites[currentSprite], transform);
+}
+
 const Utils::Vector2i& Components::SpriteSheetAnimation::GetCurrentSprite() const
 {
 	return sprites[currentSprite];
+}
+
+void Components::SpriteSheetAnimation::Restart()
+{
+	currentFrame = 0;
 }
 
 std::vector<Utils::Vector2i> Components::SpriteSheetAnimation::BuildSpritesVectorFromRange(const Atlas& atlas, const Utils::Vector2i& initialSpriteAtlas, const Utils::Vector2i& lastSpriteAtlas)
