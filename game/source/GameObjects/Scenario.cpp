@@ -71,5 +71,5 @@ void GameObject::Scenario::RegisterStairs()
 	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.8750f, 0.5938f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
 	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.0893f, 0.4375f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
 	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.9107f, 0.4375f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
-	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.5893f, 0.3094f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.5893f, 0.2969f }, Utils::Vector2f{ 0.0357f, 0.0938f }));
 }
