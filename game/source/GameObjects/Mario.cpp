@@ -132,6 +132,12 @@ void GameObject::Mario::OnCollision(GameObject* other)
 {
 	if (!other)return;
 
+	if (other->GetTag() == enemyTag)
+	{
+		Die();
+		return;
+	}
+
 	if (auto wall = other->GetComponent<Components::WallComponent>())
 	{
 		transform->position.y = wall->GetSurfacePos() - transform->size.y / 2.f;
@@ -159,6 +165,7 @@ void GameObject::Mario::Draw()
 
 void GameObject::Mario::Die()
 {
+	if (std::holds_alternative<MarioMovement::DeathBehavior>(movementBehavior)) return;
 	movementBehavior = MarioMovement::DeathBehavior{ MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), transform };
 }
 

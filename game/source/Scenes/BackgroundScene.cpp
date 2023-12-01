@@ -6,6 +6,7 @@
 #include "Components/Sprite.h"
 
 #include "GameObjects/Mario.h"
+#include "GameObjects/DK.h"
 #include "GameObjects/HUD.h"
 #include "GameObjects/Scenario.h"
 
@@ -34,6 +35,7 @@ BackgroundScene::BackgroundScene(Core::GameManagers& manager)
 void BackgroundScene::Activate()
 {
 	mario = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Mario>(Utils::Vector2f{ 30	,1020 });
+	dk = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::DK>(Utils::Vector2f{ 500,850 }, 300.f, 250.f);
 
 	auto handle = managers.GetManager<ResourceManager>().GetOrLoad<Resources::Texture>(mapTextureId, mapTexturePath);
 	map = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Scenario>(std::move(handle));
@@ -46,7 +48,7 @@ void BackgroundScene::DeActivate()
 
 void BackgroundScene::Update(float deltaTime) {
 	mario->Update(deltaTime);
-
+	dk->Update(deltaTime);
 }
 
 void BackgroundScene::Draw() {
@@ -54,6 +56,7 @@ void BackgroundScene::Draw() {
 #if DEBUG
 	managers.GetManager<Core::PhysicsManager>().DrawDebugColliders();
 #endif
+	dk->Draw();
 	mario->Draw();
 
 

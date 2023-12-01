@@ -7,6 +7,7 @@
 
 namespace GameObject {
 	class Mario;
+	class DK;
 	class Scenario;
 	class HUD;
 };
@@ -35,6 +36,7 @@ private:
 	Utils::Handle<GameObject::HUD> hud;
 
 	Utils::Handle<GameObject::Mario> mario;
+	Utils::Handle<GameObject::DK> dk;
 	Utils::Handle <GameObject::Scenario> map;
 
 	Utils::SafeCallbackObject healthCallback;

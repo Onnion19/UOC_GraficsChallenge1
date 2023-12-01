@@ -101,10 +101,6 @@ namespace Internal {
 }
 
 
-enum class ColliderTag : std::uint8_t {
-	NONE, PLAYER, INTERACTABLE, FLOOR, BARREL
-};
-
 /**
 * Public collider class, it's a safe wrapper of the internal data used by the "engine".
 * Collider has as a raw pointer the internals, this is dangerous and probably can be improved.

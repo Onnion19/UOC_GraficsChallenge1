@@ -9,7 +9,7 @@ Components::WallComponent::WallComponent(const Collider& collider)
 	if (!colliderBounds) return;
 	auto colliderShape = Geometry::GetGeometryData<Geometry::Rectangle>(*colliderBounds);
 
-	surfacePosY = colliderShape.topLeft.y;
+	surfacePosY = static_cast<int>(colliderShape.topLeft.y);
 }
 
 int Components::WallComponent::GetSurfacePos() const

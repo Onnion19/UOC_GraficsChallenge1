@@ -86,6 +86,7 @@ namespace GameObject {
 		inline static const StringHash marioDeath{ "death" };
 		inline static const StringHash marioDeathIdle{ "deathIdle" };
 		static constexpr MarioMovement::MovementData MarioMovementData{ 200.f, 190.f,370.1f,90.f };
+		inline static const Core::Tag enemyTag{ "Enemy" };
 	public:
 
 		Mario(Core::GameManagers& manager, const Utils::Vector2f& initialPosition);
