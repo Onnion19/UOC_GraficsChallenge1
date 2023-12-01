@@ -35,11 +35,11 @@ int GameObject::MarioMovement::JumpBehavior::operator()(float deltatime) {
 
 	transform->position.y = std::clamp(transform->position.y - (verticalForce * deltatime), 0.f, static_cast<float>(screenSize.y));
 	verticalForce -= movementData.gravity * deltatime;
-	return verticalForce;
+	return static_cast<int>(verticalForce);
 }
 
 int GameObject::MarioMovement::ClimbBehavior::operator()(float deltatime) {
-	return 0.f;
+	return 0;
 }
 
 
@@ -56,6 +56,14 @@ GameObject::Mario::Mario(Core::GameManagers& manager, const Utils::Vector2f& pos
 	spriteAnimation = &GetOrAddComponent<Components::SpriteSheetAnimation>(*atlasComponent, Utils::Vector2i{ 0,0 }, Utils::Vector2i{ 5,2 }, 10);
 	RegisterCollider();
 	movementBehavior = MarioMovement::WalkBehavior{ MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), transform };
+}
+
+GameObject::Mario::~Mario()
+{
+	RemoveComponent<Components::SpriteSheetAnimation>();
+	RemoveComponent<Components::Atlas>();
+	RemoveComponent<Components::Transform>();
+	UnregisterCollider();
 }
 
 const Utils::Vector2f& GameObject::Mario::GetPosition() const

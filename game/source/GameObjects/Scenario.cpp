@@ -3,6 +3,7 @@
 #include "Components/Transform.h"
 #include "Core/WindowManager.h"
 #include "GameObjects/Wall.h"
+#include "GameObjects/Stair.h"
 
 GameObject::Scenario::Scenario(Core::GameManagers& managers, const Utils::ResourceHandle<Resources::Texture>& texture) : GameObject(managers)
 {
@@ -10,6 +11,7 @@ GameObject::Scenario::Scenario(Core::GameManagers& managers, const Utils::Resour
 	colliders.reserve(30);
 	SetupTransform();
 	RegisterWalls();
+	RegisterStairs();
 }
 
 GameObject::Scenario::Scenario(Core::GameManagers& managers, Utils::ResourceHandle<Resources::Texture>&& texture) : GameObject(managers)
@@ -17,6 +19,14 @@ GameObject::Scenario::Scenario(Core::GameManagers& managers, Utils::ResourceHand
 	spriteComponent = &GetOrAddComponent<Components::Sprite>(std::move(texture));
 	SetupTransform();
 	RegisterWalls();
+	RegisterStairs();
+}
+
+GameObject::Scenario::~Scenario()
+{
+	RemoveComponent<Components::Sprite>();
+	RemoveComponent<Components::Transform>();
+	colliders.clear();
 }
 
 void GameObject::Scenario::Draw()
@@ -35,18 +45,31 @@ void GameObject::Scenario::SetupTransform()
 
 void GameObject::Scenario::RegisterWalls()
 {
-	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{0.500f,0.98440f  }, Utils::Vector2f{ 1.f,0.0313f }));
-	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{0.5000f,0.82810f }, Utils::Vector2f{ .9286f,0.0313f }));
-	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{0.125f,0.67190f  }, Utils::Vector2f{ .1786f,0.0313f }));
-	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{0.4821f,0.6719f  }, Utils::Vector2f{ .3929f,0.0313f }));
-	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{0.8571f,0.6719f  }, Utils::Vector2f{ .2143f,0.0313f }));
-	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{0.21430f,0.5156f }, Utils::Vector2f{ .4286f,0.0313f }));
-	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{0.78570f,0.5156f }, Utils::Vector2f{ .4286f,0.0313f }));
-	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{0.500f,0.35940f  }, Utils::Vector2f{ .9286f,0.0313f }));
-	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{0.500f,0.23440f  }, Utils::Vector2f{ .2143f,0.0313f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{ 0.500f,0.98440f }, Utils::Vector2f{ 1.f,0.0313f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{ 0.5000f,0.82810f }, Utils::Vector2f{ .9286f,0.0313f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{ 0.125f,0.67190f }, Utils::Vector2f{ .1786f,0.0313f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{ 0.4821f,0.6719f }, Utils::Vector2f{ .3929f,0.0313f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{ 0.8571f,0.6719f }, Utils::Vector2f{ .2143f,0.0313f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{ 0.21430f,0.5156f }, Utils::Vector2f{ .4286f,0.0313f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{ 0.78570f,0.5156f }, Utils::Vector2f{ .4286f,0.0313f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{ 0.500f,0.35940f }, Utils::Vector2f{ .9286f,0.0313f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Wall>(Utils::Vector2f{ 0.500f,0.23440f }, Utils::Vector2f{ .2143f,0.0313f }));
 
 }
 
 void GameObject::Scenario::RegisterStairs()
 {
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.1250f, 0.9063f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.3750f, 0.9063f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.6250f, 0.9063f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.8750f, 0.9063f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.3036f, 0.7500f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.6607f, 0.7500f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.1250f, 0.5938f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.3750f, 0.5938f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.6250f, 0.5938f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.8750f, 0.5938f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.0893f, 0.4375f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.9107f, 0.4375f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
+	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.5893f, 0.3094f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
 }

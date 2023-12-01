@@ -17,6 +17,7 @@ namespace GameObject {
 	public: 
 		Scenario(Core::GameManagers& managers, const Utils::ResourceHandle<Resources::Texture>& texture);
 		Scenario(Core::GameManagers& managers, Utils::ResourceHandle<Resources::Texture>&& texture);
+		~Scenario();
 
 		void Draw();
 	private: 

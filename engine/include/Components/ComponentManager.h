@@ -64,7 +64,7 @@ namespace Components {
 		bool RemoveComponent(const GameObjectID& gameObjectId)
 		{
 			auto map = GetGameObjectMap<ComponentTy>();
-			if (!map) return;
+			if (!map) return false;
 			return RemoveComponentInternal(gameObjectId, *map);
 		}
 

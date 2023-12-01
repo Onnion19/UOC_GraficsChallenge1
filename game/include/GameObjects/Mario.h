@@ -76,6 +76,7 @@ namespace GameObject {
 	public:
 
 		Mario(Core::GameManagers& manager, const Utils::Vector2f& initialPosition);
+		~Mario();
 		const Utils::Vector2f& GetPosition()const;
 		void SetPosition(const Utils::Vector2f& pos);
 

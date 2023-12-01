@@ -35,7 +35,7 @@ namespace GameObject {
 
 		template<typename T>
 		bool RemoveComponent() {
-			return componentManager.RemoveComponent<T>();
+			return componentManager.RemoveComponent<T>(GetId());
 		}
 
 	protected:
