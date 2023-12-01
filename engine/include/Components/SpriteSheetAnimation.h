@@ -20,8 +20,5 @@ namespace Components {
 		int speed;
 		int currentFrame;
 		bool loop;
-
-
-
 	};
 }
