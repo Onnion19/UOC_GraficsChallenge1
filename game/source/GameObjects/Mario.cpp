@@ -66,6 +66,19 @@ int GameObject::MarioMovement::ClimbBehavior::operator()(float deltatime, Compon
 	return movement;
 }
 
+int GameObject::MarioMovement::DeathBehavior::operator()(float deltatime, Components::SpriteSheetAnimationBook* animation)
+{
+	if (idle) return 0.f;
+	animation->SelectAnimation(Mario::marioDeath);
+	deathAnim += deltatime;
+	if (deathAnim > 2.f)
+	{
+		animation->SelectAnimation(Mario::marioDeathIdle);
+		idle = true;
+	}
+	return 0.f;
+}
+
 
 
 GameObject::Mario::Mario(Core::GameManagers& manager, const Utils::Vector2f& pos) : GameObject(manager), collider(), physics(gManager.GetManager<Core::PhysicsManager>())
@@ -109,8 +122,6 @@ void GameObject::Mario::Update(float deltatime)
 	{
 		movementBehavior = MarioMovement::JumpBehavior{ MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), transform };
 	}
-
-
 	spriteAnimation->Update(deltatime);
 
 	UpdateCollider();
@@ -146,6 +157,11 @@ void GameObject::Mario::Draw()
 	spriteAnimation->Draw(*transform);
 }
 
+void GameObject::Mario::Die()
+{
+	movementBehavior = MarioMovement::DeathBehavior{ MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), transform };
+}
+
 void GameObject::Mario::RegisterAnimations()
 {
 	auto& resourceManager = gManager.GetManager<ResourceManager>();
@@ -159,13 +175,17 @@ void GameObject::Mario::RegisterAnimations()
 	Utils::Handle<Components::SpriteSheetAnimation> Idle = std::make_unique< Components::SpriteSheetAnimation>(*atlasComponent, Utils::Vector2i{ 5,2 }, Utils::Vector2i{ 5,2 }, 10);
 	Utils::Handle<Components::SpriteSheetAnimation> climbUp = std::make_unique< Components::SpriteSheetAnimation>(*atlasComponent, Utils::Vector2i{ 0,1 }, Utils::Vector2i{ 2,1 }, 10);
 	Utils::Handle<Components::SpriteSheetAnimation> climbDown = std::make_unique< Components::SpriteSheetAnimation>(*atlasComponent, Utils::Vector2i{ 3,1 }, Utils::Vector2i{ 5,1 }, 10);
+	Utils::Handle<Components::SpriteSheetAnimation> deathAnim = std::make_unique< Components::SpriteSheetAnimation>(*atlasComponent, Utils::Vector2i{ 0,2 }, Utils::Vector2i{ 3,2 }, 10);
+	Utils::Handle<Components::SpriteSheetAnimation> deathIdleAnim = std::make_unique< Components::SpriteSheetAnimation>(*atlasComponent, Utils::Vector2i{ 4,2 }, Utils::Vector2i{ 4,2 }, 10);
 
 	spriteAnimation->AddSpriteSheet(marioMoveRight, std::move(runRight));
 	spriteAnimation->AddSpriteSheet(marioMoveLeft, std::move(runLeft));
 	spriteAnimation->AddSpriteSheet(marioIdle, std::move(Idle));
 	spriteAnimation->AddSpriteSheet(marioClimbUp, std::move(climbUp));
 	spriteAnimation->AddSpriteSheet(marioClimbDown, std::move(climbDown));
-	
+	spriteAnimation->AddSpriteSheet(marioDeath, std::move(deathAnim));
+	spriteAnimation->AddSpriteSheet(marioDeathIdle, std::move(deathIdleAnim));
+
 	spriteAnimation->SelectAnimation(marioClimbUp);
 }
 

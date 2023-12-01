@@ -58,6 +58,15 @@ namespace GameObject {
 
 		};
 
+		struct DeathBehavior : public MovementBehaviorBase {
+			DeathBehavior() = default;
+			DeathBehavior(const MovementData& mv, const Utils::Vector2i& sz, Components::Transform* t) : MovementBehaviorBase(mv, sz, t) {}
+			int operator()(float deltatime, Components::SpriteSheetAnimationBook* animation);
+
+			float deathAnim = 0;
+			bool idle = false;
+		};
+
 		// All those animations should probably be part of a animation map where contains sub animations inside and can choose which one to activate and render.
 	}
 
@@ -74,6 +83,8 @@ namespace GameObject {
 		inline static const StringHash marioClimbUp{ "climbUp" };
 		inline static const StringHash marioClimbDown{ "climbDown" };
 		inline static const StringHash marioClimbIdle{ "climbIdle" };
+		inline static const StringHash marioDeath{ "death" };
+		inline static const StringHash marioDeathIdle{ "deathIdle" };
 		static constexpr MarioMovement::MovementData MarioMovementData{ 200.f, 190.f,370.1f,90.f };
 	public:
 
@@ -87,6 +98,7 @@ namespace GameObject {
 		void Draw();
 
 	private:
+		void Die();
 		void RegisterAnimations();
 		void RegisterCollider();
 		void UpdateCollider();
@@ -96,7 +108,7 @@ namespace GameObject {
 		Collider collider;
 
 		bool collidedThisFrame = false;
-		std::variant<MarioMovement::WalkBehavior, MarioMovement::JumpBehavior, MarioMovement::ClimbBehavior> movementBehavior;
+		std::variant<MarioMovement::WalkBehavior, MarioMovement::JumpBehavior, MarioMovement::ClimbBehavior, MarioMovement::DeathBehavior> movementBehavior;
 
 		Components::Transform* transform;
 		Components::SpriteSheetAnimationBook* spriteAnimation;
