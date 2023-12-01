@@ -134,7 +134,7 @@ void GameObject::Mario::OnCollision(GameObject* other)
 
 		if (IsKeyDown(KEY_W) || IsKeyDown(KEY_S))
 		{
-			transform->position.x = stair->GetStairPos();
+			transform->position.x = static_cast<float>(stair->GetStairPos());
 			movementBehavior = MarioMovement::ClimbBehavior{ MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), transform };
 		}
 	}

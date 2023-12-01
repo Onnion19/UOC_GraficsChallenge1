@@ -69,7 +69,7 @@ namespace GameObject {
 		static constexpr auto marioTexturePath{ "resources/Characters/MarioAtlas.png" };
 		inline static const ResourceID marioTextureID{ "MarioAtlas" };
 		inline static const StringHash marioMoveLeft{ "RunLeft" };
-		inline static const StringHash marioMoveRight{ "RunLeft" };
+		inline static const StringHash marioMoveRight{ "RunRight" };
 		inline static const StringHash marioIdle{ "idle" };
 		inline static const StringHash marioClimbUp{ "climbUp" };
 		inline static const StringHash marioClimbDown{ "climbDown" };
