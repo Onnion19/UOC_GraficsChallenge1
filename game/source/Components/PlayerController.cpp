@@ -171,6 +171,7 @@ void Components::PlayerController::ResetToWalk()
 
 void Components::PlayerController::Die()
 {
+	if (isDead)return;
 	isDead = true;
 	movementBehavior = MarioMovement::DeathBehavior{ movementData,screenSize , &transform };
 	manager.UpdateHealth(-1);

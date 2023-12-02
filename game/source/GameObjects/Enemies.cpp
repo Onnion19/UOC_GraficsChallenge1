@@ -4,6 +4,7 @@
 #include "Components/MovementComponents.h"
 #include <cassert>
 #include "Core/WindowManager.h"
+#include "Components/PlayerController.h"
 
 GameObject::Enemy::Enemy(Core::GameManagers& managers, const Utils::Vector2f& position, const Utils::Vector2f& speed, const Components::SpriteSheetAnimation& animation)
 	: GameObject::GameObject(managers)
@@ -66,6 +67,10 @@ void GameObject::Enemy::OnCollision(GameObject* other)
 	{
 		gameplayManager->UpdateScore(10);
 		UnregisterCollider();
+	}
+	else
+	{
+		other->GetComponent<Components::PlayerController>()->Die();
 	}
 }
 

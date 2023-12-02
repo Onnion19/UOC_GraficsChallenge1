@@ -27,13 +27,13 @@ BackgroundScene::~BackgroundScene()
 
 void BackgroundScene::Activate()
 {
+	hud = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::HUD>();
 	mario = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Mario>(Utils::Vector2f{ 30	,1020 });
 	dk = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::DK>(Utils::Vector2f{ 800,320 }, 300.f, 90.f);
 	enemiesSpawner = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::EnemiesPool>(70);
 
 	auto handle = managers.GetManager<ResourceManager>().GetOrLoad<Resources::Texture>(mapTextureId, mapTexturePath);
 	map = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Scenario>(std::move(handle));
-	hud = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::HUD>();
 	PrepareEnemiesSpawner();
 }
 

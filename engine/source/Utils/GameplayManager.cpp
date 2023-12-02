@@ -42,6 +42,7 @@ Utils::SafeCallbackObject GameplayManager::RegisterScoreCallback(ScoreCallback c
 
 void GameplayManager::UpdateHealth(int deltaHp)
 {
+	if (health == 0) return;
 	health += deltaHp;
 	TriggerHealthCallbacks();
 }

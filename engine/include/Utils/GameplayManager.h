@@ -118,14 +118,11 @@ private:
 
 private:
 	unsigned score = 0;
-	unsigned health = 0;
+	unsigned health = 3;
 	std::chrono::steady_clock::time_point gameStart;
 	std::chrono::steady_clock::time_point gameEnd;
 	std::vector<CallbackObserver<ScoreCallback>> scoreCallbacks;
 	std::vector<CallbackObserver<HealthCallback>> healthCallbacks;
-
-
-
 };
 
 template<typename T, typename ...Args>

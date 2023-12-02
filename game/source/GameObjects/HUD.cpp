@@ -46,7 +46,7 @@ void GameObject::HUD::Update(float deltatime)
 
 void GameObject::HUD::Draw() const
 {
-	for (int i = 0; i < health; i++)
+	for (unsigned  i = 0; i < health; i++)
 	{
 		healthIcon->Render(iconTransforms[i]);
 	}

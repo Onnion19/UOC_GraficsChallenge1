@@ -37,7 +37,7 @@ namespace GameObject {
 
 		void Update(float detltaTime);
 		void Draw();
-
+		void OnHealthUpdate(unsigned int newHealth);
 	private:
 		void SetPosition(const Utils::Vector2f& pos);
 		void RegisterAnimations();
@@ -53,5 +53,6 @@ namespace GameObject {
 		Utils::Vector2f initialPosition;
 		Utils::SingleTimer deathTimer;
 		Utils::SafeCallbackObject callback;
+		Utils::SafeCallbackObject healthCallbackObject;
 	};
 }

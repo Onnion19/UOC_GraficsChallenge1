@@ -13,6 +13,7 @@
 GameObject::Mario::Mario(Core::GameManagers& manager, const Utils::Vector2f& pos) : GameObject(manager), physics(gManager.GetManager<Core::PhysicsManager>()), gameplayManager(gManager.GetManager<GameplayManager>())
 {
 	gameplayManager.SetHealth(3);
+	healthCallbackObject = gameplayManager.RegisterHealthCallback(*this);
 	initialPosition = pos;
 	transform = &GetOrAddComponent<Components::Transform>();
 	transform->position = initialPosition;
@@ -60,6 +61,15 @@ void GameObject::Mario::Update(float deltatime)
 void GameObject::Mario::Draw()
 {
 	spriteAnimation->Draw(*transform);
+}
+
+void GameObject::Mario::OnHealthUpdate(unsigned int newHealth)
+{
+	assert(!deathTimer.IsActive());
+	if (newHealth > 0)
+	{
+		callback = deathTimer.Start([&]() {Revive(initialPosition); }, 3.5f);
+	}
 }
 
 void GameObject::Mario::RegisterAnimations()
