@@ -10,6 +10,7 @@ namespace GameObject {
 	class DK;
 	class Scenario;
 	class HUD;
+	class EnemiesPool;
 };
 
 class BackgroundScene : public Scenes::SceneBase<BackgroundScene> {
@@ -25,6 +26,7 @@ public:
 	~BackgroundScene();
 private:
 
+	void PrepareEnemiesSpawner();
 
 private: 
 	static constexpr auto backgroundMusicPath{ "resources/gameMusic.wav" };
@@ -38,9 +40,9 @@ private:
 	Utils::Handle<GameObject::Mario> mario;
 	Utils::Handle<GameObject::DK> dk;
 	Utils::Handle <GameObject::Scenario> map;
+	Utils::Handle <GameObject::EnemiesPool> enemiesSpawner;
+	std::vector<Utils::SafeCallbackObject> enemiesCallbackObjects;
 
-	Utils::SafeCallbackObject healthCallback;
-	Utils::RepeatingTimerWithVariation asteroidsSpawnerTimer;
 	Utils::ResourceHandle<Music> backgroundMusic;
 };
 

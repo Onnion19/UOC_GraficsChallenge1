@@ -38,6 +38,9 @@ namespace Utils {
 			};
 		}
 
+		static bool GenerateRandomBool() {
+			return GenerateRandom(0u, 1u) == 1u;
+		}
 
 	private:
 		static inline std::mt19937 randomGenerator{ std::random_device{}() };

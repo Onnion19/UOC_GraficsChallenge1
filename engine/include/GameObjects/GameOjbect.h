@@ -20,8 +20,10 @@ namespace GameObject {
 		template<Core::StringLike T>
 		explicit GameObject(Core::GameManagers& manager, T tag) noexcept : IdentifiedObject(), Core::TaggedObject(tag), gManager(manager) {}
 		
-		GameObject(const GameObject& other) : gManager(other.gManager) , componentManager(other.componentManager) {}
+		GameObject(const GameObject& other) : IdentifiedObject(), gManager(other.gManager) , componentManager(other.componentManager) {}
 		virtual ~GameObject() {}
+
+		GameObject(GameObject&& other) noexcept: IdentifiedObject(), gManager(other.gManager) , componentManager(other.componentManager){}
 
 		template<typename T, typename ... Args>
 		T& GetOrAddComponent(Args&& ... args) {

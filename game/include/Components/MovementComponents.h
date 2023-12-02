@@ -8,6 +8,8 @@ namespace Components {
 
 	struct MRU {
 		MRU() = default;
+		MRU(MRU&&) = default;
+		MRU(const MRU&) = default;
 		Utils::Vector2f speed{};
 		void Update(float deltaTime, Transform& t);
 	};

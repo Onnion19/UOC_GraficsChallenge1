@@ -6,7 +6,10 @@
 #include "Utils/GameplayManager.h"
 #include "Utils/Vector2.hpp"
 #include "Utils/Handlers.h"
+#include "Utils/Timers.h"
 #include <array>
+#include <tuple>
+#include <functional>
 
 namespace Components {
 	class SpriteSheetAnimation;
@@ -15,18 +18,19 @@ namespace Components {
 	struct MRU;
 }
 
+enum class EnemyType {
+	Barrel, Fire, Cake
+};
 namespace GameObject
 {
 
-	enum class EnemyType {
-		Barrel, Fire, Cake
-	};
+	
 
 	class Enemy : public GameObject
 	{
 	public:
 		Enemy(Core::GameManagers& managers, const Utils::Vector2f& position, const Utils::Vector2f& speed, const Components::SpriteSheetAnimation& animation);
-		Enemy(Enemy&&) = default;
+		Enemy(Enemy&& other);
 		~Enemy();
 
 		void Respawn(const Utils::Vector2f& position, const Utils::Vector2f& speed, const Components::SpriteSheetAnimation& animation);
@@ -63,12 +67,20 @@ namespace GameObject
 		static constexpr Utils::Vector2i CakeAnimationStart{ 0,1 };
 		static constexpr Utils::Vector2i CakeAnimationEnd{ 0,1 };
 
+		
 
 	public:
+		using SpawnEnemyProperties = std::tuple<EnemyType, Utils::Vector2f/*position*/, Utils::Vector2f/*speed*/>;
+		using ScheduleEnemyFunctor = std::function<SpawnEnemyProperties()>;
+		using ScheduleTimer = std::variant< Utils::RepeatingTimerWithVariation, Utils::RepeatingTimer>;
 		EnemiesPool(Core::GameManagers& managers, unsigned poolSizeHint = 20);
-		~EnemiesPool() = default;
+		~EnemiesPool();
 
 		void SpawnEnemy(EnemyType type, const Utils::Vector2f& position, const Utils::Vector2f& speed);
+
+		[[nodiscard]] Utils::SafeCallbackObject ScheduleSpawnEnemy(ScheduleEnemyFunctor&& functor, ScheduleTimer&& timer);
+		void Update(float deltatime);
+		void Draw() const;
 
 	private:
 		Components::Atlas* atlas;
@@ -76,6 +88,8 @@ namespace GameObject
 		Utils::Handle <Components::SpriteSheetAnimation> fireAnimation;
 		Utils::Handle <Components::SpriteSheetAnimation> cakeAnimation;
 		std::vector<Enemy> pool;
+
+		std::vector<std::pair<ScheduleEnemyFunctor, ScheduleTimer>> timers;
 
 	};
 }

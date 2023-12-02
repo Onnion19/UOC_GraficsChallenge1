@@ -19,6 +19,28 @@ Components::SpriteSheetAnimation::SpriteSheetAnimation(const Atlas& atlas, const
 {
 }
 
+Components::SpriteSheetAnimation::SpriteSheetAnimation(const SpriteSheetAnimation& other)
+	: sprites(other.sprites)
+	, atlas(other.atlas)
+	, currentSprite(0)
+	, speed(other.speed)
+	, loop(other.loop)
+	, currentFrame(0)
+{
+}
+
+Components::SpriteSheetAnimation& Components::SpriteSheetAnimation::operator=(const SpriteSheetAnimation& other)
+{
+	sprites = other.sprites;
+	atlas = other.atlas;
+	currentSprite = 0;
+	speed = other.speed;
+	loop = other.loop;
+	currentFrame = 0;
+
+	return *this;
+}
+
 void Components::SpriteSheetAnimation::Update()
 {
 	++currentFrame;
