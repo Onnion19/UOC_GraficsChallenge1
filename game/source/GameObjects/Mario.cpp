@@ -55,10 +55,6 @@ void GameObject::Mario::SetPosition(const Utils::Vector2f& pos)
 
 void GameObject::Mario::Update(float deltatime)
 {
-	if (IsKeyPressed(KEY_F))
-	{
-		gameplayManager.SetHealth(0);
-	}
 	playerController->Update(deltatime, *spriteAnimation);
 	spriteAnimation->Update(deltatime);
 	deathTimer.Update(deltatime);
