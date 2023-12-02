@@ -33,7 +33,7 @@ void BackgroundScene::Activate()
 
 	auto handle = managers.GetManager<ResourceManager>().GetOrLoad<Resources::Texture>(mapTextureId, mapTexturePath);
 	map = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Scenario>(std::move(handle));
-
+	hud = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::HUD>();
 	PrepareEnemiesSpawner();
 }
 
@@ -56,8 +56,7 @@ void BackgroundScene::Draw() {
 	dk->Draw();
 	enemiesSpawner->Draw();
 	mario->Draw();
-
-
+	hud->Draw();
 }
 
 void BackgroundScene::Finish() {

@@ -1,9 +1,21 @@
 #include "GameObjects/HUD.h"
+#include "Core/WindowManager.h"
 #include "Utils/GameplayManager.h"
+#include "Components/Sprite.h"
 
 GameObject::HUD::HUD(Core::GameManagers& manager) : GameObject::GameObject(manager)
 {
-	gameTime = 0.f;
+	// HP Icons
+	auto hpIcon = manager.GetManager<ResourceManager>().GetOrLoad<Resources::Texture>(HealthIconID, HealthIconPath);
+	healthIcon = &GetOrAddComponent<Components::Sprite>(std::move(hpIcon));
+	const auto screenSize = manager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize();
+	for (int i = 0; i < iconTransforms.size(); i++)
+	{
+		auto posx = screenSize.x - (1 - iconMarginPercent.x * (i + 1)) - iconSize.x * (i+1);
+		iconTransforms[i].position = {posx, screenSize.y * iconMarginPercent.y };
+		iconTransforms[i].size = iconSize;
+	}
+
 	auto& gameplayManager = gManager.GetManager<GameplayManager>();
 	healthCallback = gameplayManager.RegisterHealthCallback(*this);
 	scoreCallback = gameplayManager.RegisterScoreCallback(*this);
@@ -13,6 +25,7 @@ GameObject::HUD::~HUD()
 {
 	healthCallback.Release();
 	scoreCallback.Release();
+	RemoveComponent<Components::Sprite>();
 }
 
 void GameObject::HUD::OnScoreUpdate(unsigned int newScore)
@@ -25,29 +38,17 @@ void GameObject::HUD::OnScoreUpdate(unsigned int newScore)
 void GameObject::HUD::OnHealthUpdate(unsigned int newHealth)
 {
 	health = newHealth;
-	// expensive allocation :( 
-	healthText = healthTextPrefix.data() + std::to_string(health);
-	switch (health)
-	{
-	case 2:
-		healthColor = Resources::Yellow;
-		break;
-	case 1:
-		healthColor = Resources::Red;
-		break;
-	default:
-		healthColor = Resources::Green;
-	}
 }
 
 void GameObject::HUD::Update(float deltatime)
 {
-	gameTime += deltatime;
 }
 
 void GameObject::HUD::Draw() const
 {
-	DrawText(healthText.c_str(), 5, 20, 20, healthColor);
+	for (int i = 0; i < health; i++)
+	{
+		healthIcon->Render(iconTransforms[i]);
+	}
 	DrawText(scoreText.c_str(), 5, 45, 20, Resources::Blue);
-	DrawText(std::to_string(gameTime).c_str(), 5, 70, 20, Resources::White);
 }
