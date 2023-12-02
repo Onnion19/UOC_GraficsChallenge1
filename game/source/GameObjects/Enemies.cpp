@@ -25,6 +25,7 @@ GameObject::Enemy::Enemy(Enemy&& other) : GameObject(other)
 	animationComponent = &GetOrAddComponent<Components::SpriteSheetAnimation>(std::move(*other.animationComponent));
 	mru = &GetOrAddComponent<Components::MRU>(*other.mru);
 	screenSize = other.screenSize;
+	SetTag(other.GetTag());
 	RegisterCollider();
 
 }
