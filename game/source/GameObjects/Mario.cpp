@@ -21,7 +21,7 @@ GameObject::Mario::Mario(Core::GameManagers& manager, const Utils::Vector2f& pos
 	transform->position = initialPosition;
 	transform->size = { size,size };
 
-	playerController = &GetOrAddComponent<Components::PlayerController>(*transform, MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), gameplayManager);
+	playerController = &GetOrAddComponent<Components::PlayerController>(*transform, MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), gameplayManager, manager.GetManager<ResourceManager>());
 	RegisterCollider();
 	RegisterAnimations();
 	SetTag("Player");

@@ -5,6 +5,8 @@
 #include "Utils/StringHash.h"
 #include "Core/Tag.h"
 #include "Core/Physics.h"
+#include "Resources/ResourceManager.h"
+#include "Resources/music.h"
 
 class GameplayManager;
 namespace Components {
@@ -89,8 +91,17 @@ namespace Components {
 	{
 		inline static const Core::Tag enemyTag{ "Enemy" };
 		inline static const Core::Tag DKTag{ "DK" };
+
+		static constexpr auto jumpSoundPath{ "resources/sounds/jump.wav" };
+		inline static const ResourceID jumpSoundID{ "JumpSound" };
+
+		static constexpr auto WalkSoundPath{ "resources/sounds/walking.wav" };
+		inline static const ResourceID walkSoundID{ "WalkSound" };
+
+		static constexpr auto dieSoundPath{ "resources/sounds/death.wav" };
+		inline static const ResourceID dieSoundID{ "DieSound" };
 	public:
-		PlayerController(Transform& t, const MarioMovement::MovementData& mv, const Utils::Vector2i& screenSize, GameplayManager& manager);
+		PlayerController(Transform& t, const MarioMovement::MovementData& mv, const Utils::Vector2i& screenSize, GameplayManager& manager, ResourceManager& resourceManager);
 		~PlayerController();
 		void SetCollider(const Collider& collider);
 		void OnCollision(GameObject::GameObject* other);
@@ -101,9 +112,14 @@ namespace Components {
 		void UpdateCollider();
 		bool IsDead()const;
 	private:
-		Transform& transform; 
+		Utils::ResourceHandle<Resources::Sound> walkSound;
+		Utils::ResourceHandle<Resources::Sound> dieSound;
+		Utils::ResourceHandle<Resources::Sound> jumpSound;
+
+		Transform& transform;
 		Collider col;
 		GameplayManager& manager;
+		ResourceManager& rManager;
 		bool isDead = false;
 		MarioMovement::MovementData movementData;
 		Utils::Vector2i screenSize;

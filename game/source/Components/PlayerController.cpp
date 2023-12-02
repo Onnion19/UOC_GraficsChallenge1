@@ -44,20 +44,18 @@ int  MarioMovement::JumpBehavior::operator()(float deltatime, Components::Sprite
 	transform->position.y = std::clamp(transform->position.y - (verticalForce * deltatime), 0.f, static_cast<float>(screenSize.y));
 	verticalForce -= movementData.gravity * deltatime;
 	std::cout << "posY = " << transform->position.y << "\tforce: " << verticalForce << std::endl;
-	return static_cast<int>(verticalForce);
+	return 0;
 }
 
 int  MarioMovement::ClimbBehavior::operator()(float deltatime, Components::SpriteSheetAnimationBook* animation) {
 	int movement = 0;
 	if (IsKeyDown(KEY_W)) {
 		transform->position.y = std::clamp(transform->position.y - movementData.climbSpeed * deltatime, 0.f, static_cast<float>(screenSize.y));
-		movement = static_cast<int>(movementData.climbSpeed);
 		animation->SelectAnimation(FlipBook::marioClimbUp);
 	}
 	else if (IsKeyDown(KEY_S))
 	{
 		transform->position.y = std::clamp(transform->position.y + movementData.climbSpeed * deltatime, 0.f, static_cast<float>(screenSize.x));
-		movement = static_cast<int>(-movementData.horizontalSpeed);
 		animation->SelectAnimation(FlipBook::marioClimbDown);
 	}
 	else
@@ -82,13 +80,18 @@ int MarioMovement::DeathBehavior::operator()(float deltatime, Components::Sprite
 
 /** PLAYER CONTROLLER ***/
 
-Components::PlayerController::PlayerController(Transform& t, const MarioMovement::MovementData& mv, const Utils::Vector2i& screenSize, GameplayManager& manager)
+Components::PlayerController::PlayerController(Transform& t, const MarioMovement::MovementData& mv, const Utils::Vector2i& screenSize, GameplayManager& manager, ResourceManager& resourceManager)
 	: transform(t)
 	, movementData(mv)
 	, screenSize(screenSize)
 	, manager(manager)
+	, rManager(resourceManager)
 {
 	ResetToWalk();
+
+	walkSound = rManager.GetOrLoad<Resources::Sound>(walkSoundID, WalkSoundPath);
+	jumpSound = rManager.GetOrLoad<Resources::Sound>(jumpSoundID, jumpSoundPath);
+	dieSound = rManager.GetOrLoad<Resources::Sound>(dieSoundID, dieSoundPath);
 }
 
 Components::PlayerController::~PlayerController()
@@ -157,13 +160,25 @@ void Components::PlayerController::Update(float deltaTime, SpriteSheetAnimationB
 	if (IsKeyPressed(KEY_SPACE) && std::holds_alternative<MarioMovement::WalkBehavior>(movementBehavior))
 	{
 		movementBehavior = MarioMovement::JumpBehavior{ movementData, screenSize, &transform };
+		PlaySound(*jumpSound);
 	}
 	if (canClimb && (IsKeyDown(KEY_W) || IsKeyDown(KEY_S)))
 	{
 		movementBehavior = MarioMovement::ClimbBehavior{ movementData, screenSize, &transform };
 	}
 
-	std::visit([&](auto&& arg) -> int {return arg(deltaTime, &spriteAnimation); }, movementBehavior);
+	auto move = std::visit([&](auto&& arg) -> int {return arg(deltaTime, &spriteAnimation); }, movementBehavior);
+	if (move != 0)
+	{
+		if (!IsSoundPlaying(*walkSound))
+		{
+			PlaySound(*walkSound);
+		}
+	}
+	else
+	{
+		StopSound(*walkSound);
+	}
 
 	UpdateCollider();
 }
@@ -177,6 +192,7 @@ void Components::PlayerController::ResetToWalk()
 void Components::PlayerController::Die()
 {
 	if (isDead)return;
+	PlaySound(*dieSound);
 	isDead = true;
 	movementBehavior = MarioMovement::DeathBehavior{ movementData,screenSize , &transform };
 	manager.UpdateHealth(-1);
