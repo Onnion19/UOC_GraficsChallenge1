@@ -10,6 +10,7 @@
 #include "GameObjects/HUD.h"
 #include "GameObjects/Scenario.h"
 #include "GameObjects/Enemies.h"
+#include "GameObjects/PowerUp.h"
 
 #if DEBUG
 #include "Core/Physics.h"
@@ -27,16 +28,19 @@ BackgroundScene::~BackgroundScene()
 
 void BackgroundScene::Activate()
 {
+	// Get screen size to compute game object size based on resolution (Need to improve to make the code more redable)
+	auto screenSize = managers.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize();
 	hud = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::HUD>();
-	mario = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Mario>(Utils::Vector2f{ 30	,1020 });
-	dk = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::DK>(Utils::Vector2f{ 800,320 }, 300.f, 90.f);
+	mario = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Mario>(Utils::Vector2f{ screenSize.x *0.0156f ,screenSize.y * 0.9444f });
+
+	dk = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::DK>(Utils::Vector2f{ screenSize.x * 0.4167f,screenSize.y * 0.2963f }, screenSize.x * 0.15625f, screenSize.x* 0.047f);
 	enemiesSpawner = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::EnemiesPool>(70);
 
 	auto handle = managers.GetManager<ResourceManager>().GetOrLoad<Resources::Texture>(mapTextureId, mapTexturePath);
 	map = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Scenario>(std::move(handle));
 	PrepareEnemiesSpawner();
-	healthCallbackObject = managers.GetManager<GameplayManager>().RegisterHealthCallback(*this);
-
+	RegisterPowerUps(screenSize);
+	gameplayManager = &managers.GetManager<GameplayManager>();
 	gameOver = false;
 }
 
@@ -46,9 +50,12 @@ void BackgroundScene::DeActivate()
 	dk.reset();
 	enemiesSpawner.reset();
 	map.reset();	
+	powerUps.clear();
 }
 
 void BackgroundScene::Update(float deltaTime) {
+
+	gameOver = gameplayManager->IsGameOver();
 	if (!gameOver)
 	{
 		mario->Update(deltaTime);
@@ -67,6 +74,7 @@ void BackgroundScene::Draw() {
 #if DEBUG
 	managers.GetManager<Core::PhysicsManager>().DrawDebugColliders();
 #endif
+	std::for_each(powerUps.begin(), powerUps.end(), [](auto& p) {p->Draw(); });
 	dk->Draw();
 	enemiesSpawner->Draw();
 	mario->Draw();
@@ -76,13 +84,6 @@ void BackgroundScene::Draw() {
 void BackgroundScene::Finish() {
 
 }
-
-void BackgroundScene::OnHealthUpdate(unsigned int newHealth)
-{
-	gameOver = newHealth == 0;
-}
-
-
 
 void BackgroundScene::PrepareEnemiesSpawner()
 {
@@ -119,6 +120,21 @@ void BackgroundScene::PrepareEnemiesSpawner()
 			};
 		enemiesCallbackObjects.emplace_back(enemiesSpawner->ScheduleSpawnEnemy(std::move(params), std::move(timer)));
 	}
+}
+
+void BackgroundScene::RegisterPowerUps(const Utils::Vector2i& screenSize)
+{
+	powerUps.reserve(10);
+	auto texture = managers.GetManager<ResourceManager>().GetOrLoad<Resources::Texture>(ResourceID{ "Bonus atlas" }, "resources/Bonus/BonusAtlas.png");
+	const Utils::Vector2i atlasSize{ 4,1 };
+	const Utils::Vector2f peachPosition{ screenSize.x * 0.5f, screenSize.y * 0.2f };
+	const Utils::Vector2f size{ screenSize.x * 0.0365f, screenSize.x * 0.0365f };
+	const float powerUpPositionY = screenSize.y * 0.62f;
+
+	powerUps.push_back(GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Peach>(texture, atlasSize, Utils::Vector2i{0,0}, peachPosition, size));
+	powerUps.push_back(GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::PowerUp>(texture, atlasSize, Utils::Vector2i{1,0}, Utils::Vector2f{screenSize.x * 0.04f,powerUpPositionY}, size));
+	powerUps.push_back(GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::PowerUp>(texture, atlasSize, Utils::Vector2i{2,0}, Utils::Vector2f{screenSize.x * 0.5f,powerUpPositionY}, size));
+	powerUps.push_back(GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::PowerUp>(texture, atlasSize, Utils::Vector2i{3,0}, Utils::Vector2f{screenSize.x * 0.87f,powerUpPositionY}, size));
 }
 
 

@@ -38,12 +38,10 @@ namespace Core {
 		void DrawDebugColliders();
 #endif
 	private:
-		// Removes collider from the registry and invalidates the data.
-		void UnregisterColliderInternal(Collider& id);
 		// This is expensive, a flat hash map would be better.
 		// Also a vector will be faster to iterate per frame but slighly slower to search by id. Probably worth the change.
 		std::unordered_map<ColliderId, ::Internal::_InternalCollider> colliders;
-		std::vector< unsigned int> collidersToErase;
+		std::vector< ColliderId> collidersToErase;
 		::Internal::ColliderIdFactory idFactory{};
 	};
 

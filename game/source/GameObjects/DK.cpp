@@ -4,11 +4,13 @@
 #include "Components/SpriteSheetAnimation.h"
 #include "Core/Physics.h"
 #include "Resources/Texture.h"
+#include "Core/WindowManager.h"
 
 GameObject::DK::DK(Core::GameManagers& managers, const Utils::Vector2f& initialPosition, float distance, float speed) : GameObject(managers)
 {
+	auto size = gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize().x * 0.0677f;
 	transform = &GetOrAddComponent<Components::Transform>();
-	transform->size = { 130.f, 130.f };
+	transform->size = { size,size };
 
 	mru = &GetOrAddComponent<Components::CyclicMRU>();
 	mru->initialPosition = initialPosition;

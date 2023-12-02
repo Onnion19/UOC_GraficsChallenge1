@@ -13,15 +13,14 @@
 
 namespace GameObject
 {
-	template<typename T> 
 	class InteractiveItem : public GameObject
 	{
-	public: 
-		InteractiveItem(Core::GameManagers& managers, const Utils::ResourceHandle<Resources::Texture>& texture, const Utils::Vector2i& atlasSize, const Utils::Vector2i& cell, const Utils::Vector2f& position);
+	public:
+		InteractiveItem(Core::GameManagers& managers, const Utils::ResourceHandle<Resources::Texture>& texture, const Utils::Vector2i& atlasSize, const Utils::Vector2i& cell, const Utils::Vector2f& position, const Utils::Vector2f& size);
 		~InteractiveItem();
 		void Draw() const;
-		void OnCollision(GameObject* other);
-	protected: 
+		virtual void OnCollision(GameObject* other) {};
+	protected:
 		void RegisterCollider();
 		void UnregisterCollider();
 	private:
@@ -31,63 +30,18 @@ namespace GameObject
 		Collider collider;
 	};
 
-	class PowerUp : public InteractiveItem<PowerUp> {
-	public: 
-		PowerUp(Core::GameManagers& managers, const Utils::ResourceHandle<Resources::Texture>& texture, const Utils::Vector2i& atlasSize, const Utils::Vector2i& cell, const Utils::Vector2f& position);
-		~PowerUp() = default;
-		void OnCollisionImpl(GameObject *other);
-	};
-
-
-	class Peach : public InteractiveItem<Peach> {
+	class PowerUp : public InteractiveItem {
 	public:
-		Peach(Core::GameManagers& managers, const Utils::ResourceHandle<Resources::Texture>& texture, const Utils::Vector2i& atlasSize, const Utils::Vector2i& cell, const Utils::Vector2f& position);
-		~Peach() = default;
-		void OnCollisionImpl(GameObject* other);
+		PowerUp(Core::GameManagers& managers, const Utils::ResourceHandle<Resources::Texture>& texture, const Utils::Vector2i& atlasSize, const Utils::Vector2i& cell, const Utils::Vector2f& position, const Utils::Vector2f& size);
+		~PowerUp() = default;
+		void OnCollision(GameObject* other) override;
 	};
 
 
-	template<typename T>
-	inline InteractiveItem<T>::InteractiveItem(Core::GameManagers& managers, const Utils::ResourceHandle<Resources::Texture>& texture, const Utils::Vector2i& atlasSize, const Utils::Vector2i& cell, const Utils::Vector2f& position)
-		: GameObject(managers)
-	{
-		transform = &GetOrAddComponent<Components::Transform>();
-		transform->position = position;
-		transform->size = { 50,50 };
-
-		atlas = &GetOrAddComponent<Components::Atlas>(texture, atlasSize.x, atlasSize.y);
-		atlasCell = cell;
-		RegisterCollider();
-	}
-
-	template<typename T>
-	inline InteractiveItem<T>::~InteractiveItem()
-	{
-		UnregisterCollider();
-		RemoveComponent< Components::Atlas>();
-		RemoveComponent< Components::Transform>();
-	}
-	template<typename T>
-	inline void InteractiveItem<T>::Draw() const
-	{
-		if (!collider.Valid()) return;
-		atlas->Draw(atlasCell, *transform);
-	}
-
-	template<typename T>
-	inline void InteractiveItem<T>::OnCollision(GameObject* other)
-	{
-		static_cast<T*>(this)->OnCollisionImpl(other);
-	}
-	template<typename T>
-	inline void InteractiveItem<T>::RegisterCollider()
-	{
-		collider = gManager.GetManager<Core::PhysicsManager>().RegisterCollider<Geometry::Circle>(*this, this, transform->position, transform->size.x / 2.f);
-		SetTag("PowerUp");
-	}
-	template<typename T>
-	inline void InteractiveItem<T>::UnregisterCollider()
-	{
-		gManager.GetManager<Core::PhysicsManager>().UnregisterCollider(collider);
-	}
+	class Peach : public InteractiveItem {
+	public:
+		Peach(Core::GameManagers& managers, const Utils::ResourceHandle<Resources::Texture>& texture, const Utils::Vector2i& atlasSize, const Utils::Vector2i& cell, const Utils::Vector2f& position, const Utils::Vector2f& size);
+		~Peach() = default;
+		void OnCollision(GameObject* other) override;
+	};
 }

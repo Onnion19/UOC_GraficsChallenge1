@@ -26,7 +26,7 @@ void EndScene::Update(float deltaTime)
 
 	if (IsKeyPressed(KEY_SPACE))
 	{
-		managers.GetManager<SceneManager>().LoadScene(ResourceID{ "GameScene" });
+		managers.GetManager<SceneManager>().LoadScene(ResourceID{ "MainMenu" });
 	}
 }
 

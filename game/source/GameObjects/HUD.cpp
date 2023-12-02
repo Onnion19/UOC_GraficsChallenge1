@@ -19,6 +19,7 @@ GameObject::HUD::HUD(Core::GameManagers& manager) : GameObject::GameObject(manag
 	auto& gameplayManager = gManager.GetManager<GameplayManager>();
 	healthCallback = gameplayManager.RegisterHealthCallback(*this);
 	scoreCallback = gameplayManager.RegisterScoreCallback(*this);
+	scoreText = scoreTextPrefix.data() + std::to_string(score);
 }
 
 GameObject::HUD::~HUD()

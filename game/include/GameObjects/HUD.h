@@ -37,8 +37,6 @@ namespace GameObject
 
 		Components::Sprite* healthIcon;
 		std::array<Components::Transform, 3> iconTransforms;
-
-		Resources::Color healthColor{ WHITE };
 		std::string scoreText{ scoreTextPrefix };
 		Utils::SafeCallbackObject healthCallback;
 		Utils::SafeCallbackObject scoreCallback;

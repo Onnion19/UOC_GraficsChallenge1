@@ -14,10 +14,13 @@ GameObject::Mario::Mario(Core::GameManagers& manager, const Utils::Vector2f& pos
 {
 	gameplayManager.SetHealth(3);
 	healthCallbackObject = gameplayManager.RegisterHealthCallback(*this);
+
 	initialPosition = pos;
+	auto size = manager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize().x * 0.0260f;
 	transform = &GetOrAddComponent<Components::Transform>();
 	transform->position = initialPosition;
-	transform->size = { 50,50 };
+	transform->size = { size,size };
+
 	playerController = &GetOrAddComponent<Components::PlayerController>(*transform, MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), gameplayManager);
 	RegisterCollider();
 	RegisterAnimations();
@@ -57,9 +60,9 @@ void GameObject::Mario::Update(float deltatime)
 		gameplayManager.SetHealth(0);
 	}
 	playerController->Update(deltatime, *spriteAnimation);
-	physics.CheckCollisionOnCollider(collider);
 	spriteAnimation->Update(deltatime);
 	deathTimer.Update(deltatime);
+	physics.CheckCollisionOnCollider(collider);
 }
 
 void GameObject::Mario::Draw()

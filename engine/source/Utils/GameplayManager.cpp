@@ -3,11 +3,13 @@
 void GameplayManager::StartGame()
 {
 	gameStart = std::chrono::steady_clock::now();
+	victory = false;
 }
 
-void GameplayManager::EndGame()
+void GameplayManager::EndGame(bool win)
 {
 	gameEnd = std::chrono::steady_clock::now();
+	victory = win;
 }
 
 float GameplayManager::GetGameDuration()
@@ -36,6 +38,11 @@ unsigned GameplayManager::GetScore() const
 unsigned GameplayManager::GetHealth() const
 {
 	return health;
+}
+
+bool GameplayManager::IsGameOver() const
+{
+	return health == 0 || victory;
 }
 
 Utils::SafeCallbackObject GameplayManager::RegisterScoreCallback(ScoreCallback callback)

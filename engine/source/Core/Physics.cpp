@@ -12,7 +12,7 @@ void Core::PhysicsManager::UnregisterCollider(Collider& col)
 bool Core::PhysicsManager::CheckCollisionOnCollider(const Collider& collider)
 {
 	// Remove Invalid colliders
-	std::for_each(collidersToErase.rbegin(), collidersToErase.rend(), [&](unsigned int id) { colliders.erase(id); });
+	std::for_each(collidersToErase.rbegin(), collidersToErase.rend(), [&](ColliderId id) { colliders.erase(id); });
 	collidersToErase.clear();
 
 	bool collides = false;

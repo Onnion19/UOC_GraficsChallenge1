@@ -71,15 +71,15 @@ private:
 class GameplayManager
 {
 public:
-
 	void StartGame();
-	void EndGame();
+	void EndGame(bool win = true);
 	float GetGameDuration();
 
 	void UpdateScore(int deltaScore);
 	void SetScore(unsigned newScore);
 	unsigned GetScore()const;
 	unsigned GetHealth() const;
+	bool IsGameOver() const;
 	[[nodiscard]] Utils::SafeCallbackObject RegisterScoreCallback(ScoreCallback callback);
 
 	void UpdateHealth(int deltaHp);
@@ -118,6 +118,7 @@ private:
 	void TriggerCallbacks(std::vector<T>& callbacks, Args&& ... args);
 
 private:
+	bool victory = false;
 	unsigned score = 0;
 	unsigned health = 3;
 	std::chrono::steady_clock::time_point gameStart;

@@ -2,7 +2,7 @@
 #include "Scenes/SceneManager.h"
 #include "Resources/Color.h"
 #include "Resources/Font.h"
-
+#include "Utils/GameplayManager.h"
 namespace {
 	using namespace Resources;
 	Color ColorLerp(const Color& a, const Color& b, float l) {
@@ -37,6 +37,7 @@ void MainMenu::Update(float deltaTime)
 {
 	if (IsKeyPressed(KEY_SPACE))
 	{
+		managers.GetManager<GameplayManager>().StartGame();
 		managers.GetManager<SceneManager>().LoadScene(ResourceID{ "GameScene" });
 	}
 	lerp += deltaTime / 2.f;
