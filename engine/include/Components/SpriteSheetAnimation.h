@@ -8,6 +8,7 @@ namespace Components {
 		SpriteSheetAnimation() = default;
 		SpriteSheetAnimation(const Atlas& atlas, const Utils::Vector2i& initialSpriteAtlas, const Utils::Vector2i& lastSpriteAtlas, int framesSpeed, bool repeat = true);
 		SpriteSheetAnimation(const Atlas& atlas, const std::vector<Utils::Vector2i>& sprites, int framesSpeed, bool repeat = true);
+		SpriteSheetAnimation(const SpriteSheetAnimation&) = default;
 
 		void Update();
 		void Draw(const Transform& transform) const;
@@ -20,7 +21,7 @@ namespace Components {
 		void NextSprite();
 	private:
 		std::vector<Utils::Vector2i> sprites;
-		const Atlas* atlas;
+		const Atlas * atlas;
 		unsigned currentSprite;
 		int speed;
 		int currentFrame;

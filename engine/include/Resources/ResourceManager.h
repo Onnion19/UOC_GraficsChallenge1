@@ -153,5 +153,5 @@ inline std::shared_ptr<T> ResourceManager::ResourceData::GetDataAs() const
 {
 	std::weak_ptr<T> weak_ptr = *(static_cast<std::weak_ptr<T>*>(_data()));
 	std::shared_ptr<T> shared_ptr = weak_ptr.lock();
-	return std::move(shared_ptr);
+	return shared_ptr;
 }

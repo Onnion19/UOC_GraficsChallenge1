@@ -2,7 +2,8 @@
 #include "Components/Atlas.h"
 #include "Components/Transform.h"
 #include "Core/Physics.h"
-
+#include "Utils/GameplayManager.h"
+#include <cassert>
 GameObject::PowerUp::PowerUp(Core::GameManagers& managers, const Utils::ResourceHandle<Resources::Texture>& texture, const Utils::Vector2i& atlasSize, const Utils::Vector2i& cell, const Utils::Vector2f& position)
 	: GameObject(managers)
 {
@@ -24,13 +25,21 @@ GameObject::PowerUp::~PowerUp() {
 
 void GameObject::PowerUp::Draw() const
 {
+	if (!collider.Valid()) return;
 	atlas->Draw(atlasCell, *transform);
 }
 
 void GameObject::PowerUp::RegisterCollider()
 {
-	collider = gManager.GetManager<Core::PhysicsManager>().RegisterCollider<Geometry::Circle>(this, transform->position, transform->size.x / 2.f);
+	collider = gManager.GetManager<Core::PhysicsManager>().RegisterCollider<Geometry::Circle>(*this, this, transform->position, transform->size.x / 2.f);
 	SetTag("PowerUp");
+}
+
+void GameObject::PowerUp::OnCollision(GameObject* other)
+{
+	assert(other && other->GetTag() == Core::Tag{ "Player" });
+	UnregisterCollider();
+	gManager.GetManager<GameplayManager>().UpdateScore(300);
 }
 
 void GameObject::PowerUp::UnregisterCollider()

@@ -1,6 +1,5 @@
 #include "GameObjects/Mario.h"
 #include "Core/Physics.h"
-#include "Utils/Geometry.h"
 #include "Utils/GameplayManager.h"
 #include "Components/Transform.h"
 #include "Components/Atlas.h"
@@ -81,8 +80,9 @@ int GameObject::MarioMovement::DeathBehavior::operator()(float deltatime, Compon
 
 
 
-GameObject::Mario::Mario(Core::GameManagers& manager, const Utils::Vector2f& pos) : GameObject(manager), collider(), physics(gManager.GetManager<Core::PhysicsManager>())
+GameObject::Mario::Mario(Core::GameManagers& manager, const Utils::Vector2f& pos) : GameObject(manager), physics(gManager.GetManager<Core::PhysicsManager>()), gameplayManager(gManager.GetManager<GameplayManager>())
 {
+	gameplayManager.SetHealth(3);
 	initialPosition = pos;
 	transform = &GetOrAddComponent<Components::Transform>();
 	transform->position = initialPosition;
@@ -90,6 +90,7 @@ GameObject::Mario::Mario(Core::GameManagers& manager, const Utils::Vector2f& pos
 	RegisterAnimations();
 	RegisterCollider();
 	movementBehavior = MarioMovement::WalkBehavior{ MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), transform };
+	SetTag("Player");
 }
 
 GameObject::Mario::~Mario()
@@ -176,6 +177,7 @@ void GameObject::Mario::Die()
 	if (std::holds_alternative<MarioMovement::DeathBehavior>(movementBehavior)) return;
 	movementBehavior = MarioMovement::DeathBehavior{ MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), transform };
 	callback = deathTimer.Start([&]() {Revive(initialPosition); }, 3.4f);
+	gameplayManager.UpdateHealth(-1);
 }
 
 void GameObject::Mario::RegisterAnimations()

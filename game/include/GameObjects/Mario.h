@@ -7,6 +7,7 @@
 #include "Resources/Texture.h"
 #include "Resources/music.h"
 #include "Utils/Timers.h"
+#include "Utils/GameplayManager.h"
 
 #include <variant>
 namespace Components {
@@ -87,7 +88,7 @@ namespace GameObject {
 		inline static const StringHash marioDeath{ "death" };
 		inline static const StringHash marioDeathIdle{ "deathIdle" };
 		static constexpr MarioMovement::MovementData MarioMovementData{ 200.f, 190.f,370.1f,90.f };
-		inline static const Core::Tag enemyTag{ "Enemy" };
+		inline static const Core::Tag enemyTag{ "DK" };
 	public:
 
 		Mario(Core::GameManagers& manager, const Utils::Vector2f& initialPosition);
@@ -109,6 +110,7 @@ namespace GameObject {
 		void UnregisterCollider();
 	private:
 		Core::PhysicsManager& physics;
+		GameplayManager& gameplayManager;
 		Collider collider;
 
 		bool collidedThisFrame = false;

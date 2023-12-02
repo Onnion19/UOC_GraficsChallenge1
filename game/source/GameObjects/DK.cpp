@@ -20,7 +20,7 @@ GameObject::DK::DK(Core::GameManagers& managers, const Utils::Vector2f& initialP
 	auto texture = gManager.GetManager<ResourceManager>().GetOrLoad<Texture>(DK_AtlasID, DK_AtlasPath);
 	auto atlasComponent = &GetOrAddComponent<Components::Atlas>(std::move(texture), DK_AtlasSize.x, DK_AtlasSize.y);
 	animation = &GetOrAddComponent<Components::SpriteSheetAnimation>(*atlasComponent, Utils::Vector2i{ 0,0 }, DK_AtlasSize - Utils::Vector2i{ 1,1 }, 15);
-	SetTag("Enemy");
+	SetTag("DK");
 	RegisterCollider();
 }
 

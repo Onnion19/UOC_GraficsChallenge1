@@ -49,4 +49,11 @@ namespace Geometry {
 		const float angle = roationDeg * DEG_TO_RAD;
 		return { std::cos(angle) , std::sin(angle) };
 	}
+
+	template<typename Vector>
+		requires std::is_same_v<Utils::Vector2<typename Vector::rep>, Vector>
+	inline float GetAngle(const Vector& vector)
+	{
+		return std::atan2f(vector.y, vector.x) * RAD_TO_DEG;
+	}
 }

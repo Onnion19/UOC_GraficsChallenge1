@@ -2,7 +2,6 @@
 
 #include "raylib.h"
 #include "Utils/Vector2.hpp"
-#include "Utils/Geometry.h"
 #include <vector>
 #include <limits>
 #include <unordered_map>

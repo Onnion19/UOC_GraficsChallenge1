@@ -8,7 +8,7 @@ namespace Components
 	{
 	public:
 		Utils::Vector2f position;
-		float rotation; 
+		float rotation = 0.f; 
 		Utils::Vector2f size;
 	};
 }

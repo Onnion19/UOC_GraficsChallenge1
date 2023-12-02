@@ -18,6 +18,7 @@ namespace GameObject
 		PowerUp(Core::GameManagers& managers, const Utils::ResourceHandle<Resources::Texture>& texture, const Utils::Vector2i& atlasSize, const Utils::Vector2i& cell,const Utils::Vector2f& position);
 		~PowerUp();
 		void Draw() const;
+		void OnCollision(GameObject *other);
 	private:
 		void RegisterCollider();
 		void UnregisterCollider();
