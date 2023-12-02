@@ -36,15 +36,12 @@ namespace GameObject {
 		void Revive(const Utils::Vector2f& position);
 
 		void Update(float detltaTime);
-		void OnCollision(GameObject* owner);
 		void Draw();
 
 	private:
 		void SetPosition(const Utils::Vector2f& pos);
-		void Die();
 		void RegisterAnimations();
 		void RegisterCollider();
-		void UpdateCollider();
 		void UnregisterCollider();
 	private:
 		Core::PhysicsManager& physics;

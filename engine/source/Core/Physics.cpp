@@ -1,7 +1,13 @@
 #include "Core/Physics.h"
 #include "Core/CollisionSolver.h"
 
+
 void Core::PhysicsManager::UnregisterCollider(Collider& col)
+{
+	collidersToErase.emplace_back(&col);
+}
+
+void Core::PhysicsManager::UnregisterColliderInternal(Collider& col)
 {
 	colliders.erase(col.id);
 	col = {};
@@ -9,7 +15,10 @@ void Core::PhysicsManager::UnregisterCollider(Collider& col)
 
 bool Core::PhysicsManager::CheckCollisionOnCollider(const Collider& collider)
 {
-	// Only 1 colision algorithm
+	// Remove Invalid colliders
+	std::for_each(collidersToErase.rbegin(), collidersToErase.rend(), [&](Collider* id) {UnregisterColliderInternal(*id); });
+	collidersToErase.clear();
+
 	for (auto&& [colliderId, col] : colliders)
 	{
 		// no self collision
@@ -22,10 +31,12 @@ bool Core::PhysicsManager::CheckCollisionOnCollider(const Collider& collider)
 			GameObject::GameObject* collidedGameObject = col.owner;
 			col.OnCollision(checkedGameObject);
 			collider.internal_collider->OnCollision(collidedGameObject);
-			return true;
 		}
 	}
 
+	// Remove Invalid colliders
+	std::for_each(collidersToErase.rbegin(), collidersToErase.rend(), [&](Collider* id) {UnregisterColliderInternal(*id); });
+	collidersToErase.clear();
 	return false;
 
 }

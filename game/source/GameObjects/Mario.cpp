@@ -18,8 +18,8 @@ GameObject::Mario::Mario(Core::GameManagers& manager, const Utils::Vector2f& pos
 	transform->position = initialPosition;
 	transform->size = { 50,50 };
 	playerController = &GetOrAddComponent<Components::PlayerController>(*transform, MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), gameplayManager);
-	RegisterAnimations();
 	RegisterCollider();
+	RegisterAnimations();
 	SetTag("Player");
 }
 
@@ -52,9 +52,7 @@ void GameObject::Mario::SetPosition(const Utils::Vector2f& pos)
 void GameObject::Mario::Update(float deltatime)
 {
 	playerController->Update(deltatime, *spriteAnimation);
-
 	physics.CheckCollisionOnCollider(collider);
-	UpdateCollider();
 	spriteAnimation->Update(deltatime);
 	deathTimer.Update(deltatime);
 }
@@ -94,11 +92,7 @@ void GameObject::Mario::RegisterAnimations()
 void GameObject::Mario::RegisterCollider()
 {
 	collider = physics.RegisterCollider<Geometry::Circle>(*playerController, this, transform->position, transform->size.x / 2.f);
-}
-
-void GameObject::Mario::UpdateCollider()
-{
-	collider.UpdateColliderBounds(Geometry::Circle{ transform->position, transform->size.x / 2.f });
+	playerController->SetCollider(collider);
 }
 
 void GameObject::Mario::UnregisterCollider()

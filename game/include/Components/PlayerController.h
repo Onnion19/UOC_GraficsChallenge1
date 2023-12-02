@@ -4,6 +4,7 @@
 #include <variant>
 #include "Utils/StringHash.h"
 #include "Core/Tag.h"
+#include "Core/Physics.h"
 
 class GameplayManager;
 namespace Components {
@@ -91,17 +92,21 @@ namespace Components {
 	public:
 		PlayerController(Transform& t, const MarioMovement::MovementData& mv, const Utils::Vector2i& screenSize, GameplayManager& manager);
 		~PlayerController();
+		void SetCollider(const Collider& collider);
 		void OnCollision(GameObject::GameObject* other);
 
 		void Update(float deltaTime, SpriteSheetAnimationBook& spriteAnimation);
 		void ResetToWalk();
 		void Die();
+		void UpdateCollider();
 	private:
+		Transform& transform; 
+		Collider col;
 		GameplayManager& manager;
 		bool isDead = false;
-		Transform& transform; 
 		MarioMovement::MovementData movementData;
 		Utils::Vector2i screenSize;
 		std::variant<MarioMovement::WalkBehavior, MarioMovement::JumpBehavior, MarioMovement::ClimbBehavior, MarioMovement::DeathBehavior> movementBehavior;
+		bool canClimb = false;
 	};
 }

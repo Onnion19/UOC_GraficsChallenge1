@@ -26,7 +26,7 @@ int MarioMovement::WalkBehavior::operator()(float deltatime, Components::SpriteS
 	{
 		animation->SelectAnimation(FlipBook::marioIdle);
 	}
-	if(applyGravity)
+	if (applyGravity)
 		transform->position.y += movementData.gravity * deltatime;
 	return movement;
 }
@@ -95,6 +95,11 @@ Components::PlayerController::~PlayerController()
 {
 }
 
+void Components::PlayerController::SetCollider(const Collider& collider)
+{
+	col = collider;
+}
+
 void Components::PlayerController::OnCollision(GameObject::GameObject* other)
 {
 	if (!other)return;
@@ -110,7 +115,7 @@ void Components::PlayerController::OnCollision(GameObject::GameObject* other)
 	{
 		if (auto walkBehavior = std::get_if<MarioMovement::WalkBehavior>(&movementBehavior))
 		{
-			transform.position.y = wall->GetSurfacePos() - transform.size.y/2.f;
+			transform.position.y = wall->GetSurfacePos() - transform.size.y / 2.f;
 		}
 		else if (auto jumptBehavior = std::get_if<MarioMovement::JumpBehavior>(&movementBehavior)) {
 			if (jumptBehavior->verticalForce < 0)
@@ -120,21 +125,25 @@ void Components::PlayerController::OnCollision(GameObject::GameObject* other)
 		}
 		else if (auto climb = std::get_if<MarioMovement::ClimbBehavior>(&movementBehavior))
 		{
-			if (std::abs(transform.position.y - wall->GetSurfacePos()) < 1)
+			if (std::abs(transform.position.y - wall->GetSurfacePos()) < 30)
 			{
 				ResetToWalk();
+				transform.position.y = wall->GetSurfacePos() - transform.size.y / 2.f;
+				canClimb = false;
 			}
 		}
-			
+
 	}
 	else if (auto stair = other->GetComponent<Components::StairComponent>()) {
-
-		if (IsKeyDown(KEY_W) || IsKeyDown(KEY_S))
-		{
-			transform.position.x = static_cast<float>(stair->GetStairPos());
-			movementBehavior = MarioMovement::ClimbBehavior{ movementData, screenSize, &transform };
-		}
+		canClimb = std::abs(transform.position.x - stair->GetStairPos()) < 15;
 	}
+	UpdateCollider();
+
+}
+
+void Components::PlayerController::UpdateCollider()
+{
+	col.UpdateColliderBounds(Geometry::Circle{ transform.position, transform.size.x / 2.f });
 }
 
 void Components::PlayerController::Update(float deltaTime, SpriteSheetAnimationBook& spriteAnimation)
@@ -144,8 +153,14 @@ void Components::PlayerController::Update(float deltaTime, SpriteSheetAnimationB
 	{
 		movementBehavior = MarioMovement::JumpBehavior{ movementData, screenSize, &transform };
 	}
+	if (canClimb && (IsKeyDown(KEY_W) || IsKeyDown(KEY_S)))
+	{
+		movementBehavior = MarioMovement::ClimbBehavior{ movementData, screenSize, &transform };
+	}
+
 	std::visit([&](auto&& arg) -> int {return arg(deltaTime, &spriteAnimation); }, movementBehavior);
 
+	UpdateCollider();
 }
 
 void Components::PlayerController::ResetToWalk()

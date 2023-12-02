@@ -29,9 +29,8 @@ namespace Core {
 		template<ColliderShape Shape, ColliderCallback T, typename ... Args>
 		Collider RegisterCollider(T& listener, GameObject::GameObject* owner, Args&& ... args);
 
-		// Removes collider from the registry and invalidates the data.
+		// Unregister the collider starting on the next frame
 		void UnregisterCollider(Collider& id);
-
 		// Verifies if the collider is colliding with any other inside the registry.
 		bool CheckCollisionOnCollider(const Collider& id);
 
@@ -39,10 +38,12 @@ namespace Core {
 		void DrawDebugColliders();
 #endif
 	private:
-
+		// Removes collider from the registry and invalidates the data.
+		void UnregisterColliderInternal(Collider& id);
 		// This is expensive, a flat hash map would be better.
 		// Also a vector will be faster to iterate per frame but slighly slower to search by id. Probably worth the change.
 		std::unordered_map<ColliderId, ::Internal::_InternalCollider> colliders;
+		std::vector< Collider*> collidersToErase;
 		::Internal::ColliderIdFactory idFactory{};
 	};
 
