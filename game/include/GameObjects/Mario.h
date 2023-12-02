@@ -6,6 +6,7 @@
 #include <vector>
 #include "Resources/Texture.h"
 #include "Resources/music.h"
+#include "Utils/Timers.h"
 
 #include <variant>
 namespace Components {
@@ -92,13 +93,15 @@ namespace GameObject {
 		Mario(Core::GameManagers& manager, const Utils::Vector2f& initialPosition);
 		~Mario();
 		const Utils::Vector2f& GetPosition()const;
-		void SetPosition(const Utils::Vector2f& pos);
+		
+		void Revive(const Utils::Vector2f& position);
 
 		void Update(float detltaTime);
 		void OnCollision(GameObject* owner);
 		void Draw();
 
 	private:
+		void SetPosition(const Utils::Vector2f& pos);
 		void Die();
 		void RegisterAnimations();
 		void RegisterCollider();
@@ -113,5 +116,9 @@ namespace GameObject {
 
 		Components::Transform* transform;
 		Components::SpriteSheetAnimationBook* spriteAnimation;
+
+		Utils::Vector2f initialPosition;
+		Utils::SingleTimer deathTimer;
+		Utils::SafeCallbackObject callback;
 	};
 }

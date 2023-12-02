@@ -13,6 +13,12 @@ Utils::SafeCallbackObject Utils::SingleTimer::Start(std::function<void()>&& func
 	return std::move(safeCallback);
 }
 
+Utils::SafeCallbackObject Utils::SingleTimer::Start(std::function<void()>&& functor, float time)
+{
+	timer = time;
+	return Start(std::move(functor));
+}
+
 void Utils::SingleTimer::Update(float deltaTime)
 {
 	if (timer < 0.f) return;
@@ -27,6 +33,10 @@ void Utils::SingleTimer::Update(float deltaTime)
 void Utils::SingleTimer::Invalidate()
 {
 	timer = -1.f;
+}
+bool Utils::SingleTimer::IsActive()const
+{
+	return timer > 0.f;
 }
 
 void Utils::SingleTimer::Trigger()

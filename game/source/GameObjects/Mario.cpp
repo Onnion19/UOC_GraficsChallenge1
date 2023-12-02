@@ -68,7 +68,7 @@ int GameObject::MarioMovement::ClimbBehavior::operator()(float deltatime, Compon
 
 int GameObject::MarioMovement::DeathBehavior::operator()(float deltatime, Components::SpriteSheetAnimationBook* animation)
 {
-	if (idle) return 0.f;
+	if (idle) return 0;
 	animation->SelectAnimation(Mario::marioDeath);
 	deathAnim += deltatime;
 	if (deathAnim > 2.f)
@@ -76,15 +76,16 @@ int GameObject::MarioMovement::DeathBehavior::operator()(float deltatime, Compon
 		animation->SelectAnimation(Mario::marioDeathIdle);
 		idle = true;
 	}
-	return 0.f;
+	return 0;
 }
 
 
 
 GameObject::Mario::Mario(Core::GameManagers& manager, const Utils::Vector2f& pos) : GameObject(manager), collider(), physics(gManager.GetManager<Core::PhysicsManager>())
 {
+	initialPosition = pos;
 	transform = &GetOrAddComponent<Components::Transform>();
-	transform->position = pos;
+	transform->position = initialPosition;
 	transform->size = { 50,50 };
 	RegisterAnimations();
 	RegisterCollider();
@@ -102,6 +103,12 @@ GameObject::Mario::~Mario()
 const Utils::Vector2f& GameObject::Mario::GetPosition() const
 {
 	return transform->position;
+}
+
+void GameObject::Mario::Revive(const Utils::Vector2f& position)
+{
+	SetPosition(position);
+	movementBehavior = MarioMovement::WalkBehavior{ MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), transform };
 }
 
 void GameObject::Mario::SetPosition(const Utils::Vector2f& pos)
@@ -126,12 +133,13 @@ void GameObject::Mario::Update(float deltatime)
 
 	UpdateCollider();
 	collidedThisFrame = false;
+	deathTimer.Update(deltatime);
 }
 
 void GameObject::Mario::OnCollision(GameObject* other)
 {
 	if (!other)return;
-
+	if (deathTimer.IsActive()) return;
 	if (other->GetTag() == enemyTag)
 	{
 		Die();
@@ -167,6 +175,7 @@ void GameObject::Mario::Die()
 {
 	if (std::holds_alternative<MarioMovement::DeathBehavior>(movementBehavior)) return;
 	movementBehavior = MarioMovement::DeathBehavior{ MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), transform };
+	callback = deathTimer.Start([&]() {Revive(initialPosition); }, 3.4f);
 }
 
 void GameObject::Mario::RegisterAnimations()

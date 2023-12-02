@@ -35,7 +35,7 @@ BackgroundScene::BackgroundScene(Core::GameManagers& manager)
 void BackgroundScene::Activate()
 {
 	mario = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Mario>(Utils::Vector2f{ 30	,1020 });
-	dk = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::DK>(Utils::Vector2f{ 500,850 }, 300.f, 250.f);
+	dk = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::DK>(Utils::Vector2f{ 800,320 }, 300.f, 90.f);
 
 	auto handle = managers.GetManager<ResourceManager>().GetOrLoad<Resources::Texture>(mapTextureId, mapTexturePath);
 	map = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Scenario>(std::move(handle));

@@ -7,11 +7,14 @@ namespace Utils {
 	class SingleTimer
 	{
 	public:
+		SingleTimer() = default;
 		SingleTimer(float time) : callback(), timer(time) {}
 		[[nodiscard]] virtual Utils::SafeCallbackObject Start(std::function<void()>&& functor);
+		[[nodiscard]] virtual Utils::SafeCallbackObject Start(std::function<void()>&& functor, float time);
 
 		void Update(float deltaTime);
 		void Invalidate();
+		bool IsActive() const;
 
 	protected:
 		virtual void Trigger();
@@ -19,7 +22,7 @@ namespace Utils {
 	protected:
 		Utils::ObserverCallbackObject callbackObject;
 		std::function<void()> callback;
-		float timer;
+		float timer = -1.f;
 	};
 
 	class RepeatingTimer : public SingleTimer {
