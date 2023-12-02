@@ -146,6 +146,11 @@ void Components::PlayerController::UpdateCollider()
 	col.UpdateColliderBounds(Geometry::Circle{ transform.position, transform.size.x / 2.f });
 }
 
+bool Components::PlayerController::IsDead() const
+{
+	return isDead;
+}
+
 void Components::PlayerController::Update(float deltaTime, SpriteSheetAnimationBook& spriteAnimation)
 {
 	// Update the movement

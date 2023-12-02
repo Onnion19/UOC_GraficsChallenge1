@@ -99,6 +99,7 @@ namespace Components {
 		void ResetToWalk();
 		void Die();
 		void UpdateCollider();
+		bool IsDead()const;
 	private:
 		Transform& transform; 
 		Collider col;

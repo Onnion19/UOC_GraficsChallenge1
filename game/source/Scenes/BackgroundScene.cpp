@@ -35,17 +35,31 @@ void BackgroundScene::Activate()
 	auto handle = managers.GetManager<ResourceManager>().GetOrLoad<Resources::Texture>(mapTextureId, mapTexturePath);
 	map = GameObject::GameObjectFactory::MakeGameObjectHandle<GameObject::Scenario>(std::move(handle));
 	PrepareEnemiesSpawner();
+	healthCallbackObject = managers.GetManager<GameplayManager>().RegisterHealthCallback(*this);
+
+	gameOver = false;
 }
 
 void BackgroundScene::DeActivate()
 {
 	mario.reset();
+	dk.reset();
+	enemiesSpawner.reset();
+	map.reset();	
 }
 
 void BackgroundScene::Update(float deltaTime) {
-	mario->Update(deltaTime);
-	dk->Update(deltaTime);
-	enemiesSpawner->Update(deltaTime);
+	if (!gameOver)
+	{
+		mario->Update(deltaTime);
+		dk->Update(deltaTime);
+		enemiesSpawner->Update(deltaTime);
+	}
+	else
+	{
+		managers.GetManager<GameplayManager>().EndGame();
+		managers.GetManager<SceneManager>().LoadScene(ResourceID{ "EndScene" });
+	}
 }
 
 void BackgroundScene::Draw() {
@@ -65,11 +79,7 @@ void BackgroundScene::Finish() {
 
 void BackgroundScene::OnHealthUpdate(unsigned int newHealth)
 {
-	if (newHealth == 0)
-	{
-		managers.GetManager<GameplayManager>().EndGame();
-		managers.GetManager<SceneManager>().LoadScene(ResourceID{ "EndScene" });
-	}
+	gameOver = newHealth == 0;
 }
 
 
@@ -104,8 +114,8 @@ void BackgroundScene::PrepareEnemiesSpawner()
 			[](unsigned int iterations, float initialTime) -> float {return Utils::RandomGenerator::GenerateRandom(1.f,5.5f); } };
 
 		auto params = [x = screenSize.x, y = screenSize.y]() ->  GameObject::EnemiesPool::SpawnEnemyProperties {
-			const Utils::Vector2f speed = (Utils::RandomGenerator::GenerateRandomBool()) ? Utils::Vector2f{90.f, 0.f} : Utils::Vector2f{-90.f, 0.f};
-			return { EnemyType::Fire , {x * 0.5f, y * 0.48f}, speed}; 
+			const Utils::Vector2f speed = (Utils::RandomGenerator::GenerateRandomBool()) ? Utils::Vector2f{ 90.f, 0.f } : Utils::Vector2f{ -90.f, 0.f };
+			return { EnemyType::Fire , {x * 0.5f, y * 0.48f}, speed };
 			};
 		enemiesCallbackObjects.emplace_back(enemiesSpawner->ScheduleSpawnEnemy(std::move(params), std::move(timer)));
 	}

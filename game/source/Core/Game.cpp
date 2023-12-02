@@ -37,11 +37,10 @@ Core::Game::~Game()
 
 void Core::Game::Initialize()
 {
-	//managers.GetManager<SceneManager>().AddScene<BackgroundScene>(ResourceID{ "GameScene" }, false);
-	//managers.GetManager<SceneManager>().AddScene<EndScene>(ResourceID{ "EndScene" }, false);
-	//managers.GetManager<SceneManager>().AddScene<MainMenu>(ResourceID{ "MainMenu" }, false);
-	//managers.GetManager<SceneManager>().AddAndLoadScene<LogoScene>(ResourceID{ "Logo" }, false);
-	managers.GetManager<SceneManager>().AddAndLoadScene<BackgroundScene>(ResourceID{ "GameScene" }, false);
+	managers.GetManager<SceneManager>().AddScene<BackgroundScene>(ResourceID{ "GameScene" }, false);
+	managers.GetManager<SceneManager>().AddScene<EndScene>(ResourceID{ "EndScene" }, false);
+	managers.GetManager<SceneManager>().AddScene<MainMenu>(ResourceID{ "MainMenu" }, false);
+	managers.GetManager<SceneManager>().AddAndLoadScene<LogoScene>(ResourceID{ "Logo" }, false);
 }
 
 void Core::Game::Start()

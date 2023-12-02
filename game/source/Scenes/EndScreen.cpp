@@ -2,7 +2,7 @@
 #include "Scenes/SceneManager.h"
 #include "Scenes/BackgroundScene.h"
 #include "Utils/GameplayManager.h"	
-
+#include "Core/Physics.h"
 EndScene::EndScene(Core::GameManagers& manager) : SceneBase<EndScene>(manager), flickeringEffect(0.f)
 {
 }
@@ -12,8 +12,7 @@ void EndScene::Activate()
 	font = managers.GetManager<ResourceManager>().GetOrLoad<Font>(fontID, fontPath);
 	auto& gameplayManager = managers.GetManager<GameplayManager>();
 	auto score = gameplayManager.GetScore();
-	auto time = gameplayManager.GetGameDuration();
-	highscoreText = timePlayed + std::to_string(time) + "    Score: " + std::to_string(score);
+	message = (gameplayManager.GetHealth() > 0) ? "VICTORY" : "GAME OVER";
 }
 
 void EndScene::DeActivate()
@@ -33,7 +32,7 @@ void EndScene::Update(float deltaTime)
 
 void EndScene::Draw()
 {
-	DrawTextEx(*font, message, { 700, 460 }, 80, 0, RED);
+	DrawTextEx(*font, message.c_str(), {700, 460}, 80, 0, RED);
 	DrawTextEx(*font, highscoreText.c_str(), {650, 580}, 40, 0, WHITE);
 	int timer = static_cast<int>(flickeringEffect * 1.5f);
 	if (timer % 2)

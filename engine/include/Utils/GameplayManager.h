@@ -79,6 +79,7 @@ public:
 	void UpdateScore(int deltaScore);
 	void SetScore(unsigned newScore);
 	unsigned GetScore()const;
+	unsigned GetHealth() const;
 	[[nodiscard]] Utils::SafeCallbackObject RegisterScoreCallback(ScoreCallback callback);
 
 	void UpdateHealth(int deltaHp);

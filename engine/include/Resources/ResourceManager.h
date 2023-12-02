@@ -29,6 +29,7 @@ class ResourceManager {
 private:
 	// Struct holding the ref counting of the resoruce.
 	struct ResourceData {
+		ResourceData() = default;
 		template<typename shared_ptr>
 		ResourceData(const shared_ptr& ptr);
 		int GetUsageCount()const;
@@ -86,8 +87,9 @@ private:
 	auto Load(ResourceID id, Args&& ... args) {
 		ResourceHandle<T> shared_ptr = Resources::Loader::Load<T>(std::forward<Args>(args)...);
 		auto& container = GetOrCreateContainerByType<T>();
-		auto emplace = container.emplace(id, shared_ptr);
-		assert(emplace.second && "Failed to emplace the new resource");
+		//auto emplace = container.emplace(id, shared_ptr);
+		container[id] = shared_ptr;
+		//assert(emplace.second && "Failed to emplace the new resource");
 		return shared_ptr;
 	}
 

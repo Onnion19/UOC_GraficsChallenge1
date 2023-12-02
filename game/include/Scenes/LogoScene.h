@@ -17,7 +17,7 @@ public:
 	void Finish();
 private:
 	inline static const ResourceID LogoID{ "logo" };
-	static constexpr auto logoPath{ "resources/logo.png" };
+	static constexpr auto logoPath{ "resources/Menu/logo.png" };
 	static constexpr int logoSize = 512;
 	static constexpr float timeInScreen = 3.f;
 private:

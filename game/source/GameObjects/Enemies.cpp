@@ -58,6 +58,11 @@ void GameObject::Enemy::OnCollision(GameObject* other)
 {
 	assert(other && other->GetTag() == Core::Tag{ "Player" });
 
+	auto playerController = other->GetComponent<Components::PlayerController>();
+	assert(playerController);
+	if (playerController->IsDead())return;
+
+
 	// If player is on top, destroy it + add points
 	auto playerTransform = other->GetComponent<Components::Transform>();
 	assert(playerTransform);

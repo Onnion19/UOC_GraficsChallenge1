@@ -42,7 +42,9 @@ private:
 	Utils::Handle <GameObject::Scenario> map;
 	Utils::Handle <GameObject::EnemiesPool> enemiesSpawner;
 	std::vector<Utils::SafeCallbackObject> enemiesCallbackObjects;
+	Utils::SafeCallbackObject healthCallbackObject;
 
 	Utils::ResourceHandle<Music> backgroundMusic;
+	bool gameOver = false;
 };
 

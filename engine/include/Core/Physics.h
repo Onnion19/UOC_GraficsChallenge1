@@ -43,7 +43,7 @@ namespace Core {
 		// This is expensive, a flat hash map would be better.
 		// Also a vector will be faster to iterate per frame but slighly slower to search by id. Probably worth the change.
 		std::unordered_map<ColliderId, ::Internal::_InternalCollider> colliders;
-		std::vector< Collider*> collidersToErase;
+		std::vector< unsigned int> collidersToErase;
 		::Internal::ColliderIdFactory idFactory{};
 	};
 

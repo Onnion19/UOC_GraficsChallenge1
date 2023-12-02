@@ -52,6 +52,10 @@ void GameObject::Mario::SetPosition(const Utils::Vector2f& pos)
 
 void GameObject::Mario::Update(float deltatime)
 {
+	if (IsKeyPressed(KEY_F))
+	{
+		gameplayManager.SetHealth(0);
+	}
 	playerController->Update(deltatime, *spriteAnimation);
 	physics.CheckCollisionOnCollider(collider);
 	spriteAnimation->Update(deltatime);

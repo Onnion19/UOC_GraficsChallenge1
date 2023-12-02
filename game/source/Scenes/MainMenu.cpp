@@ -24,6 +24,7 @@ MainMenu::MainMenu(Core::GameManagers& manager) : SceneBase<MainMenu>(manager)
 
 void MainMenu::Activate()
 {
+	backgroundImage = managers.GetManager<ResourceManager>().GetOrLoad<Texture2D>(bgID, bgPath);
 	mainMenuFont = managers.GetManager<ResourceManager>().GetOrLoad <Resources::Font>(fontID, fontPath);
 }
 
@@ -43,10 +44,18 @@ void MainMenu::Update(float deltaTime)
 
 void MainMenu::Draw()
 {
+	static Rectangle textureQuad{ 0, 0, static_cast<float>(backgroundImage->width), static_cast<float>(backgroundImage->height) };
+	static Rectangle renderQuad{
+		1920/2.f - bgSize.x/2.f,
+		1080/2.f - bgSize.y/2.f,
+		bgSize.x,
+		bgSize.y
+	};
+	DrawTexturePro(*backgroundImage, textureQuad, renderQuad, {}, 0.f, WHITE);
 	const auto color = ColorLerp(BLUE, RED, lerp);
-	DrawTextEx(*mainMenuFont, title, { 700, 460 }, 80, 0, color);
-	DrawTextEx(*mainMenuFont, author, { 770, 620 }, 30, 0, color);
-	DrawTextEx(*mainMenuFont, action, { 790, 690 }, 30, 0, color);
+	DrawTextEx(*mainMenuFont, author, { 770, 950 }, 30, 0, color);
+	DrawTextEx(*mainMenuFont, action, { 790, 1000 }, 30, 0, color);
+	DrawTextEx(*mainMenuFont, action2, { 790, 1050 }, 30, 0, color);
 }
 
 void MainMenu::Finish()

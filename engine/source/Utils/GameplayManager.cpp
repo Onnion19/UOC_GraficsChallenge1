@@ -33,6 +33,11 @@ unsigned GameplayManager::GetScore() const
 	return score;
 }
 
+unsigned GameplayManager::GetHealth() const
+{
+	return health;
+}
+
 Utils::SafeCallbackObject GameplayManager::RegisterScoreCallback(ScoreCallback callback)
 {
 	auto safeObject = Utils::CallbackObjectsFactory::MakeSafeCallbackObject();

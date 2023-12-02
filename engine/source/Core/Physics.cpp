@@ -4,21 +4,18 @@
 
 void Core::PhysicsManager::UnregisterCollider(Collider& col)
 {
-	collidersToErase.emplace_back(&col);
-}
-
-void Core::PhysicsManager::UnregisterColliderInternal(Collider& col)
-{
-	colliders.erase(col.id);
+	collidersToErase.emplace_back(col.id);
 	col = {};
 }
+
 
 bool Core::PhysicsManager::CheckCollisionOnCollider(const Collider& collider)
 {
 	// Remove Invalid colliders
-	std::for_each(collidersToErase.rbegin(), collidersToErase.rend(), [&](Collider* id) {UnregisterColliderInternal(*id); });
+	std::for_each(collidersToErase.rbegin(), collidersToErase.rend(), [&](unsigned int id) { colliders.erase(id); });
 	collidersToErase.clear();
 
+	bool collides = false;
 	for (auto&& [colliderId, col] : colliders)
 	{
 		// no self collision
@@ -31,13 +28,12 @@ bool Core::PhysicsManager::CheckCollisionOnCollider(const Collider& collider)
 			GameObject::GameObject* collidedGameObject = col.owner;
 			col.OnCollision(checkedGameObject);
 			collider.internal_collider->OnCollision(collidedGameObject);
+			collides = true;
 		}
 	}
 
-	// Remove Invalid colliders
-	std::for_each(collidersToErase.rbegin(), collidersToErase.rend(), [&](Collider* id) {UnregisterColliderInternal(*id); });
-	collidersToErase.clear();
-	return false;
+
+	return collides;
 
 }
 
