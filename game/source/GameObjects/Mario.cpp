@@ -9,76 +9,6 @@
 #include "Core/WindowManager.h"
 
 
-int GameObject::MarioMovement::WalkBehavior::operator()(float deltatime, Components::SpriteSheetAnimationBook* animation) {
-
-	int movement = 0;
-	if (IsKeyDown(KEY_D)) {
-		transform->position.x = std::clamp(transform->position.x + movementData.horizontalSpeed * deltatime, 0.f, static_cast<float>(screenSize.x));
-		movement = static_cast<int>(movementData.horizontalSpeed);
-		animation->SelectAnimation(Mario::marioMoveRight);
-	}
-	else if (IsKeyDown(KEY_A))
-	{
-		transform->position.x = std::clamp(transform->position.x - movementData.horizontalSpeed * deltatime, 0.f, static_cast<float>(screenSize.x));
-		movement = static_cast<int>(-movementData.horizontalSpeed);
-		animation->SelectAnimation(Mario::marioMoveLeft);
-	}
-	else
-	{
-		animation->SelectAnimation(Mario::marioIdle);
-	}
-	//transform->position.y += movementData.gravity * deltatime;
-	return movement;
-}
-
-GameObject::MarioMovement::JumpBehavior::JumpBehavior(const MovementData& md, const Utils::Vector2i& sz, Components::Transform* t)
-	: WalkBehavior(md, sz, t)
-{
-	verticalForce = movementData.jumpStrength;
-}
-
-int GameObject::MarioMovement::JumpBehavior::operator()(float deltatime, Components::SpriteSheetAnimationBook* animation) {
-	WalkBehavior::operator()(deltatime, animation);
-
-	transform->position.y = std::clamp(transform->position.y - (verticalForce * deltatime), 0.f, static_cast<float>(screenSize.y));
-	verticalForce -= movementData.gravity * deltatime;
-	return static_cast<int>(verticalForce);
-}
-
-int GameObject::MarioMovement::ClimbBehavior::operator()(float deltatime, Components::SpriteSheetAnimationBook* animation) {
-	int movement = 0;
-	if (IsKeyDown(KEY_W)) {
-		transform->position.y = std::clamp(transform->position.y - movementData.climbSpeed * deltatime, 0.f, static_cast<float>(screenSize.y));
-		movement = static_cast<int>(movementData.climbSpeed);
-		animation->SelectAnimation(Mario::marioClimbUp);
-	}
-	else if (IsKeyDown(KEY_S))
-	{
-		transform->position.y = std::clamp(transform->position.y + movementData.climbSpeed * deltatime, 0.f, static_cast<float>(screenSize.x));
-		movement = static_cast<int>(-movementData.horizontalSpeed);
-		animation->SelectAnimation(Mario::marioClimbDown);
-	}
-	else
-	{
-		animation->SelectAnimation(Mario::marioIdle);
-	}
-	return movement;
-}
-
-int GameObject::MarioMovement::DeathBehavior::operator()(float deltatime, Components::SpriteSheetAnimationBook* animation)
-{
-	if (idle) return 0;
-	animation->SelectAnimation(Mario::marioDeath);
-	deathAnim += deltatime;
-	if (deathAnim > 2.f)
-	{
-		animation->SelectAnimation(Mario::marioDeathIdle);
-		idle = true;
-	}
-	return 0;
-}
-
-
 
 GameObject::Mario::Mario(Core::GameManagers& manager, const Utils::Vector2f& pos) : GameObject(manager), physics(gManager.GetManager<Core::PhysicsManager>()), gameplayManager(gManager.GetManager<GameplayManager>())
 {
@@ -87,9 +17,9 @@ GameObject::Mario::Mario(Core::GameManagers& manager, const Utils::Vector2f& pos
 	transform = &GetOrAddComponent<Components::Transform>();
 	transform->position = initialPosition;
 	transform->size = { 50,50 };
+	playerController = &GetOrAddComponent<Components::PlayerController>(*transform, MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), gameplayManager);
 	RegisterAnimations();
 	RegisterCollider();
-	movementBehavior = MarioMovement::WalkBehavior{ MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), transform };
 	SetTag("Player");
 }
 
@@ -109,7 +39,7 @@ const Utils::Vector2f& GameObject::Mario::GetPosition() const
 void GameObject::Mario::Revive(const Utils::Vector2f& position)
 {
 	SetPosition(position);
-	movementBehavior = MarioMovement::WalkBehavior{ MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), transform };
+	playerController->ResetToWalk();
 }
 
 void GameObject::Mario::SetPosition(const Utils::Vector2f& pos)
@@ -121,63 +51,17 @@ void GameObject::Mario::SetPosition(const Utils::Vector2f& pos)
 
 void GameObject::Mario::Update(float deltatime)
 {
+	playerController->Update(deltatime, *spriteAnimation);
+
 	physics.CheckCollisionOnCollider(collider);
-
-	// Update the movement
-	auto movement = std::visit([&](auto&& arg) -> int {return arg(deltatime, spriteAnimation); }, movementBehavior);
-
-	if (IsKeyPressed(KEY_SPACE) && std::holds_alternative<MarioMovement::WalkBehavior>(movementBehavior))
-	{
-		movementBehavior = MarioMovement::JumpBehavior{ MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), transform };
-	}
-	spriteAnimation->Update(deltatime);
-
 	UpdateCollider();
-	collidedThisFrame = false;
+	spriteAnimation->Update(deltatime);
 	deathTimer.Update(deltatime);
-}
-
-void GameObject::Mario::OnCollision(GameObject* other)
-{
-	if (!other)return;
-	if (deathTimer.IsActive()) return;
-	if (other->GetTag() == enemyTag)
-	{
-		Die();
-		return;
-	}
-
-	if (auto wall = other->GetComponent<Components::WallComponent>())
-	{
-		transform->position.y = wall->GetSurfacePos() - transform->size.y / 2.f;
-		if (!std::holds_alternative<MarioMovement::WalkBehavior>(movementBehavior))
-		{
-			movementBehavior = MarioMovement::WalkBehavior{ MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), transform };
-		}
-		collidedThisFrame = true;
-	}
-	else if (auto stair = other->GetComponent<Components::StairComponent>()) {
-
-		if (IsKeyDown(KEY_W) || IsKeyDown(KEY_S))
-		{
-			transform->position.x = static_cast<float>(stair->GetStairPos());
-			movementBehavior = MarioMovement::ClimbBehavior{ MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), transform };
-		}
-	}
-
 }
 
 void GameObject::Mario::Draw()
 {
 	spriteAnimation->Draw(*transform);
-}
-
-void GameObject::Mario::Die()
-{
-	if (std::holds_alternative<MarioMovement::DeathBehavior>(movementBehavior)) return;
-	movementBehavior = MarioMovement::DeathBehavior{ MarioMovementData, gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize(), transform };
-	callback = deathTimer.Start([&]() {Revive(initialPosition); }, 3.4f);
-	gameplayManager.UpdateHealth(-1);
 }
 
 void GameObject::Mario::RegisterAnimations()
@@ -196,20 +80,20 @@ void GameObject::Mario::RegisterAnimations()
 	Utils::Handle<Components::SpriteSheetAnimation> deathAnim = std::make_unique< Components::SpriteSheetAnimation>(*atlasComponent, Utils::Vector2i{ 0,2 }, Utils::Vector2i{ 3,2 }, 10);
 	Utils::Handle<Components::SpriteSheetAnimation> deathIdleAnim = std::make_unique< Components::SpriteSheetAnimation>(*atlasComponent, Utils::Vector2i{ 4,2 }, Utils::Vector2i{ 4,2 }, 10);
 
-	spriteAnimation->AddSpriteSheet(marioMoveRight, std::move(runRight));
-	spriteAnimation->AddSpriteSheet(marioMoveLeft, std::move(runLeft));
-	spriteAnimation->AddSpriteSheet(marioIdle, std::move(Idle));
-	spriteAnimation->AddSpriteSheet(marioClimbUp, std::move(climbUp));
-	spriteAnimation->AddSpriteSheet(marioClimbDown, std::move(climbDown));
-	spriteAnimation->AddSpriteSheet(marioDeath, std::move(deathAnim));
-	spriteAnimation->AddSpriteSheet(marioDeathIdle, std::move(deathIdleAnim));
+	spriteAnimation->AddSpriteSheet(MarioMovement::FlipBook::marioMoveRight, std::move(runRight));
+	spriteAnimation->AddSpriteSheet(MarioMovement::FlipBook::marioMoveLeft, std::move(runLeft));
+	spriteAnimation->AddSpriteSheet(MarioMovement::FlipBook::marioIdle, std::move(Idle));
+	spriteAnimation->AddSpriteSheet(MarioMovement::FlipBook::marioClimbUp, std::move(climbUp));
+	spriteAnimation->AddSpriteSheet(MarioMovement::FlipBook::marioClimbDown, std::move(climbDown));
+	spriteAnimation->AddSpriteSheet(MarioMovement::FlipBook::marioDeath, std::move(deathAnim));
+	spriteAnimation->AddSpriteSheet(MarioMovement::FlipBook::marioDeathIdle, std::move(deathIdleAnim));
 
-	spriteAnimation->SelectAnimation(marioClimbUp);
+	spriteAnimation->SelectAnimation(MarioMovement::FlipBook::marioClimbUp);
 }
 
 void GameObject::Mario::RegisterCollider()
 {
-	collider = physics.RegisterCollider<Geometry::Circle>(*this, this, transform->position, transform->size.x / 2.f);
+	collider = physics.RegisterCollider<Geometry::Circle>(*playerController, this, transform->position, transform->size.x / 2.f);
 }
 
 void GameObject::Mario::UpdateCollider()

@@ -14,6 +14,7 @@ GameObject::Enemy::Enemy(Core::GameManagers& managers, const Utils::Vector2f& po
 	transform = &GetOrAddComponent<Components::Transform>();
 	animationComponent = &GetOrAddComponent<Components::SpriteSheetAnimation>(animation);
 	mru = &GetOrAddComponent<Components::MRU>();
+	SetTag("Enemy");
 	Respawn(position, speed, animation);
 }
 
