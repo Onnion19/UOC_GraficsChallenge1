@@ -40,6 +40,11 @@ void MainMenu::Update(float deltaTime)
 		managers.GetManager<GameplayManager>().StartGame();
 		managers.GetManager<SceneManager>().LoadScene(ResourceID{ "GameScene" });
 	}
+	else if (IsKeyPressed(KEY_O))
+	{
+		managers.GetManager<SceneManager>().LoadScene(ResourceID{ "Options" });
+	}
+
 	lerp += deltaTime / 2.f;
 }
 
