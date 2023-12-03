@@ -4,6 +4,7 @@ void GameplayManager::StartGame()
 {
 	gameStart = std::chrono::steady_clock::now();
 	victory = false;
+	score = 0; 
 }
 
 void GameplayManager::EndGame(bool win)

@@ -12,6 +12,7 @@ GameObject::Scenario::Scenario(Core::GameManagers& managers, const Utils::Resour
 	SetupTransform();
 	RegisterWalls();
 	RegisterStairs();
+	RegisterFireBarrel();
 }
 
 GameObject::Scenario::Scenario(Core::GameManagers& managers, Utils::ResourceHandle<Resources::Texture>&& texture) : GameObject(managers)
@@ -20,18 +21,22 @@ GameObject::Scenario::Scenario(Core::GameManagers& managers, Utils::ResourceHand
 	SetupTransform();
 	RegisterWalls();
 	RegisterStairs();
+	RegisterFireBarrel();
 }
 
 GameObject::Scenario::~Scenario()
 {
 	RemoveComponent<Components::Sprite>();
 	RemoveComponent<Components::Transform>();
+	fireBarrel->RemoveComponent<Components::Sprite>();
+	fireBarrel->RemoveComponent<Components::Transform>();
 	colliders.clear();
 }
 
 void GameObject::Scenario::Draw()
 {
 	spriteComponent->Render(*transformComponent);
+	barrelspriteComponent->Render(*barreltransformComponent);
 }
 
 void GameObject::Scenario::SetupTransform()
@@ -72,4 +77,15 @@ void GameObject::Scenario::RegisterStairs()
 	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.0893f, 0.4375f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
 	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.9107f, 0.4375f }, Utils::Vector2f{ 0.0357f, 0.1250f }));
 	colliders.emplace_back(GameObjectFactory::MakePureGameObjectHandle<Stair>(Utils::Vector2f{ 0.5893f, 0.2969f }, Utils::Vector2f{ 0.0357f, 0.0938f }));
+}
+
+void GameObject::Scenario::RegisterFireBarrel()
+{
+	auto texture = gManager.GetManager<ResourceManager>().GetOrLoad<Resources::Texture>(ResourceID{ "Fire Barrel" }, "resources/Enemies/BurningBarrel.png");
+	Utils::Vector2f screensize = gManager.GetManager<WindowManager>().GetCurrentWindow()->GetWindowSize();
+	fireBarrel = GameObjectFactory::MakePureGameObjectHandle<GameObject>();
+	barreltransformComponent = &fireBarrel->GetOrAddComponent<Components::Transform>();
+	barreltransformComponent->position = screensize * Utils::Vector2f{ 0.5f, 0.5f };
+	barreltransformComponent->size = screensize * Utils::Vector2f{ 0.14f, 0.14f };
+	barrelspriteComponent = &fireBarrel->GetOrAddComponent<Components::Sprite>(std::move(texture));
 }

@@ -24,9 +24,14 @@ namespace GameObject {
 		void SetupTransform();
 		void RegisterWalls();
 		void RegisterStairs();
+		void RegisterFireBarrel();
 	private: 
 		Components::Transform* transformComponent;
 		Components::Sprite* spriteComponent;
 		std::vector<Utils::Handle<GameObject>> colliders;
+
+		Utils::Handle<GameObject> fireBarrel;
+		Components::Transform* barreltransformComponent;
+		Components::Sprite* barrelspriteComponent;
 	};
 }
